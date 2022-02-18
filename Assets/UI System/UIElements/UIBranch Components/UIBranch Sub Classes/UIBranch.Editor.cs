@@ -9,7 +9,6 @@ public partial class UIBranch
     private const string OptionalBranch = nameof(IsOptional);
     private const string InGamUIBranch = nameof(InGameUI);
     private const string IsPauseMenu = nameof(PauseMenu);
-    private const string SaveLastHighlightedOff = nameof(DontSaveLastHighlighted);
     private const string TimedBranch = nameof(IsTimedPopUp);
     private const string ResolveBranch = nameof(IsResolve);
     private const string AnyPopUpBranch = nameof(IsAPopUpEditor);
@@ -29,14 +28,6 @@ public partial class UIBranch
         }
         
         return true;
-    }
-
-    private bool DontSaveLastHighlighted()
-    {
-        if (_saveExitSelection == IsActive.No)
-            _alwaysHighlighted = IsActive.No;
-        
-        return _saveExitSelection == IsActive.No;
     }
 
     private void ChangeCanvasOrder()

@@ -3,15 +3,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class UIColour : NodeFunctionBase, IAlwaysHighlightSettings
+public class UIColour : NodeFunctionBase
 {
     public UIColour(IColourSettings settings, IUiEvents uiEvents) : base(uiEvents)
     {
-        _settings = settings;
-        _scheme = _settings.ColourScheme;
-        _textElements = _settings.TextElement;
-        _imageElements = _settings.ImageElement;
-        MyBranch = _settings.ParentBranch;
+        _scheme = settings.ColourScheme;
+        _textElements = settings.TextElement;
+        _imageElements = settings.ImageElement;
     }
 
     //Variables
@@ -26,28 +24,17 @@ public class UIColour : NodeFunctionBase, IAlwaysHighlightSettings
     private Color _selectHighlightColour;
     private float _selectHighlightPerc;
     private int _id;
-    private readonly IColourSettings _settings;
-    private IAlwaysHighlight _alwaysHighlighted;
 
     //Properties, Getter & Setters
-    public IBranch MyBranch { get; }
     protected override bool CanBePressed() => (_scheme.ColourSettings & EventType.Pressed) != 0;
     protected override bool CanBeHighlighted() => (_scheme.ColourSettings & EventType.Highlighted) !=0;
     private bool CanBeSelected() => (_scheme.ColourSettings & EventType.Selected) != 0;
-    public Override Overridden => _settings.OverrideAlwaysHighlighted;
-    public INode UiNode => _uiEvents.ReturnMasterNode;
-    public bool IsSelected => _isSelected;
-    public Action DoPointerOverSetUp => PointerOverSetUp;
-    public Action DoPointerNotOver => PointerNotOver;
-    public bool OptionalStartConditions => !CanBeHighlighted();
 
     public override void OnAwake()
     {
         base.OnAwake();
         _id = _uiEvents.MasterNodeID;
         SetUpCachedColours();
-        if(MyBranch.AlwaysHighlighted == IsActive.Yes)
-            _alwaysHighlighted = EZInject.Class.WithParams<IAlwaysHighlight>(this);
     }
     
     private void SetUpCachedColours()
@@ -61,31 +48,6 @@ public class UIColour : NodeFunctionBase, IAlwaysHighlightSettings
         _selectHighlightColour = SelectedHighlightColour();
     }
 
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        if(_alwaysHighlighted.IsNotNull())
-            _alwaysHighlighted.ObserveEvents();
-    }
-
-    public override void OnDisable()
-    {
-        base.OnDisable();
-        if(_alwaysHighlighted.IsNotNull())
-            _alwaysHighlighted.UnObserveEvents();
-    }
-
-    protected override void LateStartSetUp()
-    {
-        base.LateStartSetUp();
-        if(MyHubDataIsNull) return;
-        
-        if (_myDataHub.SceneStarted)
-        {
-            _alwaysHighlighted.ShowStartingHighlightedNode();
-        }
-    }
-
     protected override void SavePointerStatus(bool pointerOver)
     {
         if(FunctionNotActive()) return;
@@ -96,7 +58,6 @@ public class UIColour : NodeFunctionBase, IAlwaysHighlightSettings
         }
         else
         {
-            if (_alwaysHighlighted.IsNotNull() && _alwaysHighlighted.CanAllow()) return;
             PointerNotOver();
         }
     }
@@ -109,7 +70,7 @@ public class UIColour : NodeFunctionBase, IAlwaysHighlightSettings
         }
         else
         {
-           NotSelectedHighlight();
+            NotSelectedHighlight();
         }
     }
 

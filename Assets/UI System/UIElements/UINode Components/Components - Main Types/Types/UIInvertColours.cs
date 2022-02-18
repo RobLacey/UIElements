@@ -2,12 +2,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIInvertColours : NodeFunctionBase, IAlwaysHighlightSettings
+public class UIInvertColours : NodeFunctionBase
 {
     public UIInvertColours(IInvertSettings settings, IUiEvents uiEvents) : base(uiEvents)
     {
-        _settings = settings;
-        MyBranch = settings.ParentBranch;
         _activateWhen = settings.ActivateWhen;
         _text = settings.Text;
         _image = settings.Image;
@@ -23,26 +21,16 @@ public class UIInvertColours : NodeFunctionBase, IAlwaysHighlightSettings
     private Color _textStartColour = Color.white;
     private bool _hasText;
     private bool _hasImage;
-    private IInvertSettings _settings;
-    private IAlwaysHighlight _alwaysHighlighted;
     
     //Properties
     protected override bool CanBeHighlighted() => (_activateWhen & ActivateWhen.OnHighlighted) != 0;
     protected override bool CanBePressed() => (_activateWhen & ActivateWhen.OnSelected) != 0;
-    public IBranch MyBranch { get; }
-    public Override Overridden => _settings.OverrideAlwaysHighlighted;
-    public INode UiNode => _uiEvents.ReturnMasterNode;
-    public bool IsSelected => _isSelected;
-    public Action DoPointerOverSetUp => ChangeToInvertedColour;
-    public Action DoPointerNotOver => SetToStartingColour;
-    public bool OptionalStartConditions => !CanBeHighlighted();
 
     //Main
     public override void OnAwake()
     {
         base.OnAwake();
         SetInverseColourSettings();
-        _alwaysHighlighted = EZInject.Class.WithParams<IAlwaysHighlight>(this);
     }
 
     private void SetInverseColourSettings()
@@ -53,20 +41,6 @@ public class UIInvertColours : NodeFunctionBase, IAlwaysHighlightSettings
         _hasImage = _image;
     }
     
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        if(_alwaysHighlighted.IsNotNull())
-            _alwaysHighlighted.ObserveEvents();
-    }
-
-    public override void OnDisable()
-    {
-        base.OnDisable();
-        if(_alwaysHighlighted.IsNotNull())
-            _alwaysHighlighted.UnObserveEvents();
-    }
-
     protected override void SavePointerStatus(bool pointerOver)
     {
         if(FunctionNotActive() || !CanBeHighlighted() || CanBePressed() && _isSelected) return;
@@ -77,7 +51,6 @@ public class UIInvertColours : NodeFunctionBase, IAlwaysHighlightSettings
         }
         else
         {
-            if(_alwaysHighlighted.IsNotNull() && _alwaysHighlighted.CanAllow()) return;
             SetToStartingColour();
         }
     }

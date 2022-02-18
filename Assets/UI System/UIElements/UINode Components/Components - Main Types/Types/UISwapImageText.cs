@@ -2,12 +2,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UISwapImageText : NodeFunctionBase, IAlwaysHighlightSettings
+public class UISwapImageText : NodeFunctionBase
 {
     public UISwapImageText(ISwapImageOrTextSettings settings, IUiEvents uiEvents) : base(uiEvents)
     {
-        _settings = settings;
-        MyBranch = settings.ParentBranch;
         _changeWhen = settings.ChangeWhen;
         _toggleIsOff = settings.ToggleOff;
         _toggleIsOn = settings.ToggleOn;
@@ -23,44 +21,24 @@ public class UISwapImageText : NodeFunctionBase, IAlwaysHighlightSettings
     private readonly Image _toggleIsOn;
     private readonly Text _textToSwap;
     private readonly string _changeTextToo;
-    private readonly ISwapImageOrTextSettings _settings;
-    private IAlwaysHighlight _alwaysHighlighted;
     
-    //Properties
+    //Properties, Getters & Setters
     protected override bool CanBeHighlighted() => _changeWhen == ChangeWhen.OnHighlight;
     protected override bool CanBePressed() => _changeWhen == ChangeWhen.OnPressed;
     private bool ToggleOnNewControls => _changeWhen == ChangeWhen.OnControlChanged;
-    public IBranch MyBranch { get; }
-    public Override Overridden => _settings.OverrideAlwaysHighlighted;
-    public INode UiNode => _uiEvents.ReturnMasterNode;
-    public bool IsSelected => _isSelected;
-    public Action DoPointerOverSetUp => PointerOver;
-    public Action DoPointerNotOver => PointerNotOver;
-    public bool OptionalStartConditions => CanBePressed();
-
-    public override void OnAwake()
-    {
-        base.OnAwake();
-        if(MyBranch.AlwaysHighlighted == IsActive.Yes)
-            _alwaysHighlighted = EZInject.Class.WithParams<IAlwaysHighlight>(this);
-    }
-
     private string GetStartingText() => _textToSwap ? _textToSwap.text : String.Empty;
 
+    //Main
     public override void ObserveEvents()
     {
         base.ObserveEvents();
         InputEvents.Do.Subscribe<IAllowKeys>(OnControlsChanged);
-        if(_alwaysHighlighted.IsNotNull())
-            _alwaysHighlighted.ObserveEvents();
     }
 
     public override void UnObserveEvents()
     {
         base.UnObserveEvents();
         InputEvents.Do.Unsubscribe<IAllowKeys>(OnControlsChanged);
-        if(_alwaysHighlighted.IsNotNull())
-            _alwaysHighlighted.UnObserveEvents();
     }
 
     protected override void LateStartSetUp()
@@ -133,7 +111,6 @@ public class UISwapImageText : NodeFunctionBase, IAlwaysHighlightSettings
         }
         else
         {
-            if(_alwaysHighlighted.IsNotNull() && _alwaysHighlighted.CanAllow()) return;
             PointerNotOver();
         }
     }

@@ -78,11 +78,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     private IsActive _saveExitSelection = IsActive.Yes;
     
     [SerializeField] 
-    [Label("Always Show Highlighted")] [HideIf(EConditionOperator.Or,AnyPopUpBranch, InGamUIBranch, SaveLastHighlightedOff)]
-    [Tooltip("Can be Overridden from each Node setting")]
-    private IsActive _alwaysHighlighted = IsActive.No;
-    
-    [SerializeField] 
     [ShowIf(CanAutoOpenClose)] 
     [Label("Auto Close Branch")]
     private IsActive _autoClose = IsActive.No;
@@ -119,7 +114,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     //Variables
     private UITweener _uiTweener;
     private bool _tweenOnChange = true, _canActivateBranch = true;
-    private bool _activePopUp, _isTabBranch, _sceneIsChanging;
+    private bool _sceneIsChanging;
     private IBranchBase _branchTypeBaseClass;
     private IHub _myHub;
 
@@ -137,19 +132,9 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         if(args.Highlighted.MyBranch.NotEqualTo(this)) return;
         if(LastHighlighted == args.Highlighted) return;
         
-        ClearNodeIfAlwaysHighlightedIsOn();
-
         LastHighlighted = NodeSearch.Find(args.Highlighted)
                                     .DefaultReturn(LastSelected)
                                     .RunOn(ThisGroupsUiNodes);
-    }
-
-    private void ClearNodeIfAlwaysHighlightedIsOn()
-    {
-        var tempStore = _alwaysHighlighted;
-        _alwaysHighlighted = IsActive.No;
-        LastHighlighted.UnHighlightAlwaysOn();
-        _alwaysHighlighted = tempStore;
     }
 
     private void SaveSelected(ISelectedNode args)
@@ -176,6 +161,10 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         AutoOpenCloseClass = EZInject.Class.WithParams<IAutoOpenClose>(this); 
         _branchTypeBaseClass = BranchFactory.Factory.PassThisBranch(this).CreateType(_branchType);
         _branchTypeBaseClass.OnAwake();
+        if (IsHomeScreenBranch() || IsControlBar())
+        {
+            FindObjectOfType<UIHub>().AddHomeScreenBranch(this);
+        }
     }
 
     private void CheckForValidSetUp()
@@ -243,9 +232,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         HistoryEvents.Do.Unsubscribe<IHighlightedNode>(SaveHighlighted);
         HistoryEvents.Do.Unsubscribe<ISelectedNode>(SaveSelected);
     }
-
-    public IBranch TargetBranch => this;
-    public GOUIModule ReturnGOUIModule => _branchTypeBaseClass.ReturnGOUIModule() as GOUIModule;
 
     public void OnDisable()
     {

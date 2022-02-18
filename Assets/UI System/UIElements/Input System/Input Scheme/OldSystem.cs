@@ -142,8 +142,8 @@ public class OldSystem : InputScheme
         _hasPauseAxis = PauseButton != string.Empty;
         _hasPosSwitchAxis = PositiveSwitch != string.Empty;
         _hasNegSwitchAxis = NegativeSwitch != string.Empty;
-        _hasPosGOUIAxis = PositiveSwitch != string.Empty;
-        _hasNegGOUIAxis = NegativeSwitch != string.Empty;
+        _hasPosGOUIAxis = PositiveGOUISwitch != string.Empty;
+        _hasNegGOUIAxis = NegativeGOUISwitch != string.Empty;
         _hasCancelAxis = CancelButton != string.Empty;
         _hasSwitchToMenusButton = MenuToGameSwitch != string.Empty;
         _hasVCursorHorizontal = VCursorHorizontal != string.Empty;

@@ -33,8 +33,6 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     [Label("Hide Cursor When Keys Active")]
     private IsActive _hideMouseCursor = IsActive.No;
     
-    //TODO Create a custom cursor and virual cursor class so a hotspot can be set for a VC and just use a texture not a prefab
-    
     [SerializeField] 
     [HideIf(EConditionOperator.Or, KeysOnly, VirtualCursor)]
     private IsActive _customMouseCursor = IsActive.No;
@@ -70,15 +68,6 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     [SerializeField]
     private PauseFunction _globalEscapeFunction;
     
-    [Header("Start Delay")] [Space(10f)] [HorizontalLine(1, color: EColor.Blue, order = 1)]
-    
-    [SerializeField] 
-    [Label("Delay UI Start By then..")] [Range(0, 10)]
-    protected float _delayUIStart;
-    
-    [SerializeField] 
-    [Label("..Enable Controls After..")] [Range(0, 10)] 
-    protected float _controlActivateDelay;
 
     public void Awake()
     {
@@ -144,8 +133,6 @@ public abstract class InputScheme : ScriptableObject, IIsAService
 
     public PauseOptionsOnEscape PauseOptions => _pauseOptionsOnEscape;
     public EscapeKey GlobalCancelAction => SetGlobalEscapeFunction();
-    public float ControlActivateDelay => _controlActivateDelay;
-    public float DelayUIStart => _delayUIStart;
     public InGameSystem InGameMenuSystem => _inGameMenuSystem;
     public InMenuOrGame WhereToStartGame => _startGameWhere;
     public bool CanUseVirtualCursor => _useVirtualCursor == VirtualControl.Yes;

@@ -161,7 +161,7 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
         
         ThisNodeIsHighLighted();
         
-        if (AllowKeys && InMenu || MyBranch.AlwaysHighlighted == IsActive.Yes)
+        if (AllowKeys && InMenu)
         {
             OnEnter();
         }

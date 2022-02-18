@@ -179,7 +179,7 @@ namespace UIElements
 
         private void Start()
         {
-            CheckGOUIBranchIsSetUp();
+             CheckGOUIBranchIsSetUp();
             _checkVisibility.SetUpOnStart(this);
         }
 

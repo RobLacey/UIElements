@@ -46,9 +46,6 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<DisabledNode>().To<IDisabledNode>().WithParameters();
         _injectMaster.Bind<InGameNode>().To<IInGameNode>().WithParameters();
         
-        //NodeFunction
-        _injectMaster.Bind<AlwaysHighlighted>().To<IAlwaysHighlight>().WithParameters();
-        
         //Branch Types
         _injectMaster.Bind<HomeScreenBranch>().To<IHomeScreenBranch>().WithParameters();
         _injectMaster.Bind<StandardBranch>().To<IStandardBranch>().WithParameters();

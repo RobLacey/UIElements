@@ -29,7 +29,7 @@ public class UINavigation : NodeFunctionBase
     protected override bool CanBeHighlighted() => false;
     protected override bool CanBePressed() => !(ChildBranch is null);
     protected override void SavePointerStatus(bool pointerOver) { }
-    public override bool FunctionNotActive() => SetNavigation == NavigationType.None;
+    protected override bool FunctionNotActive() => SetNavigation == NavigationType.None;
 
     private bool MultiSelectAllowed => _inputScheme.MultiSelectPressed() &&
                                        _myNode.MultiSelectSettings.OpenChildBranch == IsActive.No

@@ -27,7 +27,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
     public bool CanAllowKeys { get; private set; }
     private bool UsingVirtualCursor => _inputScheme.CanUseVirtualCursor;
     public bool ShowCursorOnStart { get; private set; }
-    private bool SceneStarted => _myDataHub.SceneStarted;
+    private bool SceneStarted { get; set; }
 
     //Events
     private Action<IAllowKeys> AllowKeys { get; set; }
@@ -107,6 +107,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         }
         
         SetUpVcCorrectly();
+        SceneStarted = true;
     }
 
     private bool MousePreferredControlMethod() 
@@ -191,6 +192,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         if (CanAllowKeys) return;
         CanAllowKeys = true;
         SetAllowKeys();
+
         if(!SceneStarted) return;
         SetNextHighlightedForKeys();
     }

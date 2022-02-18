@@ -7,13 +7,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cf72707778a495380664443a05e90e8, type: 3}
   m_Name: Scheme - Old
   m_EditorClassIdentifier: 
-  _mainControlType: 0
-  _hideMouseCursor: 0
+  _mainControlType: 3
+  _hideMouseCursor: 1
   _customMouseCursor: 1
   _cursorSettings:
     _cursor: {fileID: 0}
@@ -22,30 +22,28 @@ MonoBehaviour:
   _useVirtualCursor: 1
   _virtualCursorSettings:
     _restrictRaycastTo: 2
-    _virtualCursorPrefab: {fileID: 766753675201208392, guid: c68b6dd03c66fa94b8c11ef4d321378c, type: 3}
+    _virtualCursorPrefab: {fileID: 0}
     _onlyHitInGameUi: 1
     _cursorSpeed: 7
     _inGameObjectLayersToHit:
       serializedVersion: 2
-      m_Bits: 512
+      m_Bits: 0
     _raycastLength: 1000
   _startGameWhere: 0
-  _pauseOptionsOnEscape: 0
-  _globalEscapeFunction: 2
-  _delayUIStart: 0.5
-  _controlActivateDelay: 1
+  _pauseOptionsOnEscape: 1
+  _globalEscapeFunction: 1
   _pauseOptionButton: 
-  _cancelButton: 
+  _cancelButton: Cancel
   _selectButton: 
   _multiSelectButton: 
-  _posSwitchButton: 
-  _negSwitchButton: 
+  _posSwitchButton: Switch Positive Branch
+  _negSwitchButton: Switch Negative Branch
   _posNextGOUIButton: 
   _negNextGOUIButton: 
   _switchToMenusButton: 
   _switchToVC: 
   _vCursorHorizontal: 
-  _vCursorVertical: Vertical
+  _vCursorVertical: 
   _hotKey1: 
   _hotKey2: 
   _hotKey3: 

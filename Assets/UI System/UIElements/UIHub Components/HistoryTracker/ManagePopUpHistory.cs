@@ -1,5 +1,6 @@
 ﻿using System;
 using EZ.Service;
+using UnityEngine;
 
 public interface IManagePopUpHistory
 {

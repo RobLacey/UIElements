@@ -1,6 +1,7 @@
 ﻿using System;
 using EZ.Events;
 using EZ.Service;
+using UnityEngine;
 
 public interface IHomeGroup
 {

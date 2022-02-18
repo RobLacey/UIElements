@@ -30,7 +30,7 @@ namespace UIElements
     [RequireComponent(typeof(UIInput))]
 
     public class UIHub : MonoBehaviour, IHub, IEZEventUser, ISetUpStartBranches, IOnStart, 
-                         IEZEventDispatcher, IIsAService, IServiceUser, ISceneIsChanging
+                         IEZEventDispatcher, IIsAService, ISceneIsChanging
     {
         public UIHub()
         {
@@ -62,6 +62,15 @@ namespace UIElements
         
         [SerializeField] private int _nextLevel;
 
+        [Header("Start Delay")] [Space(10f)] [HorizontalLine(1, color: EColor.Blue, order = 1)]
+    
+        [SerializeField] 
+        [Label("Delay UI Start By then..")] [Range(0, 10)]
+        protected float _delayUIStart;
+    
+        [SerializeField] 
+        [Label("..Enable Controls After..")] [Range(0, 10)] 
+        protected float _controlActivateDelay;
         
         //Editor
         [Button("Add a New Tree Structure")]
@@ -91,10 +100,9 @@ namespace UIElements
         }
     
         //Variables
-        private List<IBranch> _homeBranches;
+        private readonly List<IBranch> _homeBranches = new List<IBranch>();
         private INode _lastHighlighted;
         private bool _startingInGame, _inMenu;
-        private InputScheme _inputScheme;
         private IHistoryTrack _historyTrack;
         private IAudioService _audioService;
         private ICancel _cancelHandler;
@@ -129,7 +137,6 @@ namespace UIElements
         { 
             var uIInput = GetComponent<IInput>();
             _startingInGame = uIInput.StartInGame();
-            GetHomeScreenBranches();
             _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
             _cancelHandler = EZInject.Class.NoParams<ICancel>();
             _audioService = EZInject.Class.WithParams<IAudioService>(this);
@@ -138,28 +145,20 @@ namespace UIElements
             _myDataHub.OnAwake();
         }
 
-        private void GetHomeScreenBranches()
+        public void AddHomeScreenBranch(UIBranch branch)
         {
-            var all = FindObjectsOfType<UIBranch>();
-            _homeBranches = new List<IBranch>();
-            foreach (var uiBranch in all)
+            if(branch == _startOnThisBranch)
             {
-                if (!uiBranch.IsHomeScreenBranch()) continue;
-                
-                if(uiBranch == _startOnThisBranch)
-                {
-                    _homeBranches.Insert(0, uiBranch);
-                }
-                else
-                {
-                    _homeBranches.Add(uiBranch);
-                }
+                _homeBranches.Insert(0, branch);
+            }
+            else
+            {
+                _homeBranches.Add(branch);
             }
         }
 
         private void OnEnable()
         {
-            UseEZServiceLocator();
             FetchEvents();
             ObserveEvents();
             _canvasSortingOrderSettings.OnEnable();
@@ -170,8 +169,6 @@ namespace UIElements
             _myDataHub.OnEnable();
         }
         
-        public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
-
         public void AddService() => EZService.Locator.AddNew<IHub>(this);
 
         public void OnRemoveService() => _audioService.OnDisable();
@@ -197,9 +194,9 @@ namespace UIElements
         // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator StartUIDelay()
         {
-            yield return new WaitForEndOfFrame(); //Helps sync up Tweens and thread
-            if(_inputScheme.DelayUIStart != 0)
-                yield return new WaitForSeconds(_inputScheme.DelayUIStart);
+            yield return new WaitForEndOfFrame();
+            if(_delayUIStart != 0)
+                yield return new WaitForSeconds(_delayUIStart);
             CheckIfStartingInGame();
             SetStartPositionsAndSettings();
             StartCoroutine(EnableStartControls());
@@ -228,8 +225,8 @@ namespace UIElements
 
         private IEnumerator EnableStartControls()
         {
-            if(_inputScheme.ControlActivateDelay != 0)
-                yield return new WaitForSeconds(_inputScheme.ControlActivateDelay);
+            if(_controlActivateDelay != 0)
+                yield return new WaitForSeconds(_controlActivateDelay);
             
             if(!_startingInGame)
             {

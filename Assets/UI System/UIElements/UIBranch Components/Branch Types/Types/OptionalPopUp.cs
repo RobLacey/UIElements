@@ -83,8 +83,6 @@ public class OptionalPopUpPopUp : BranchBase, IClearOptionalPopUp, IAddOptionalP
     {
         base.SetUpBranch(newParentController);
         
-        //Debug.Log();
-        
         if(!_myBranch.CanvasIsEnabled && !_restoreOnHome)
         {
             AdjustCanvasOrderAdded();

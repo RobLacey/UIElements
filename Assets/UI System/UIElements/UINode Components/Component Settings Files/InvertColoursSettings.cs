@@ -4,7 +4,7 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 
-public interface IInvertSettings : IComponentSettings, IOverride
+public interface IInvertSettings : IComponentSettings
 {
     ActivateWhen ActivateWhen { get; }
     Text Text { get; }
@@ -20,9 +20,6 @@ public class InvertColoursSettings : IInvertSettings
     [SerializeField]
     private ActivateWhen _activateWhen;
 
-    [SerializeField] 
-    private Override _overrideAlwaysHighlighted = Override.Allow;
-    
     [SerializeField] 
     [AllowNesting] [ShowIf(Active)] [DisableIf("ImageSet")] 
     private Text _text;
@@ -45,14 +42,11 @@ public class InvertColoursSettings : IInvertSettings
     public Text Text => _text;
     public Image Image => _image;
     public Color Colour => _invertedColour;
-    public Override OverrideAlwaysHighlighted => _overrideAlwaysHighlighted;
-    public IBranch ParentBranch { get; private set; }
 
 
     //Main
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)
     {
-        ParentBranch = uiNodeEvents.ReturnMasterNode.MyBranch;
         CheckForSetUpError(functions, uiNodeEvents.ReturnMasterNode);
         
         if (CanCreate(functions))

@@ -6,6 +6,7 @@ public interface IHomeScreenBranch : IBranchBase { }
 
 public class HomeScreenBranch: BranchBase, IHomeScreenBranch
 {
+    //Constructor
     public HomeScreenBranch(IBranch branch) : base(branch) { }
 
     private ICanvasOrderData _canvasOrderData;
@@ -44,19 +45,7 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     public override void OnStart()
     {
         base.OnStart();
-        SetCanvas(ActiveCanvas.Yes);
-        SetControlBarCanvasOrder();
-    }
-
-    private void SetControlBarCanvasOrder()
-    {
-        if(!IsControlBar) return;
-        
-        var storedCondition = _myBranch.MyCanvas.enabled;
-        _myBranch.MyCanvas.enabled = true;
-        _myBranch.MyCanvas.overrideSorting = true;
-        _myBranch.MyCanvas.sortingOrder = _canvasOrderData.ReturnControlBarCanvasOrder();
-        _myBranch.MyCanvas.enabled = storedCondition;
+        SetCanvas(ActiveCanvas.No);
     }
 
     protected override void SaveInMenu(IInMenu args)
@@ -65,9 +54,22 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
         SetBlockRaycast(BlockRaycast.Yes);
     }
 
-    private void SetUpOnStart(IOnStart args) => SetBlockRaycast(BlockRaycast.Yes);
-
     //Main
+    private void SetUpOnStart(IOnStart args)
+    {
+        SetCanvas(ActiveCanvas.Yes);
+        SetControlBarCanvasOrder();
+        SetBlockRaycast(BlockRaycast.Yes);
+    }
+
+    private void SetControlBarCanvasOrder()
+    {
+        if(!IsControlBar) return;
+        
+        _myBranch.MyCanvas.overrideSorting = true;
+        _myBranch.MyCanvas.sortingOrder = _canvasOrderData.ReturnControlBarCanvasOrder();
+    }
+    
     protected override void SetUpBranchesOnStart(ISetUpStartBranches args)
     {
         if (args.StartBranch == _myBranch)

@@ -3,7 +3,7 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 
-public interface ISwapImageOrTextSettings : IComponentSettings, IOverride
+public interface ISwapImageOrTextSettings : IComponentSettings
 {
     ChangeWhen ChangeWhen { get; }
     Image ToggleOn { get; }
@@ -18,8 +18,6 @@ public class SwapImageOrTextSettings : ISwapImageOrTextSettings
     [Header("Toggle Ui Image Settings")]
     [SerializeField] private ChangeWhen _changeWhen = ChangeWhen.Never;
 
-    [SerializeField] private Override _overrideAlwaysHighlighted = Override.Allow;
-    
     [SerializeField] [AllowNesting] [ShowIf(Active)] private Image _toggleIsOff;
     [SerializeField] [AllowNesting] [ShowIf(Active)]  private Image _toggleIsOn;
     
@@ -37,14 +35,10 @@ public class SwapImageOrTextSettings : ISwapImageOrTextSettings
     public Image ToggleOff => _toggleIsOff;
     public Text TextToSwap => _textToSwap;
     public string ChangeTextToo => _changeTextToo;
-    public Override OverrideAlwaysHighlighted => _overrideAlwaysHighlighted;
-    public IBranch ParentBranch { get; private set; } 
 
 
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)
     {
-        ParentBranch = uiNodeEvents.ReturnMasterNode.MyBranch;
-
         CheckForSetUpError(functions, uiNodeEvents.ReturnMasterNode);
         
         if (CanCreate(functions))

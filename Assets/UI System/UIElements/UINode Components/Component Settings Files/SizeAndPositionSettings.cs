@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public interface ISizeAndPositionSettings : IComponentSettings, IOverride
+public interface ISizeAndPositionSettings : IComponentSettings
 {
     SizeAndPositionScheme Scheme { get; }
     RectTransform RectTransform { get; }
@@ -13,17 +13,14 @@ public class SizeAndPositionSettings : ISizeAndPositionSettings
 {
     [SerializeField] private RectTransform _rectTransforms = default;
     [SerializeField] private SizeAndPositionScheme _scheme = default;
-    [SerializeField] private Override _overrideAlwaysHighlighted = Override.Allow;
 
+    //Properties
     public SizeAndPositionScheme Scheme => _scheme;
     public RectTransform RectTransform => _rectTransforms;
-    public IBranch ParentBranch { get; private set; }
-    public Override OverrideAlwaysHighlighted => _overrideAlwaysHighlighted;
 
+    //Main
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)
     {
-        ParentBranch = uiNodeEvents.ReturnMasterNode.MyBranch;
-        
         CheckForSetUpError(functions, uiNodeEvents.ReturnMasterNode);
         
         if (CanCreate(functions))

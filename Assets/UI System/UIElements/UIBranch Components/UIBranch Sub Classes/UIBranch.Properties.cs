@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UIElements;
 using UnityEngine;
 
 /// <summary>
@@ -47,7 +48,6 @@ public partial class UIBranch : ICloseBranch
     public IAutoOpenClose AutoOpenCloseClass { get; private set; }
     public bool PointerOverBranch => AutoOpenCloseClass.PointerOverBranch;
     public float Timer => _timer;
-    public IsActive AlwaysHighlighted => _alwaysHighlighted;
 
     public IsActive SetSaveLastSelectionOnExit
     {
@@ -94,4 +94,7 @@ public partial class UIBranch : ICloseBranch
     
     public int ReturnManualCanvasOrder => _orderInCanvas;
     public IsActive ReturnOnlyAllowOnHomeScreen => _onlyAllowOnHomeScreen;
+    public IBranch TargetBranch => this;
+    public GOUIModule ReturnGOUIModule => _branchTypeBaseClass.ReturnGOUIModule() as GOUIModule;
+
 }

@@ -96,7 +96,6 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     private bool SetIfCanNavigate() => IsAToggle() || IsCancelOrBack;
     private bool IsAToggle() => _buttonFunction == ButtonFunction.ToggleGroup
                                 || _buttonFunction == ButtonFunction.ToggleNotLinked;
-
     public EscapeKey EscapeKeyType => _escapeKeyFunction;
     public GameObject ReturnGameObject => gameObject;
     public GameObject InGameObject { get; set; }
@@ -231,7 +230,6 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     public void SetNodeAsActive() => _nodeBase.SetNodeAsActive();
     public void SetAsHotKeyParent(bool setAsActive) => _nodeBase.HotKeyPressed(setAsActive);
 
-    public void UnHighlightAlwaysOn() => _nodeBase.UnHighlightAlwaysOn();
     public void DeactivateNode() => _nodeBase.DeactivateNodeByType();
 
     public void ClearNode() => _nodeBase.ClearNodeCompletely();

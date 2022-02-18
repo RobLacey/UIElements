@@ -3,7 +3,7 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 
-public interface IColourSettings : IComponentSettings, IOverride
+public interface IColourSettings : IComponentSettings
 {
     ColourScheme ColourScheme { get; }
     Text TextElement { get; }
@@ -15,7 +15,6 @@ public class ColourSettings: IColourSettings
 {
     [SerializeField] 
     [AllowNesting] [Label("Colour Scheme")] private ColourScheme _scheme;
-    [SerializeField] private Override _overrideAlwaysHighlighted = Override.Allow;
     [Header("Elements")]
     [SerializeField] private Text _text;
     [SerializeField] private Image[] _images;
@@ -24,13 +23,10 @@ public class ColourSettings: IColourSettings
     public ColourScheme ColourScheme => _scheme;
     public Text TextElement => _text;
     public Image[] ImageElement => _images;
-    public IBranch ParentBranch { get; private set; }
-    public Override OverrideAlwaysHighlighted => _overrideAlwaysHighlighted;
 
     //Main
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)
     {
-        ParentBranch = uiNodeEvents.ReturnMasterNode.MyBranch;
         CheckForSetUpError(functions, uiNodeEvents.ReturnMasterNode);
         
         if (CanCreate(functions))

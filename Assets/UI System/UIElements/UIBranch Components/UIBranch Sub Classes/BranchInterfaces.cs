@@ -26,7 +26,6 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     DoTween TweenOnHome { get; set; }
     IBranch MyParentBranch { get; set; }
     float Timer { get; }
-    IsActive AlwaysHighlighted { get; }
     INode[] ThisGroupsUiNodes { get; }
     bool PointerOverBranch { get;}
     IAutoOpenClose AutoOpenCloseClass { get; }

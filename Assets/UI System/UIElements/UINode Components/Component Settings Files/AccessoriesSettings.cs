@@ -4,13 +4,12 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public interface IAccessoriesSettings : IComponentSettings, IOverride
+public interface IAccessoriesSettings : IComponentSettings
 {
     AccessoryEventType ActivateWhen { get; }
     GameObject[] AccessoriesList { get; }
     Outline[] OutLineList { get; }
     Shadow[] ShadowList { get; }
-    IBranch ParentBranch { get; }
 }
 
 [Serializable]
@@ -18,9 +17,6 @@ public class AccessoriesSettings : IAccessoriesSettings
 {
     [SerializeField] [EnumFlags] 
     private AccessoryEventType _activateWhen = AccessoryEventType.None;
-
-    [SerializeField] 
-    private Override _overrideAlwaysHighlighted = Override.Allow;
 
     [FormerlySerializedAs("_accessoriesListTest")] [SerializeField] [Space(10f)]
     private GameObject[] _accessoriesList;
@@ -37,14 +33,11 @@ public class AccessoriesSettings : IAccessoriesSettings
     public GameObject[] AccessoriesList => _accessoriesList;
     public Outline[] OutLineList => _outlinesToUse;
     public Shadow[] ShadowList => _dropShadowsToUse;
-    public IBranch ParentBranch { get; private set; }
-    public Override OverrideAlwaysHighlighted => _overrideAlwaysHighlighted;
 
 
     //Main
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)
     {
-        ParentBranch = uiNodeEvents.ReturnMasterNode.MyBranch;
         CheckForSetUpError(functions, uiNodeEvents.ReturnMasterNode);
         
         if (CanCreate(functions))
