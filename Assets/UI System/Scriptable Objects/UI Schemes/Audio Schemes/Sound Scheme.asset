@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d681e17b637724095c32cdb0c004b6, type: 3}
+  m_Name: Sound Scheme
+  m_EditorClassIdentifier: 
+  _highlighted: {fileID: 8300000, guid: f1f7dc47b145161499e176d142db42c1, type: 3}
+  _highlightedVolume: 1
+  _select: {fileID: 8300000, guid: f3482201aa4e48e45a93bae4c892c943, type: 3}
+  _selectedVolume: 1
+  _cancel: {fileID: 8300000, guid: d89f385fe46f6344d9b3a462d7a97a8f, type: 3}
+  _cancelVolume: 1
+  _disabled: {fileID: 8300000, guid: dd8a8ccefedda0a4f88030d6d0fce384, type: 3}
+  _disabledVolume: 0.5

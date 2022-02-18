@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 426eb39d9ead40649cbb3b4df531a7fe, type: 3}
+  m_Name: Scheme - New
+  m_EditorClassIdentifier: 
+  _mainControlType: 2
+  _hideMouseCursor: 1
+  _customMouseCursor: 1
+  _cursorSettings:
+    _cursor: {fileID: 0}
+    _hotSpot: {x: 0, y: 0}
+  _inGameMenuSystem: 1
+  _useVirtualCursor: 1
+  _virtualCursorSettings:
+    _restrictRaycastTo: 2
+    _virtualCursorPrefab: {fileID: 0}
+    _onlyHitInGameUi: 1
+    _cursorSpeed: 7
+    _inGameObjectLayersToHit:
+      serializedVersion: 2
+      m_Bits: 0
+    _raycastLength: 1000
+  _startGameWhere: 1
+  _pauseOptionsOnEscape: 0
+  _globalEscapeFunction: 0
+  _delayUIStart: 0
+  _controlActivateDelay: 0
