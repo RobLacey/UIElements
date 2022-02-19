@@ -115,7 +115,6 @@ public class PopUpController : IPopUpController, IEZEventUser, INoResolvePopUp, 
     private void AddToActivePopUps_Optional(IAddOptionalPopUp args) 
         => AddToPopUpList(args.ThisPopUp, _activeOptionalPopUps);
 
-
     private void AddToPopUpList(IBranch newPopUp, 
                                 List<IBranch> popUpList)
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using EZ.Service;
-using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UINavigation : NodeFunctionBase

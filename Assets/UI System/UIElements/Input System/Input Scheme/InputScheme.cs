@@ -72,7 +72,6 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     public void Awake()
     {
         if(!Application.isPlaying) return; 
-        SetUpUInputScheme();
         AddService();
         SetCursor();
     }
@@ -141,30 +140,19 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     
     
     //Abstracts
-    protected abstract string PauseButton { get; }
-    protected abstract string PositiveSwitch { get; }
-    protected abstract string NegativeSwitch { get; }
-    protected abstract string PositiveGOUISwitch { get; }
-    protected abstract string NegativeGOUISwitch { get; }
-    protected abstract string CancelButton { get; }
-    protected abstract string MenuToGameSwitch { get; }
-    protected abstract string VCursorHorizontal { get; }
-    protected abstract string VCursorVertical { get; }
-    protected abstract string SelectedButton { get; }
-    protected abstract string MultiSelectButton { get; }
     public abstract bool  AnyMouseClicked { get; }
     public abstract bool  LeftMouseClicked { get; }
     public abstract bool  RightMouseClicked { get; }
     public abstract bool CanSwitchToKeysOrController(bool allowKeys);
     public abstract bool CanSwitchToMouseOrVC(bool allowKeys);
-    protected abstract string SwitchToVC { get; }
     protected abstract float MouseXAxis { get; }
     protected abstract float MouseYAxis { get; }
     public abstract Vector3 GetMouseOrVcPosition();
     public abstract void SetVirtualCursorPosition(Vector3 pos);
     private protected abstract Vector3 GetVirtualCursorPosition();
-    protected abstract void SetUpUInputScheme();
     public void TurnOffInGameMenuSystem() => _inGameMenuSystem = InGameSystem.Off;
+    public abstract bool HorizontalNavPressed();
+    public abstract bool VerticalNavPressed();
     public abstract bool PressPause();
     public abstract bool PressedMenuToGameSwitch();
     public abstract bool PressedCancel();

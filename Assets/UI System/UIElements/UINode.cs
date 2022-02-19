@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using EZ.Events;
 using EZ.Service;
@@ -7,6 +8,7 @@ using NaughtyAttributes;
 using UIElements.Input_System;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
+using Debug = UnityEngine.Debug;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(RunTimeSetter))]
@@ -104,7 +106,7 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     public IUiEvents UINodeEvents => _uiNodeEvents;
     public MultiSelectSettings MultiSelectSettings => _multiSelectSettings;
     public IRunTimeSetter MyRunTimeSetter { get; private set; }
-    private void SceneIsChangeing(ISceneIsChanging args) => SceneIsChanging = true;
+    private void SceneChanging(ISceneIsChanging args) => SceneIsChanging = true;
     public bool IsDisabled => _nodeBase.IsDisabled;
 
     
@@ -161,7 +163,7 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         }
     }
     
-    public void ObserveEvents() => HistoryEvents.Do.Subscribe<ISceneIsChanging>(SceneIsChangeing);
+    public void ObserveEvents() => HistoryEvents.Do.Subscribe<ISceneIsChanging>(SceneChanging);
     public void UnObserveEvents() { }
 
     private void LateStartSetUp()
@@ -177,7 +179,7 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     private void OnDisable()
     {
         _myDataHub = null;
-        HistoryEvents.Do.Unsubscribe<ISceneIsChanging>(SceneIsChangeing);
+        HistoryEvents.Do.Unsubscribe<ISceneIsChanging>(SceneChanging);
         
         if(SceneIsChanging) return;
         
@@ -256,8 +258,13 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     }
     public void OnMove(AxisEventData eventData)
     {
+        Debug.Log("UpTo Here");
+        
+        //Make a new class that is called when a input is pressed and sets the event data
         if(!CanStart || !AllowKeys) return;
-        _nodeBase.DoMoveToNextNode(eventData.moveDir);
+        var eventDataTest = new AxisEventData(EventSystem.current);
+        eventDataTest.moveDir = eventData.moveDir;
+        _nodeBase.DoMoveToNextNode(eventDataTest.moveDir);
     }
     public void OnPointerUp(PointerEventData eventData) { }
 

@@ -36,6 +36,8 @@ MonoBehaviour:
   _cancelButton: Cancel
   _selectButton: 
   _multiSelectButton: 
+  _upAndDownNavigate: Vertical
+  _leftAndRightNavigate: Horizontal
   _posSwitchButton: Switch Positive Branch
   _negSwitchButton: Switch Negative Branch
   _posNextGOUIButton: 
@@ -44,7 +46,7 @@ MonoBehaviour:
   _switchToVC: 
   _vCursorHorizontal: 
   _vCursorVertical: 
-  _hotKey1: 
+  _hotKey1: HotKey1
   _hotKey2: 
   _hotKey3: 
   _hotKey4: 

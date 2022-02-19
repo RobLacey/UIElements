@@ -3,20 +3,8 @@
 [CreateAssetMenu(menuName = "UIElements Schemes / New Input Scheme - New", fileName = "Scheme - New")]
 public class NewSystem : InputScheme
 {
-    protected override string PauseButton { get; } = " ";
-    protected override string PositiveSwitch { get; } = " ";
-    protected override string NegativeSwitch { get; } = " ";
-    protected override string PositiveGOUISwitch { get; } = " ";
-    protected override string NegativeGOUISwitch { get; } = " ";
-    protected override string CancelButton { get; } = " ";
-    protected override string MenuToGameSwitch { get; } = " ";
-    protected override string VCursorHorizontal { get; } = " ";
-    protected override string VCursorVertical { get; } = " ";
-    protected override string SwitchToVC { get; } = " ";
     protected override float MouseXAxis { get; } = 0;
     protected override float MouseYAxis { get; } = 0;
-    protected override string SelectedButton { get; } = " ";
-    protected override string MultiSelectButton { get; } = " ";
     public override bool AnyMouseClicked { get; } = false;
     public override bool LeftMouseClicked { get; } = false;
     public override bool RightMouseClicked { get; } = false;
@@ -45,9 +33,14 @@ public class NewSystem : InputScheme
         return Vector3.zero;
     }
 
-    protected override void SetUpUInputScheme()
+    public override bool HorizontalNavPressed()
     {
-        Debug.Log("New Scheme");
+        return false;
+    }
+
+    public override bool VerticalNavPressed()
+    {
+        return false;
     }
 
     public override bool PressPause()
