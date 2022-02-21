@@ -8,7 +8,7 @@ using UnityEngine;
 /// Class that handles switching control from the mouse to a keyboard or controller
 /// </summary>
 
-public interface IChangeControl : IEZEventUser, IMonoEnable, IMonoStart { }
+public interface IChangeControl : IEZEventUser, IMonoEnable, IMonoStart, IMonoDisable { }
 
 public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVCSetUpOnStart, 
                              IVcChangeControlSetUp, IServiceUser
@@ -34,8 +34,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
     private Action<IVCSetUpOnStart> VcStartSetUp { get; set; }
     private Action<IVcChangeControlSetUp> SetVcUsage { get; set; }
 
-    //Getters / Setters
-
+    //Main
     public void OnEnable()
     {
         UseEZServiceLocator();
@@ -63,10 +62,16 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         InputEvents.Do.Subscribe<IChangeControlsSwitchPressed>(ChangeControlSwitch);
         HistoryEvents.Do.Subscribe<IOnStart>(StartGame);
     }
+    
+    public void OnDisable() => UnObserveEvents();
 
-    public void UnObserveEvents() { }
+    public void UnObserveEvents()
+    {
+        InputEvents.Do.Unsubscribe<IChangeControlsPressed>(ChangeControlType);
+        InputEvents.Do.Unsubscribe<IChangeControlsSwitchPressed>(ChangeControlSwitch);
+        HistoryEvents.Do.Unsubscribe<IOnStart>(StartGame);
+    }
 
-    //Main
     public void OnStart()
     {
         _controlMethod = _inputScheme.ControlType;

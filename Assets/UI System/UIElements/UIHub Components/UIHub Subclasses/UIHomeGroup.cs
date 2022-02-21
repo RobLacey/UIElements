@@ -1,11 +1,10 @@
 ﻿using System;
 using EZ.Events;
 using EZ.Service;
-using UnityEngine;
+using UIElements;
 
-public interface IHomeGroup
+public interface IHomeGroup: IMonoEnable, IMonoDisable
 {
-    void OnEnable();
     void SetUpHomeGroup();
     void SwitchHomeGroups(SwitchType switchType);
 }
@@ -14,7 +13,7 @@ public interface IHomeGroup
 /// This class Looks after switching between, clearing and correctly restoring the home screen branches. Main functionality
 /// is for keyboard or controller. Differ from internal branch groups as involve Branches not Nodes
 /// </summary>
-public class UIHomeGroup : IEZEventUser, IHomeGroup, ISwitchGroupPressed, IEZEventDispatcher, IServiceUser
+public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
 {
     //Variables
     private int _index = 0;
@@ -25,30 +24,23 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, ISwitchGroupPressed, IEZEve
 
     //Properties and Getters / Setters
     private IBranch[] HomeGroup => _myUIHub.HomeBranches.ToArray();
-    private bool OnHomeScreen => _myDataHub.OnHomeScreen;
     private bool GameIsPaused => _myDataHub.GamePaused;
-
-    //Events
-    private Action<ISwitchGroupPressed> OnSwitchGroupPressed { get; set; }
 
     //Main
     public void OnEnable()
     {
         UseEZServiceLocator();
-        FetchEvents();
         ObserveEvents();
     }
+    
+    public void OnDisable() => UnObserveEvents();
 
     public void UseEZServiceLocator()
     {
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
         _myUIHub = EZService.Locator.Get<IHub>(this);
     }
-
-    public void OnDisable() { }
-
-    public void FetchEvents() => OnSwitchGroupPressed = InputEvents.Do.Fetch<ISwitchGroupPressed>();
-
+    
     public void ObserveEvents()
     {
         HistoryEvents.Do.Subscribe<IReturnToHome>(ActivateHomeGroupBranch);
@@ -83,14 +75,8 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, ISwitchGroupPressed, IEZEve
 
     public void SwitchHomeGroups(SwitchType switchType)
     {
-        if (!OnHomeScreen) return;
-        if(HomeGroup.Length > 1)
-            OnSwitchGroupPressed?.Invoke(this);
-        SetNewIndex(switchType);
-    }
-
-    private void SetNewIndex(SwitchType switchType)
-    {
+        if(HomeGroup.Length <=1) return;
+        
         switch (switchType)
         {
             case SwitchType.Positive:
@@ -102,8 +88,6 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, ISwitchGroupPressed, IEZEve
             case SwitchType.Activate:
                 break;
         }
-        if(HomeGroup[_index].ThisGroupsUiNodes.Length == 0)
-            SetNewIndex(switchType);
         
         _lastActiveHomeBranch = HomeGroup[_index];
         HomeGroup[_index].MoveToThisBranch();
@@ -152,5 +136,4 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, ISwitchGroupPressed, IEZEve
             branch.MoveToThisBranch();
         }
     }
-
 }

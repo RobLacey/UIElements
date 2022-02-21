@@ -4,7 +4,7 @@ using EZ.Events;
 using EZ.Service;
 using UIElements;
 
-public interface IMenuAndGameSwitching : IEZEventUser, IMonoEnable, IMonoStart { }
+public interface IMenuAndGameSwitching : IEZEventUser, IMonoEnable, IMonoStart, IMonoDisable { }
 
 public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDispatcher, IServiceUser
 {
@@ -46,7 +46,15 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
         PopUpEvents.Do.Subscribe<INoPopUps>(SaveNoPopUps);
     }
 
-    public void UnObserveEvents() { }
+    public void OnDisable() => UnObserveEvents();
+
+    public void UnObserveEvents()
+    {
+        InputEvents.Do.Unsubscribe<IMenuGameSwitchingPressed>(CheckForActivation);
+        HistoryEvents.Do.Unsubscribe<IGameIsPaused>(WhenTheGameIsPaused);
+        HistoryEvents.Do.Unsubscribe<IOnStart>(StartUp);
+        PopUpEvents.Do.Unsubscribe<INoPopUps>(SaveNoPopUps);
+    }
 
     public void OnStart()
     {

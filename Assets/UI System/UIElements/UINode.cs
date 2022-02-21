@@ -1,20 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using EZ.Events;
 using EZ.Service;
 using NaughtyAttributes;
 using UIElements.Input_System;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(RunTimeSetter))]
 
 public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPointerDownHandler,
-                              IMoveHandler, IPointerUpHandler, ISubmitHandler, IPointerExitHandler, 
+                              IPointerUpHandler, ISubmitHandler, IPointerExitHandler, 
                               IServiceUser, IEZEventUser
 {
     [Header("Main Settings")]
@@ -256,19 +253,18 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         if(!AllowKeys) return;
         _nodeBase.SelectedAction();
     }
-    public void OnMove(AxisEventData eventData)
+
+    public void NavigateToNextMenuItem(AxisEventData eventData)
     {
-        Debug.Log("UpTo Here");
-        
-        //Make a new class that is called when a input is pressed and sets the event data
         if(!CanStart || !AllowKeys) return;
-        var eventDataTest = new AxisEventData(EventSystem.current);
-        eventDataTest.moveDir = eventData.moveDir;
-        _nodeBase.DoMoveToNextNode(eventDataTest.moveDir);
+        
+        _nodeBase.DoMoveToNextNode(eventData.moveDir);
+
     }
+    public void MenuNavigateToThisNode(MoveDirection moveDirection) => _nodeBase.MenuNavigateToThisNode(moveDirection);
+    
     public void OnPointerUp(PointerEventData eventData) { }
 
-    public void DoNonMouseMove(MoveDirection moveDirection) => _nodeBase.DoNonMouseMove(moveDirection);
 
     /// <summary>
     /// Needed maybe for when sliders and scroll bar are used

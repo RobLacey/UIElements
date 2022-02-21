@@ -122,6 +122,14 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         ObserveEvents();
     }
 
+    private void OnDisable()
+    {
+        UnObserveEvents();
+        ChangeControl.OnDisable();
+        MenuToGameSwitching.OnDisable();
+        SwitchGroups.OnDisable();
+    }
+
     public void UseEZServiceLocator()
     {
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
@@ -151,7 +159,11 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenu);
     }
 
-    public void UnObserveEvents() { }
+    public void UnObserveEvents()
+    {
+        HistoryEvents.Do.Unsubscribe<IGameIsPaused>(SaveGameIsPaused);
+        HistoryEvents.Do.Unsubscribe<IInMenu>(SaveInMenu);
+    }
 
     private void Start()   
     {
@@ -186,6 +198,19 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
     private void InMenuControls()
     {
+        if(!AllowKeys)
+        {
+            DoChangeControlPressed();
+            SwitchGroups.ImmediateSwitch();
+            return;
+        }
+        
+        if (_inputScheme.MenuNavigationPressed(AllowKeys))
+        {
+            DoMenuNavigation();
+            return;
+        }
+        
         if (CanDoCancel())
         {
             WhenCancelPressed();
@@ -194,9 +219,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
         if(SwitchGroups.CanSwitchBranches())
         {
-            if (SwitchGroups.GOUISwitchProcess() || 
-                SwitchGroups.SwitchGroupProcess() || 
-                SwitchGroups.BranchGroupSwitchProcess()) return;
+            if (SwitchGroups.SwitchGroupProcess()) return;
         }
         
         if(_inputScheme.CanUseVirtualCursor)
@@ -206,6 +229,12 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         
         if(MultiSelectPressed) return;
         DoChangeControlPressed();
+    }
+
+    private void DoMenuNavigation()
+    {
+        var eventData = _inputScheme.DoMenuNavigation();
+        _myDataHub.Highlighted.NavigateToNextMenuItem(eventData);
     }
 
     private bool MoveVirtualCursor()

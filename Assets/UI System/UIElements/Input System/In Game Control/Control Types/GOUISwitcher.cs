@@ -7,17 +7,18 @@ using Object = UnityEngine.Object;
 
 namespace UIElements
 {
-    public interface IGOUISwitcher : IMonoEnable, IMonoStart
+    public interface IGOUISwitcher : IMonoEnable, IMonoStart, IMonoDisable
     {
         void UseGOUISwitcher(SwitchType switchType);
         int GOUIPlayerCount { get; }
     }
     
-    public class GOUISwitcher : IGOUISwitcher, IEZEventUser, IEZEventDispatcher, ISwitchGroupPressed, IServiceUser
+    public class GOUISwitcher : IGOUISwitcher, IEZEventUser, IServiceUser
     {
         //Properties & Getters / Setters
         private bool CanSwitch => _myDataHub.SceneStarted && _myDataHub.OnHomeScreen && _playerObjects.Count > 0;
         public int GOUIPlayerCount => _playerObjects.Count;
+
 
         //Variables
         private int _index = 0;
@@ -25,17 +26,15 @@ namespace UIElements
         private IHistoryTrack _historyTrack;
         private IDataHub _myDataHub;
         
-        //Events
-        private Action<ISwitchGroupPressed> OnSwitchGroupPressed { get; set; }
-
         //Main
         public void OnEnable()
         {
             UseEZServiceLocator();
-            FetchEvents();
             ObserveEvents();
         }
         
+        public void OnDisable() => UnObserveEvents();
+
         public void UseEZServiceLocator()
         {
             _historyTrack = EZService.Locator.Get<IHistoryTrack>(this);
@@ -44,11 +43,15 @@ namespace UIElements
 
         public void ObserveEvents()
         {
-            GOUIEvents.Do.Subscribe<IStartGOUIBranch>(SetIndex);
+            GOUIEvents.Do.Subscribe<IStartGOUIBranch>(AddGOUIToSwitchList);
             BranchEvent.Do.Subscribe<ICloseBranch>(RemovePlayerObject);
         }
 
-        public void UnObserveEvents() { }
+        public void UnObserveEvents()
+        {
+            GOUIEvents.Do.Unsubscribe<IStartGOUIBranch>(AddGOUIToSwitchList);
+            BranchEvent.Do.Unsubscribe<ICloseBranch>(RemovePlayerObject);
+        }
 
         public void OnStart() => FindActiveGameObjectsOnStart();
 
@@ -63,12 +66,8 @@ namespace UIElements
             }
         }
 
-        public void FetchEvents() => OnSwitchGroupPressed = InputEvents.Do.Fetch<ISwitchGroupPressed>();
-
         public void UseGOUISwitcher(SwitchType switchType)
         {
-            SwitchHasBeenPressed();
-            
             if(!CanSwitch) return;
             
             switch (switchType)
@@ -85,8 +84,6 @@ namespace UIElements
             }
         }
 
-        private void SwitchHasBeenPressed() => OnSwitchGroupPressed?.Invoke(this);
-
         private void DoSwitchProcess(Func<int, int> switchAction)
         {
             _playerObjects[_index].SwitchExit();
@@ -94,34 +91,16 @@ namespace UIElements
             _playerObjects[_index].SwitchEnter();
         }
 
-        private void SetIndex(IStartGOUIBranch args)
+        private void AddGOUIToSwitchList(IStartGOUIBranch args)
         {
             if(!_myDataHub.SceneStarted) return;
             
             if (!_playerObjects.Contains(args.ReturnGOUIModule))
             {
                 _playerObjects.Add(args.ReturnGOUIModule);
-                return;
-            }
-            
-            FindNewIndex(args.ReturnGOUIModule);
-        }
-
-        private void FindNewIndex(IGOUIModule currentGOUI)
-        {
-            int index = 0;
-            foreach (var inGameObjectUI in _playerObjects)
-            {
-                if (ReferenceEquals(inGameObjectUI, currentGOUI))
-                {
-                    _index = index;
-                    break;
-                }
-
-                index++;
             }
         }
-        
+
         private void RemovePlayerObject(ICloseBranch args)
         {
             if(args.ReturnGOUIModule.IsNull()) return;

@@ -31,6 +31,7 @@ public class DisabledNode : IDisabledNode, IEZEventDispatcher, IServiceUser
     //Main
     public void OnEnable()
     {
+        Debug.Log("Doing Disable next");
         UseEZServiceLocator();
         FetchEvents();
     }

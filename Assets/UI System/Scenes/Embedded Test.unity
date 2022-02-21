@@ -2479,11 +2479,11 @@ MonoBehaviour:
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 4
+    _setKeyNavigation: 2
     _up: {fileID: 0}
-    _down: {fileID: 0}
+    _down: {fileID: 1332049459}
     _left: {fileID: 0}
-    _right: {fileID: 0}
+    _right: {fileID: 183270146}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -2896,11 +2896,11 @@ MonoBehaviour:
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 4
+    _setKeyNavigation: 2
     _up: {fileID: 0}
     _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _left: {fileID: 176592437}
+    _right: {fileID: 1746369515}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -7893,7 +7893,7 @@ PrefabInstance:
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._up
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1746369515}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._scheme
       value: 
@@ -7917,11 +7917,11 @@ PrefabInstance:
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._down
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7713156617632872757}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._left
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1332049459}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation.right
       value: 
@@ -8016,7 +8016,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._setKeyNavigation
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._images.Array.data[0]
@@ -12053,8 +12053,6 @@ MonoBehaviour:
     _timedPrefab: {fileID: 1989339583218866511, guid: adbef19219254c343a1f6e636127928d, type: 3}
   _disableTheseNodes:
   - {fileID: 6790820043816564219}
-  - {fileID: 6790820044446171236}
-  - {fileID: 6790820044164496566}
 --- !u!4 &663133645
 Transform:
   m_ObjectHideFlags: 0
@@ -16542,7 +16540,7 @@ PrefabInstance:
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._up
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 176592437}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._scheme
       value: 
@@ -16566,7 +16564,7 @@ PrefabInstance:
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._down
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7713156618011646807}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation.right
       value: 
@@ -16578,7 +16576,7 @@ PrefabInstance:
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._right
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1109364856}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _audio._audioScheme
       value: 
@@ -16665,7 +16663,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _navigation._setKeyNavigation
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._images.Array.data[0]
@@ -28713,10 +28711,10 @@ MonoBehaviour:
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 4
+    _setKeyNavigation: 2
     _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
+    _down: {fileID: 1109364856}
+    _left: {fileID: 183270146}
     _right: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -37668,10 +37666,10 @@ MonoBehaviour:
   _enabledFunctions: 327
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 4
-    _up: {fileID: 0}
+    _setKeyNavigation: 2
+    _up: {fileID: 1109364856}
     _down: {fileID: 0}
-    _left: {fileID: 0}
+    _left: {fileID: 7713156618011646807}
     _right: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 2f508ea07536e3843b9b21691700c5cd, type: 2}
@@ -37948,11 +37946,11 @@ MonoBehaviour:
   _enabledFunctions: 327
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 4
-    _up: {fileID: 0}
+    _setKeyNavigation: 2
+    _up: {fileID: 1332049459}
     _down: {fileID: 0}
     _left: {fileID: 0}
-    _right: {fileID: 0}
+    _right: {fileID: 7713156617632872757}
   _colours:
     _scheme: {fileID: 11400000, guid: 2f508ea07536e3843b9b21691700c5cd, type: 2}
     _text: {fileID: 0}

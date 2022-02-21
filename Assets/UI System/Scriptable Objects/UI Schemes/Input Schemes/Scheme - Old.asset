@@ -40,8 +40,8 @@ MonoBehaviour:
   _leftAndRightNavigate: Horizontal
   _posSwitchButton: Switch Positive Branch
   _negSwitchButton: Switch Negative Branch
-  _posNextGOUIButton: 
-  _negNextGOUIButton: 
+  _posNextGOUIButton: Switch GOUI Pos
+  _negNextGOUIButton: Switch GOUI Neg
   _switchToMenusButton: 
   _switchToVC: 
   _vCursorHorizontal: 

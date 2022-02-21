@@ -3,6 +3,7 @@ using EZ.Service;
 using NaughtyAttributes;
 using UIElements;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [Serializable]
 public class CursorSettings
@@ -144,6 +145,8 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     public abstract bool  LeftMouseClicked { get; }
     public abstract bool  RightMouseClicked { get; }
     public abstract bool CanSwitchToKeysOrController(bool allowKeys);
+    public abstract bool MenuNavigationPressed(bool allowKeys);
+    public abstract AxisEventData DoMenuNavigation();
     public abstract bool CanSwitchToMouseOrVC(bool allowKeys);
     protected abstract float MouseXAxis { get; }
     protected abstract float MouseYAxis { get; }

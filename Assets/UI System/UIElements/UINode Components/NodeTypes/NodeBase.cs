@@ -239,7 +239,7 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
 
     public void DoMoveToNextNode(MoveDirection moveDirection) => _uiFunctionEvents.DoOnMove(moveDirection);
 
-    public void DoNonMouseMove(MoveDirection moveDirection)
+    public void MenuNavigateToThisNode(MoveDirection moveDirection)
     {
         if(!MyBranch.CanvasIsEnabled)return;
         

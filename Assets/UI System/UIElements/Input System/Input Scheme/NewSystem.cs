@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 [CreateAssetMenu(menuName = "UIElements Schemes / New Input Scheme - New", fileName = "Scheme - New")]
 public class NewSystem : InputScheme
@@ -8,6 +9,16 @@ public class NewSystem : InputScheme
     public override bool AnyMouseClicked { get; } = false;
     public override bool LeftMouseClicked { get; } = false;
     public override bool RightMouseClicked { get; } = false;
+
+    public override bool MenuNavigationPressed(bool allowKeys)
+    {
+        return false;
+    }
+
+    public override AxisEventData DoMenuNavigation()
+    {
+        return new AxisEventData(EventSystem.current);
+    }
 
     public override bool CanSwitchToMouseOrVC(bool allowKeys)
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [CreateAssetMenu(menuName = "UIElements Schemes / New Input Scheme - Old", fileName = "Scheme - Old")]
 public class OldSystem : InputScheme
@@ -94,10 +95,26 @@ public class OldSystem : InputScheme
         {
             if (VCSwitchTo()) return true;
         }
-        return NavigationKeyPressed() && !allowKeys;
+        return NavigationKeyPressed() || SwitchKeyPressed() && !allowKeys;
     }
 
+    //TODO ADD to parent class
+    private bool SwitchKeyPressed() => PressedNegativeSwitch() || PressedPositiveSwitch() 
+                                                               || PressedNegativeGOUISwitch() 
+                                                               || PressedPositiveGOUISwitch();
+
+    //TODO ADD to parent class
     private bool NavigationKeyPressed() => HorizontalNavPressed() || VerticalNavPressed();
+
+    public override bool MenuNavigationPressed(bool allowKeys) => allowKeys && NavigationKeyPressed();
+
+    public override AxisEventData DoMenuNavigation()
+    {
+        int upDownInput = CheckInput.GetAxisRaw(_upAndDownNavigate);
+        int leftRightInput = CheckInput.GetAxisRaw(_leftAndRightNavigate);
+
+        return CheckInput.MenuNavCalc(upDownInput, leftRightInput);
+    }
 
     public override bool CanSwitchToMouseOrVC(bool allowKeys)
     {

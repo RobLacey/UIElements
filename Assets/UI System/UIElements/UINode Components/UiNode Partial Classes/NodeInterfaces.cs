@@ -25,7 +25,8 @@ public interface INode : IToggles, IParameters
     float AutoOpenDelay { get; }
     bool CanAutoOpen { get; }
     IRunTimeSetter MyRunTimeSetter { get; }
-    void DoNonMouseMove(MoveDirection moveDirection);
+    void NavigateToNextMenuItem(AxisEventData eventData);
+    void MenuNavigateToThisNode(MoveDirection moveDirection);
     void SetGOUIModule(IGOUIModule module);
     bool IsDisabled { get; }
 }

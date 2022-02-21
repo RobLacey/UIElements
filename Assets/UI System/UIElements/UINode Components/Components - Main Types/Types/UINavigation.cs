@@ -75,22 +75,22 @@ public class UINavigation : NodeFunctionBase
         {
             case MoveDirection.Down when _down:
             {
-                _down.DoNonMouseMove(moveDirection);
+                _down.MenuNavigateToThisNode(moveDirection);
                 break;
             }
             case MoveDirection.Up when _up:
             {
-                _up.DoNonMouseMove(moveDirection);
+                _up.MenuNavigateToThisNode(moveDirection);
                 break;
             }
             case MoveDirection.Left when _left:
             {
-                _left.DoNonMouseMove(moveDirection);
+                _left.MenuNavigateToThisNode(moveDirection);
                 break;
             }
             case MoveDirection.Right when _right:
             {
-                _right.DoNonMouseMove(moveDirection);
+                _right.MenuNavigateToThisNode(moveDirection);
                 break;
             }
         }
@@ -127,7 +127,7 @@ public class UINavigation : NodeFunctionBase
 
     private void CheckMoveDirection(Func<int,int> iterateMethod, MoveDirection moveDirection, int index)
     {
-        _myBranch.ThisGroupsUiNodes[iterateMethod.Invoke(index)].DoNonMouseMove(moveDirection);
+        _myBranch.ThisGroupsUiNodes[iterateMethod.Invoke(index)].MenuNavigateToThisNode(moveDirection);
     }
 
     private protected override void ProcessPress()

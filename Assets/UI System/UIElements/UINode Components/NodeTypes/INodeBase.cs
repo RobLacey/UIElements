@@ -15,7 +15,7 @@ public interface INodeBase : IMono
     void SelectedAction();
     void ClearNodeCompletely();
     void DoMoveToNextNode(MoveDirection moveDirection);
-    void DoNonMouseMove(MoveDirection moveDirection);
+    void MenuNavigateToThisNode(MoveDirection moveDirection);
     void EnableNodeAfterBeingDisabled();
     void DisableNode();
     bool IsDisabled { get; }
