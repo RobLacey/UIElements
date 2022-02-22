@@ -151,6 +151,7 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
     {
         if(IsDisabled) return;
         _disabledNode.IsDisabled = true;
+        SetNodeAsNotSelected_NoEffects();
         _uiFunctionEvents.DoIsDisabled(IsDisabled);
     }
 

@@ -37407,7 +37407,7 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
-  _enabledFunctions: 487
+  _enabledFunctions: 231
   _navigation:
     _childBranch: {fileID: 1450462822}
     _setKeyNavigation: 3

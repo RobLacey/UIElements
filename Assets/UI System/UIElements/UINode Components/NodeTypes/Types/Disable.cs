@@ -12,14 +12,12 @@ public interface IDisableData : IParameters
 
 public class DisabledNode : IDisabledNode, IEZEventDispatcher, IServiceUser
 {
-    public DisabledNode(IDisableData nodeBase)
+    public DisabledNode(IDisableData nodeBaseData)
     {
-        ThisIsTheDisabledNode = nodeBase.ThisNode;
-        _nodeBase = nodeBase;
+        ThisIsTheDisabledNode = nodeBaseData.ThisNode;
     }
 
     private bool _isDisabled;
-    private readonly IDisableData _nodeBase;
     private IDataHub _myDataHub;
 
     //Events
@@ -31,7 +29,6 @@ public class DisabledNode : IDisabledNode, IEZEventDispatcher, IServiceUser
     //Main
     public void OnEnable()
     {
-        Debug.Log("Doing Disable next");
         UseEZServiceLocator();
         FetchEvents();
     }
@@ -52,13 +49,17 @@ public class DisabledNode : IDisabledNode, IEZEventDispatcher, IServiceUser
         set
         {
             _isDisabled = value;
-            if (!_isDisabled) return;
-            
-            ThisIsDisabled?.Invoke(this);
-            _nodeBase.SetNodeAsNotSelected_NoEffects();
-            if(_myDataHub.Highlighted == ThisIsTheDisabledNode)
-                FindNextFreeNode();
+            DisableProcess();
         }
+    }
+
+    private void DisableProcess()
+    {
+        if (!_isDisabled) return;
+
+        ThisIsDisabled?.Invoke(this);
+        if (_myDataHub.Highlighted == ThisIsTheDisabledNode)
+            FindNextFreeNode();
     }
 
     public void FindNextFreeNode()
@@ -78,7 +79,8 @@ public class DisabledNode : IDisabledNode, IEZEventDispatcher, IServiceUser
         }
         else
         {
-            Debug.Log("Help Nothing is free");
+            //Switch HomeGroup or better message
+            Debug.Log("Nothing is free use disable pass through instead");
         }
     }
 }
