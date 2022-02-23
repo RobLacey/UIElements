@@ -123,23 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &61269 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3688934388505339717, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
-  m_PrefabInstance: {fileID: 783623616}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &61270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00f12c3acdfb4140bd7b437f898978ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1540407
 GameObject:
   m_ObjectHideFlags: 0
@@ -905,6 +888,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 375905088}
@@ -2096,6 +2081,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 246213780}
@@ -2105,7 +2092,7 @@ MonoBehaviour:
     _left: {fileID: 0}
     _right: {fileID: 1173239053}
   _colours:
-    _scheme: {fileID: 11400000, guid: f2317544bd8dcca428a7d48f1ccef21f, type: 2}
+    _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
     _images:
     - {fileID: 584906878}
@@ -2372,6 +2359,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1712214354}
@@ -2476,6 +2465,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
@@ -2893,6 +2884,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
@@ -4163,6 +4156,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 634434330}
@@ -5214,7 +5209,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
   m_PrefabInstance: {fileID: 783623616}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61269}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
@@ -5270,7 +5265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.2224908, b: 0.1641509, a: 1}
+  m_Color: {r: 0.10615587, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9360,7 +9355,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
   m_PrefabInstance: {fileID: 1586830572}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2098775722}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
@@ -10134,7 +10129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.2224908, b: 0.1641509, a: 1}
+  m_Color: {r: 0.105882354, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14369,6 +14364,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1154447021}
@@ -17115,6 +17112,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 477428662}
@@ -20193,6 +20192,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1712214354}
@@ -20326,6 +20327,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1064311445}
@@ -20335,7 +20338,7 @@ MonoBehaviour:
     _left: {fileID: 135199491}
     _right: {fileID: 2010628281}
   _colours:
-    _scheme: {fileID: 11400000, guid: f2317544bd8dcca428a7d48f1ccef21f, type: 2}
+    _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
     _images:
     - {fileID: 1409156513}
@@ -23345,7 +23348,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.2224908, b: 0.1641509, a: 1}
+  m_Color: {r: 0.105882354, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -25708,6 +25711,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 504002778}
@@ -27576,6 +27581,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1712214354}
@@ -28708,6 +28715,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
@@ -30248,6 +30257,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 323
   _navigation:
     _childBranch: {fileID: 0}
@@ -31950,6 +31961,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1248739661}
@@ -31959,7 +31972,7 @@ MonoBehaviour:
     _left: {fileID: 1173239053}
     _right: {fileID: 0}
   _colours:
-    _scheme: {fileID: 11400000, guid: f2317544bd8dcca428a7d48f1ccef21f, type: 2}
+    _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
     _images:
     - {fileID: 327850751}
@@ -32049,6 +32062,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 634434330}
@@ -32781,6 +32796,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1096179286}
@@ -33280,23 +33297,6 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096161699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00f12c3acdfb4140bd7b437f898978ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &2098775722 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3688934388505339717, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
-  m_PrefabInstance: {fileID: 1586830572}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2098775724
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2098775722}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00f12c3acdfb4140bd7b437f898978ac, type: 3}
@@ -34298,6 +34298,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
@@ -36170,7 +36172,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5921039407959095551, guid: d232574277994fb47897e30df1121d9e, type: 3}
       propertyPath: _autoOpen
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5921039407959095551, guid: d232574277994fb47897e30df1121d9e, type: 3}
       propertyPath: _enabledFunctions
@@ -36207,6 +36209,10 @@ PrefabInstance:
     - target: {fileID: 5921039407959095551, guid: d232574277994fb47897e30df1121d9e, type: 3}
       propertyPath: _multiSelectSettings._allowMultiSelect
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5921039407959095551, guid: d232574277994fb47897e30df1121d9e, type: 3}
+      propertyPath: _multiSelectSettings._multiSelectGroup
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5921039407959095551, guid: d232574277994fb47897e30df1121d9e, type: 3}
       propertyPath: _tooltips._listOfTooltips.Array.data[0]
@@ -36302,7 +36308,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5921039408018227064, guid: d232574277994fb47897e30df1121d9e, type: 3}
       propertyPath: _autoClose
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5921039408018227067, guid: d232574277994fb47897e30df1121d9e, type: 3}
       propertyPath: m_Camera
@@ -36635,6 +36641,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
@@ -37007,6 +37015,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 239
   _navigation:
     _childBranch: {fileID: 616071579}
@@ -37034,7 +37044,7 @@ MonoBehaviour:
     _rectTransforms: {fileID: 6133450943879981526}
     _scheme: {fileID: 11400000, guid: fbc5c68a16615164ea654f85e6637892, type: 2}
   _accessories:
-    _activateWhen: 1
+    _activateWhen: -1
     _accessoriesList:
     - {fileID: 1365136548}
     _outlinesToUse: []
@@ -37273,6 +37283,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 231
   _navigation:
     _childBranch: {fileID: 1096179286}
@@ -37300,7 +37312,7 @@ MonoBehaviour:
     _rectTransforms: {fileID: 6133450945571266715}
     _scheme: {fileID: 11400000, guid: 95445a3136365244b9b89fa129934925, type: 2}
   _accessories:
-    _activateWhen: 1
+    _activateWhen: -1
     _accessoriesList:
     - {fileID: 391106622}
     _outlinesToUse: []
@@ -37407,6 +37419,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 231
   _navigation:
     _childBranch: {fileID: 1450462822}
@@ -37434,7 +37448,7 @@ MonoBehaviour:
     _rectTransforms: {fileID: 6133450944779181129}
     _scheme: {fileID: 11400000, guid: 95445a3136365244b9b89fa129934925, type: 2}
   _accessories:
-    _activateWhen: 1
+    _activateWhen: -1
     _accessoriesList:
     - {fileID: 973409514}
     _outlinesToUse: []
@@ -37663,6 +37677,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 327
   _navigation:
     _childBranch: {fileID: 0}
@@ -37943,6 +37959,8 @@ MonoBehaviour:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 327
   _navigation:
     _childBranch: {fileID: 0}

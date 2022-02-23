@@ -39,9 +39,9 @@ public static class BranchGroups
         var newGroup = new GroupList
         {
             StartNode = (UINode) branch.DefaultStartOnThisNode,
-            GroupNodes = new UINode[branch.ThisGroupsUiNodes.Length]
+            GroupNodes = new UINode[branch.ThisBranchesNodes.Length]
         };
-        newGroup.GroupNodes = branch.ThisGroupsUiNodes.Cast<UINode>().ToArray();
+        newGroup.GroupNodes = branch.ThisBranchesNodes.Cast<UINode>().ToArray();
         return newGroup;
     }
 
@@ -61,15 +61,15 @@ public static class BranchGroups
         return groupIndex;
     }
 
-    public static int SwitchBranchGroup(List<GroupList> groupsList, int passedIndex, SwitchType switchType)
+    public static int SwitchBranchGroup(List<GroupList> groupsList, int passedIndex, SwitchInputType switchInputType)
     {
         int newIndex = passedIndex;
         
-        if (switchType == SwitchType.Positive)
+        if (switchInputType == SwitchInputType.Positive)
         {
             newIndex = passedIndex.PositiveIterate(groupsList.Count);
         }
-        if (switchType == SwitchType.Negative)
+        if (switchInputType == SwitchInputType.Negative)
         {
            newIndex = passedIndex.NegativeIterate(groupsList.Count);
         }

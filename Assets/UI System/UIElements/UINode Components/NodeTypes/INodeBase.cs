@@ -4,21 +4,17 @@ using UnityEngine.EventSystems;
 
 public interface INodeBase : IMono
 {
-    void DeactivateNodeByType();
-    void UnHighlightAlwaysOn();
+    void ExitNodeByType();
     UINavigation Navigation { set; }
+    void InMenuOrInGame();
     void SetNodeAsActive();
-    void OnEnter();
-    void OnExit();
-    void ThisNodeIsHighLighted();
-    void ThisNodeNotHighLighted();
-    void SelectedAction();
-    void ClearNodeCompletely();
+    void OnEnteringNode();
+    void OnExitingNode();
+    void NodeSelected();
+    void SetNodeAsNotSelected_NoEffects();
     void DoMoveToNextNode(MoveDirection moveDirection);
     void MenuNavigateToThisNode(MoveDirection moveDirection);
-    void EnableNodeAfterBeingDisabled();
-    void DisableNode();
-    bool IsDisabled { get; }
+    void EnableOrDisableNode(IDisableData isDisabled);
     void HotKeyPressed(bool setAsActive);
     void SetUpGOUIParent(IGOUIModule module);
 }

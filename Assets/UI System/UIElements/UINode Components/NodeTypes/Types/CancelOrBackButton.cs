@@ -30,7 +30,7 @@ public class CancelOrBackButton : NodeBase, ICancelButtonActivated, ICancelOrBac
         CancelHoverOver= CancelEvents.Do.Fetch<ICancelHoverOver>();
     }
 
-    protected override void TurnNodeOnOff()
+    public override void NodeSelected()
     {
         if (CloseOnExit())
         {

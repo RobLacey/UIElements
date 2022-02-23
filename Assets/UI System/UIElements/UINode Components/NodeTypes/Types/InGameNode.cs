@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 public interface IInGameNode : INodeBase { }
 
@@ -11,7 +10,6 @@ public class InGameNode : NodeBase, IInGameNode, ICloseThisGOUIModule
     }
 
     //Variables
-    private INode _parentNode;
     private readonly float _autoOpenDelay;
     private readonly IDelayTimer _delayTimer = EZInject.Class.NoParams<IDelayTimer>();
 
@@ -29,16 +27,16 @@ public class InGameNode : NodeBase, IInGameNode, ICloseThisGOUIModule
 
     public override void SetUpGOUIParent(IGOUIModule module) => _uiNode.InGameObject = module.GOUITransform.gameObject;
 
-    protected override void TurnNodeOnOff()
+    public override void NodeSelected()
     {
         if(!AllowKeys)
             MyBranch.SetBranchAsActive();
-        base.TurnNodeOnOff();
+        base.NodeSelected();
     }
 
-    public override void OnEnter()
+    public override void OnEnteringNode()
     {
-        base.OnEnter();
+        base.OnEnteringNode();
         
         if (_uiNode.CanAutoOpen && !IsSelected)
         {
@@ -50,31 +48,31 @@ public class InGameNode : NodeBase, IInGameNode, ICloseThisGOUIModule
     private void StartAutoOpen()
     {
         MyBranch.AutoOpenCloseClass.ChildNodeHasOpenChild = _uiNode.HasChildBranch;
-        TurnNodeOnOff();
+        NodeSelected();
     }
 
-    public override void OnExit()
+    public override void OnExitingNode()
     {
-        base.OnExit();
+        base.OnExitingNode();
         if (_uiNode.CanAutoOpen && IsSelected)
         {
             _delayTimer.StopTimer();
         }
     }
     
-    public override void DeactivateNodeByType()
+    public override void ExitNodeByType()
     {
         if (!IsSelected) return;
-        Deactivate();
+        SetNodeAsNotSelected_NoEffects();
         
         CloseGOUIModule?.Invoke(this);
         if(PointerOverNode && !AllowKeys) return;
-        OnExit();
+        OnExitingNode();
     }
 
-    public override void ClearNodeCompletely()
+    public override void SetNodeAsNotSelected_NoEffects()
     {
-        base.ClearNodeCompletely();
+        base.SetNodeAsNotSelected_NoEffects();
         CloseGOUIModule?.Invoke(this);
     }
 }

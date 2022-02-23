@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine.EventSystems;
 
 public interface IUiEvents
 {
@@ -8,14 +7,12 @@ public interface IUiEvents
     event Action<bool> WhenPointerOver;
     event Action<bool> IsSelected;
     event Action IsPressed;
-    event Action<bool> IsDisabled;
-    event Action<MoveDirection> OnMove;
+    event Action<IDisableData> IsDisabled;
     event Action MuteAudio;
     void DoWhenPointerOver(bool pointer);
     void DoIsSelected(bool selected);
     void DoIsPressed();
-    void DoIsDisabled(bool disabled);
-    void DoOnMove(MoveDirection direction);
+    void DoIsDisabled(IDisableData disabled);
     void DoMuteAudio();
 }
 
@@ -34,14 +31,12 @@ public class UiEvents : IUiEvents
     public event Action<bool> WhenPointerOver;
     public event Action<bool> IsSelected;
     public event Action IsPressed;
-    public event Action<bool> IsDisabled;
-    public event Action<MoveDirection> OnMove;
+    public event Action<IDisableData> IsDisabled;
     public event Action MuteAudio;
 
     public void DoWhenPointerOver(bool pointer) => WhenPointerOver?.Invoke(pointer);
     public void DoIsSelected(bool selected) => IsSelected?.Invoke(selected);
     public void DoIsPressed() => IsPressed?.Invoke();
-    public void DoIsDisabled(bool disabled) => IsDisabled?.Invoke(disabled);
-    public void DoOnMove(MoveDirection direction) => OnMove?.Invoke(direction);
+    public void DoIsDisabled(IDisableData disabled) => IsDisabled?.Invoke(disabled);
     public void DoMuteAudio() => MuteAudio?.Invoke();
 }

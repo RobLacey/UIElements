@@ -73,7 +73,7 @@ public enum BranchType { HomeScreen, Standard, ResolvePopUp, OptionalPopUp,
 public enum WhenToMove { Immediately, AfterEndOfTween }
 public enum PauseOptionsOnEscape { EnterPauseOrEscapeMenu, DoNothing }
 public  enum ControlMethod { MouseOnly, KeysOrControllerOnly, AllowBothStartWithMouse, AllowBothStartWithKeys }
-public enum SwitchType { Positive, Negative, Activate }
+public enum SwitchInputType { Positive, Negative, Activate }
 public enum TweenType { In, Out }
 public enum OutTweenType { Cancel, MoveToChild }
 public enum UseSide { ToTheRightOf, ToTheLeftOf, ToTheTopOf, ToTheBottomOf, CentreOf  }
@@ -115,7 +115,7 @@ public enum GameType
 
 public enum MultiSelectGroup
 {
-    One, Two, Three, Four, Five
+   None, One, Two, Three, Four, Five
 }
 
 public enum StartOffscreen
@@ -127,6 +127,11 @@ public enum Override
 {
     Override, Allow
 }
+
+public enum Disabled { Yes, No }
+
+public enum ClearAction { All, StopAt, SkipOne}
+
 
 
 

@@ -15,7 +15,7 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     bool IsHomeScreenBranch();
     bool IsTimedPopUp();
     bool IsInGameBranch();
-    
+
     INode DefaultStartOnThisNode { get; }
     CanvasGroup MyCanvasGroup { get; }
     ScreenType ScreenType { get; set; }
@@ -26,7 +26,7 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     DoTween TweenOnHome { get; set; }
     IBranch MyParentBranch { get; set; }
     float Timer { get; }
-    INode[] ThisGroupsUiNodes { get; }
+    INode[] ThisBranchesNodes { get; }
     bool PointerOverBranch { get;}
     IAutoOpenClose AutoOpenCloseClass { get; }
     IsActive SetSaveLastSelectionOnExit { set; }
@@ -88,7 +88,7 @@ public interface IDynamicBranch : IThisBranch
     INode DefaultStartOnThisNode { get; set; }
     INode LastSelected { get; set; }
     INode LastHighlighted { get; set; }
-    INode[] ThisGroupsUiNodes { get; set; }
+    INode[] ThisBranchesNodes { get;}
     void SetThisGroupsNode(INode[] groupsNodes);
     bool IsInGameBranch();
 }

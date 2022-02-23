@@ -9,7 +9,7 @@ namespace UIElements
 {
     public interface IGOUISwitcher : IMonoEnable, IMonoStart, IMonoDisable
     {
-        void UseGOUISwitcher(SwitchType switchType);
+        void UseGOUISwitcher(SwitchInputType switchInputType);
         int GOUIPlayerCount { get; }
     }
     
@@ -66,19 +66,19 @@ namespace UIElements
             }
         }
 
-        public void UseGOUISwitcher(SwitchType switchType)
+        public void UseGOUISwitcher(SwitchInputType switchInputType)
         {
             if(!CanSwitch) return;
             
-            switch (switchType)
+            switch (switchInputType)
             {
-                case SwitchType.Positive:
+                case SwitchInputType.Positive:
                     DoSwitchProcess(x => _index.PositiveIterate(x));
                     break;
-                case SwitchType.Negative:
+                case SwitchInputType.Negative:
                     DoSwitchProcess(x => _index.NegativeIterate(x));
                     break;
-                case SwitchType.Activate:
+                case SwitchInputType.Activate:
                     _playerObjects[_index].SwitchEnter();
                     break;
             }

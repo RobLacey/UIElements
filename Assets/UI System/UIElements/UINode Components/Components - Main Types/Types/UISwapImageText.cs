@@ -27,6 +27,8 @@ public class UISwapImageText : NodeFunctionBase
     protected override bool CanBePressed() => _changeWhen == ChangeWhen.OnPressed;
     private bool ToggleOnNewControls => _changeWhen == ChangeWhen.OnControlChanged;
     private string GetStartingText() => _textToSwap ? _textToSwap.text : String.Empty;
+    protected override bool FunctionNotActive() => _isDisabled && _passOver;
+
 
     //Main
     public override void ObserveEvents()

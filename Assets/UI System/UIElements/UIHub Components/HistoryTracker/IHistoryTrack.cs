@@ -5,9 +5,8 @@ using EZ.Service;
 public interface IHistoryTrack : IParameters, IIsAService
 {
     void OnEnable();
-    bool IsPaused { get; }
     bool NoHistory { get; }
-    IHistoryManagement HistoryListManagement { get; }
+    bool NodeNeededForMultiSelect(INode node);
     void GOUIBranchHasClosed(IBranch branchToClose, bool noGOUILeft = false);
     void ReturnToNextHomeGroup();
     void BackToHome();

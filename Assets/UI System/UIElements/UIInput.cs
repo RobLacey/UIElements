@@ -181,6 +181,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         
         if (!CanStart) return;
 
+        //TODO Do I need this anymore
         if(ReturnControlFromEditor.CanReturn(_inMenu, ActiveBranch)) return;
         
         if (CanPauseGame())
@@ -198,22 +199,22 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
     private void InMenuControls()
     {
+        if (CanDoCancel())
+        {
+            WhenCancelPressed();
+            return;
+        }
+
         if(!AllowKeys)
         {
             DoChangeControlPressed();
             SwitchGroups.ImmediateSwitch();
             return;
         }
-        
+
         if (_inputScheme.MenuNavigationPressed(AllowKeys))
         {
             DoMenuNavigation();
-            return;
-        }
-        
-        if (CanDoCancel())
-        {
-            WhenCancelPressed();
             return;
         }
 

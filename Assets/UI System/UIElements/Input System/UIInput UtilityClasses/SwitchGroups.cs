@@ -3,6 +3,7 @@ using EZ.Events;
 using EZ.Inject;
 using EZ.Service;
 using UIElements;
+using UnityEngine;
 
 
 public interface ISwitchGroup: IMonoDisable, IMonoEnable, IMonoStart
@@ -34,6 +35,11 @@ public class SwitchGroups : IEZEventUser, IParameters, ISwitchGroupPressed, ISer
     private readonly IHomeGroup _homeGroup;
     private bool _onHomeScreen = true;
     private IDataHub _myDataHub;
+
+    private enum SwitchStyle
+    {
+        Normal, Branch
+    }
 
     //Properties, Getters / Setters
     private void SaveOnHomeScreen(IOnHomeScreen args) => _onHomeScreen = args.OnHomeScreen;
@@ -78,34 +84,46 @@ public class SwitchGroups : IEZEventUser, IParameters, ISwitchGroupPressed, ISer
     {
         if (_onHomeScreen)
         {
-            return NormalSwitch() == true || GOUISwitch();
+            return NormalSwitch(HomeGroupSwitch, SwitchStyle.Normal) || GOUISwitch();
         }
         
         if(!_onHomeScreen)
         {
-            return BranchGroupSwitch();
+            if (_myDataHub.ActiveBranch.BranchGroupsList.Count <= 1) return false;
+            return NormalSwitch(BranchSwitch, SwitchStyle.Branch);
         }
         return false;
     }
 
-    private bool NormalSwitch()
+    private bool NormalSwitch(Action<SwitchInputType> switchAction, SwitchStyle switchStyle)
     {
         var canSwitch = Switch(_inputScheme.PressedPositiveSwitch(),
                                _inputScheme.PressedNegativeSwitch(),
-                               HomeGroupSwitch);
-        if (canSwitch)
+                               switchAction);
+        if (canSwitch && switchStyle == SwitchStyle.Normal)
+        {
             OnSwitchGroupPressed?.Invoke(this);
+        }
+
         return canSwitch;
     }
 
-    private bool BranchGroupSwitch()
-    {
-        if (_myDataHub.ActiveBranch.BranchGroupsList.Count <= 1) return false;
-
-        return Switch(_inputScheme.PressedPositiveSwitch(),
-                      _inputScheme.PressedNegativeSwitch(),
-                      BranchSwitch);
-    }
+    // private bool BranchGroupSwitch(Action<SwitchType> switchAction)
+    // {
+    //     // if (_myDataHub.ActiveBranch.BranchGroupsList.Count <= 1) return false;
+    //
+    //     var canSwitch = Switch(_inputScheme.PressedPositiveSwitch(),
+    //                          _inputScheme.PressedNegativeSwitch(),
+    //                          switchAction);
+    //     
+    //     if (canSwitch)
+    //     {
+    //         _myDataHub.Highlighted.ThisNodeNotHighLighted();
+    //         OnSwitchGroupPressed?.Invoke(this);
+    //     }
+    //
+    //     return canSwitch;
+    // }
 
     public void ImmediateSwitch()
     {
@@ -113,7 +131,7 @@ public class SwitchGroups : IEZEventUser, IParameters, ISwitchGroupPressed, ISer
         
         if(_inputScheme.PressedPositiveGOUISwitch() || _inputScheme.PressedNegativeGOUISwitch())
         {
-            GOUISwitchAction(SwitchType.Activate);
+            GOUISwitchAction(SwitchInputType.Activate);
         }
     }
 
@@ -134,35 +152,35 @@ public class SwitchGroups : IEZEventUser, IParameters, ISwitchGroupPressed, ISer
         return false;
     }
     
-    private static bool Switch(bool posPressed, bool negPressed, Action<SwitchType> switchAction)
+    private static bool Switch(bool posPressed, bool negPressed, Action<SwitchInputType> switchAction)
     {
         if (posPressed)
         {
-            switchAction.Invoke(SwitchType.Positive);
+            switchAction.Invoke(SwitchInputType.Positive);
             return true;
         }
 
         if (negPressed)
         {
-            switchAction.Invoke(SwitchType.Negative);
+            switchAction.Invoke(SwitchInputType.Negative);
             return true;
         }
 
         return false;
     }
 
-    private void HomeGroupSwitch(SwitchType switchType) => _homeGroup.SwitchHomeGroups(switchType);
+    private void HomeGroupSwitch(SwitchInputType switchInputType) => _homeGroup.SwitchHomeGroups(switchInputType);
 
-    private void BranchSwitch(SwitchType switchType)
+    private void BranchSwitch(SwitchInputType switchInputType)
     {
         var activeBranch = _myDataHub.ActiveBranch;
         
         activeBranch.GroupIndex = BranchGroups.SwitchBranchGroup(activeBranch.BranchGroupsList,
                                                                  activeBranch.GroupIndex,
-                                                                 switchType);
+                                                                 switchInputType);
     }
 
-    private void GOUISwitchAction(SwitchType switchType) => _switcher.UseGOUISwitcher(switchType);
+    private void GOUISwitchAction(SwitchInputType switchInputType) => _switcher.UseGOUISwitcher(switchInputType);
 
 }
 

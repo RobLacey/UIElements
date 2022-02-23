@@ -14,11 +14,12 @@ public abstract class NodeFunctionBase : IEZEventUser, IMono, IServiceUser
     protected bool _pointerOver;
     protected bool _isSelected;
     protected bool _isDisabled;
+    protected bool _passOver;
     protected IUiEvents _uiEvents;
     protected IDataHub _myDataHub;
 
     //Properties
-    protected virtual void AxisMoveDirection(MoveDirection moveDirection) { }
+    public virtual void AxisMoveDirection(MoveDirection moveDirection) { }
     protected abstract bool CanBeHighlighted();
     protected abstract bool CanBePressed();
     protected virtual bool FunctionNotActive() => _isDisabled;
@@ -59,7 +60,6 @@ public abstract class NodeFunctionBase : IEZEventUser, IMono, IServiceUser
         _uiEvents.IsSelected += SaveIsSelected;
         _uiEvents.IsPressed += ProcessPress;
         _uiEvents.IsDisabled += IsDisabled;
-        _uiEvents.OnMove += AxisMoveDirection;
     }
 
     public virtual void UnObserveEvents()
@@ -69,7 +69,6 @@ public abstract class NodeFunctionBase : IEZEventUser, IMono, IServiceUser
         _uiEvents.IsSelected -= SaveIsSelected;
         _uiEvents.IsPressed -= ProcessPress;
         _uiEvents.IsDisabled -= IsDisabled;
-        _uiEvents.OnMove -= AxisMoveDirection;
     }
 
     public virtual void OnDestroy()
@@ -84,9 +83,10 @@ public abstract class NodeFunctionBase : IEZEventUser, IMono, IServiceUser
 
     protected virtual void SaveIsSelected(bool isSelected) => _isSelected = isSelected;
 
-    private void IsDisabled(bool isDisabled)
+    private void IsDisabled(IDisableData disableData)
     {
-        _isDisabled = isDisabled;
+        _isDisabled = disableData.IsNodeDisabled();
+        _passOver = disableData.PassOver();
         ProcessDisabled();
     }
     

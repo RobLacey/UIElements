@@ -58,11 +58,9 @@ public interface IActiveBranch
     IBranch ActiveBranch { get; }
 }
 
-public interface IDisabledNode: IMonoEnable, IMonoDisable
+public interface IDisabledNode
 {
-    INode ThisIsTheDisabledNode { get; }
-    bool IsDisabled { get; set; }
-    void FindNextFreeNode();
+    INode ThisNode { get; }
 }
 
 public interface IStoreNodeHistoryData

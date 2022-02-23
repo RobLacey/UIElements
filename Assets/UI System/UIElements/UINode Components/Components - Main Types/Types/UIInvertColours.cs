@@ -25,6 +25,7 @@ public class UIInvertColours : NodeFunctionBase
     //Properties
     protected override bool CanBeHighlighted() => (_activateWhen & ActivateWhen.OnHighlighted) != 0;
     protected override bool CanBePressed() => (_activateWhen & ActivateWhen.OnSelected) != 0;
+    protected override bool FunctionNotActive() => _isDisabled && _passOver;
 
     //Main
     public override void OnAwake()

@@ -101,12 +101,10 @@ public class UIAudio : NodeFunctionBase
 
     private protected override void ProcessPress() { }
 
-    private bool IsDisabledCheckForDisabledSound()
+    private void PlayDisabledSound()
     {
-        if (!_isDisabled || !HasDisabledSound()) return false;
-        
+        if (!_isDisabled || !HasDisabledSound()) return;
         _audioService.PlayDisabled(_audioScheme.DisabledClip, _audioScheme.DisabledVolume);
-        return true;
     }
 
     private void PlayCancelAudio()
@@ -117,18 +115,19 @@ public class UIAudio : NodeFunctionBase
     
     private void PlaySelectedAudio()
     {
-        if(IsDisabledCheckForDisabledSound()) return;
         if(FunctionNotActive() || !CanBePressed()) return;
         _audioService.PlaySelect(_audioScheme.SelectedClip, _audioScheme.SelectedVolume);
     }
     private void PlayHighlightedAudio()
     {
-        if(IsDisabledCheckForDisabledSound()) return;
         if(FunctionNotActive() || !CanBeHighlighted()) return;
         _audioService.PlayHighlighted(_audioScheme.HighlightedClip, _audioScheme.HighlightedVolume);
     }
 
-    private protected override void ProcessDisabled() { }
+    private protected override void ProcessDisabled()
+    {
+        PlayDisabledSound();
+    }
 
     private void HotKeyPressed(IHotKeyPressed args)
     {

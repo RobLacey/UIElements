@@ -55,7 +55,7 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     protected override bool CanBeHighlighted() => false;
     protected override bool CanBePressed() => false;
     private protected override void ProcessPress() { }
-    protected override bool FunctionNotActive() => _isDisabled || ListOfTooltips.Length == 0;
+    protected override bool FunctionNotActive() => _isDisabled && _passOver || ListOfTooltips.Length == 0;
     private protected override void ProcessDisabled()
     {
         if(FunctionNotActive()) return;

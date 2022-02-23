@@ -12,9 +12,9 @@ public class Standard : NodeBase, IStandard
     private readonly IDelayTimer _delayTimer = EZInject.Class.NoParams<IDelayTimer>();
     private readonly float _autoOpenDelay;
 
-    public override void OnEnter()
+    public override void OnEnteringNode()
     {
-        base.OnEnter();
+        base.OnEnteringNode();
 
         if (_uiNode.CanAutoOpen && !IsSelected)
         {
@@ -23,9 +23,9 @@ public class Standard : NodeBase, IStandard
         }
     }
 
-    public override void OnExit()
+    public override void OnExitingNode()
     {
-        base.OnExit();
+        base.OnExitingNode();
         if (_uiNode.CanAutoOpen)
         {
             _delayTimer.StopTimer();
@@ -35,15 +35,15 @@ public class Standard : NodeBase, IStandard
     private void StartAutoOpen()
     {
         MyBranch.AutoOpenCloseClass.ChildNodeHasOpenChild = _uiNode.HasChildBranch;
-        TurnNodeOnOff();
+        NodeSelected();
     }
 
-    public override void DeactivateNodeByType()
+    public override void ExitNodeByType()
     {
         if (!IsSelected) return;
-        Deactivate();
-        
+        SetNodeAsNotSelected_NoEffects();
+
         if(PointerOverNode && !AllowKeys) return;
-        OnExit();
+        OnExitingNode();
     }
 }

@@ -40,7 +40,7 @@ public class GroupedToggles : NodeBase, IGroupedToggles
     private readonly IDelayTimer _delayTimer;
     
     //Properties
-    private List<INode> AllNodes => _uiNode.MyBranch.ThisGroupsUiNodes.ToList();
+    private List<INode> AllNodes => _uiNode.MyBranch.ThisBranchesNodes.ToList();
 
     //Events
     private static event Action<INode, Action> SelectedToggle;
@@ -54,6 +54,7 @@ public class GroupedToggles : NodeBase, IGroupedToggles
         if (_startAsSelected)
         {
             SetNodeAsSelected_NoEffects();
+            OnExitingNode();
             TurnOnTab();
         }
     }
@@ -101,22 +102,20 @@ public class GroupedToggles : NodeBase, IGroupedToggles
             _tabBranch.SetUpAsTabBranch();
     }
     
-    public override void OnEnter()
+    public override void OnEnteringNode()
     {
-        base.OnEnter();
+        base.OnEnteringNode();
         
         if (_uiNode.CanAutoOpen && !IsSelected)
         {
             _delayTimer.SetDelay(_autoOpenDelay)
-                       .StartTimer(StartAutoOpen);
+                       .StartTimer(NodeSelected);
         }
     }
     
-    private void StartAutoOpen() => TurnNodeOnOff();
-
-    public override void OnExit()
+    public override void OnExitingNode()
     {
-        base.OnExit();
+        base.OnExitingNode();
         if (_uiNode.CanAutoOpen)
         {
             _delayTimer.StopTimer();
@@ -130,18 +129,11 @@ public class GroupedToggles : NodeBase, IGroupedToggles
         SetAsNotActive(callback);
     }
 
-    protected override void TurnNodeOnOff()
+    public override void NodeSelected()
     {
         if (IsSelected) return;        
         TurnOffOtherTogglesInGroup();
-        Activate();
-    }
-
-    protected override void Activate()
-    {
-        TurnOnTab();
-        SetSelectedStatus(true, DoPressOnNode);
-        ThisNodeIsSelected(_uiNode);
+        Activate(DoPressOnNode);
     }
 
     private void SetAsNotActive(Action callback = null)

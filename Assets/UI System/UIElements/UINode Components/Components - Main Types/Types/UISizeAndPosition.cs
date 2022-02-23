@@ -25,7 +25,7 @@ public class UISizeAndPosition : NodeFunctionBase, ISizeAndPosition
     public string GameObjectID { get; private set; }
     protected override bool CanBeHighlighted() => Scheme.CanBeHighlighted || Scheme.CanBeSelectedAndHighlight;
     protected override bool CanBePressed()  => !Scheme.NotSet && !Scheme.CanBeSelectedAndHighlight;
-    protected override bool FunctionNotActive() => _isDisabled || Scheme.NotSet;
+    protected override bool FunctionNotActive() => _isDisabled && _passOver || Scheme.NotSet;
 
     //Main
     public override void OnAwake()

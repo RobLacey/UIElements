@@ -134,7 +134,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         
         LastHighlighted = NodeSearch.Find(args.Highlighted)
                                     .DefaultReturn(LastSelected)
-                                    .RunOn(ThisGroupsUiNodes);
+                                    .RunOn(ThisBranchesNodes);
     }
 
     private void SaveSelected(ISelectedNode args)
@@ -144,14 +144,14 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
 
         LastSelected = NodeSearch.Find(args.SelectedNode)
                                  .DefaultReturn(LastSelected)
-                                 .RunOn(ThisGroupsUiNodes);
+                                 .RunOn(ThisBranchesNodes);
     }
 
     //Main
     private void Awake()
     {
         CheckForValidSetUp();
-        ThisGroupsUiNodes = BranchChildNodeUtil.GetChildNodes(this);
+        ThisBranchesNodes = BranchChildNodeUtil.GetChildNodes(this);
         MyCanvasGroup = GetComponent<CanvasGroup>();
         MyCanvasGroup.blocksRaycasts = false;
         _uiTweener = GetComponent<UITweener>();
@@ -207,7 +207,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         }
         else
         {
-            DefaultStartOnThisNode = (UINode) ThisGroupsUiNodes.First();
+            DefaultStartOnThisNode = (UINode) ThisBranchesNodes.First();
         }
     }
 
@@ -357,7 +357,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     private void SetSaveLastSelected()
     {
         if (_saveExitSelection == IsActive.No)
-            LastHighlighted = ThisGroupsUiNodes[0];
+            LastHighlighted = ThisBranchesNodes[0];
     }
 
     public void SetCanvas(ActiveCanvas activeCanvas) => _branchTypeBaseClass.SetCanvas(activeCanvas);

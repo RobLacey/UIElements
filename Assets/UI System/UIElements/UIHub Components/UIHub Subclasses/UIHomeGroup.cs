@@ -6,7 +6,7 @@ using UIElements;
 public interface IHomeGroup: IMonoEnable, IMonoDisable
 {
     void SetUpHomeGroup();
-    void SwitchHomeGroups(SwitchType switchType);
+    void SwitchHomeGroups(SwitchInputType switchInputType);
 }
 
 /// <summary>
@@ -66,26 +66,26 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
 
     private void ReturnHomeGroup(IReturnHomeGroupIndex args)
     {
-        if (HomeGroup[_index].ThisGroupsUiNodes.Length == 0)
+        if (HomeGroup[_index].ThisBranchesNodes.Length == 0)
         {
             _index = _index.PositiveIterate(HomeGroup.Length);
         }
         args.TargetNode = HomeGroup[_index].LastHighlighted;
     }
 
-    public void SwitchHomeGroups(SwitchType switchType)
+    public void SwitchHomeGroups(SwitchInputType switchInputType)
     {
         if(HomeGroup.Length <=1) return;
         
-        switch (switchType)
+        switch (switchInputType)
         {
-            case SwitchType.Positive:
+            case SwitchInputType.Positive:
                 _index = _index.PositiveIterate(HomeGroup.Length);
                 break;
-            case SwitchType.Negative:
+            case SwitchInputType.Negative:
                 _index = _index.NegativeIterate(HomeGroup.Length);
                 break;
-            case SwitchType.Activate:
+            case SwitchInputType.Activate:
                 break;
         }
         

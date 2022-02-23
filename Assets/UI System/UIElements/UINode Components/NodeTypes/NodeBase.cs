@@ -1,11 +1,10 @@
 ﻿using System;
 using EZ.Events;
 using EZ.Service;
-using UnityEngine;
+using UIElements.Input_System;
 using UnityEngine.EventSystems;
 
-public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, ISelectedNode, 
-                                 IHighlightedNode, IDisableData, IServiceUser
+public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, IHighlightedNode, IServiceUser
 {
     protected NodeBase(INode node)
     {
@@ -16,11 +15,11 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
     
     //Variables
     protected readonly INode _uiNode;
-    private IDisabledNode _disabledNode;
     private bool _hasFinishedSetUp;
     private IDataHub _myDataHub;
     private readonly IUiEvents _uiFunctionEvents;
     private bool _fromHotKey;
+    private IHistoryTrack _historyTracker;
 
     //Events
     private Action<IHighlightedNode> DoHighlighted { get; set; } 
@@ -33,21 +32,12 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
     protected bool AllowKeys => _myDataHub.AllowKeys;
     protected bool PointerOverNode { get; private set; }
     public IBranch MyBranch { get; protected set; }
-    public bool IsDisabled => _disabledNode.IsDisabled;
     public UINavigation Navigation { get; set; }
     protected bool IsSelected { get; private set; }
     public INode Highlighted => _uiNode;
     public INode SelectedNode { get; private set; }
-    public INode ThisNode => _uiNode;
 
-    //Set / Getters
-    private void SetNewHighlighted(IHighlightedNode args) 
-    {
-        if ((PointerOverNode && _myDataHub.AllowKeys) && args.Highlighted != _uiNode)
-            OnExit();
-    }
-
-    private void SaveInMenuOrInGame(IInMenu args)
+    public void InMenuOrInGame()
     {
         if (HasNotFinishedSetUp()) return;
         
@@ -55,7 +45,7 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
         
         if (!InMenu)
         {
-            OnExit();
+            OnExitingNode();
             return;
         }
         
@@ -70,18 +60,25 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
         return true;
     }
     
+    protected void DoPressOnNode() => _uiFunctionEvents.DoIsPressed();
+    public virtual void ExitNodeByType() => OnExitingNode();
+
+    
     //Main
-    public void OnAwake() => _disabledNode = EZInject.Class.WithParams<IDisabledNode>(this);
+    public void OnAwake() { }
 
     public void OnEnable()
     {
         UseEZServiceLocator();
         FetchEvents();
-        ObserveEvents();
         LateStartSetUp();
     }
 
-    public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
+    public void UseEZServiceLocator()
+    {
+        _myDataHub = EZService.Locator.Get<IDataHub>(this);
+        _historyTracker = EZService.Locator.Get<IHistoryTrack>(this);
+    }
 
     private void LateStartSetUp()
     {
@@ -99,116 +96,43 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
         DoHighlighted = HistoryEvents.Do.Fetch<IHighlightedNode>();
         DoSelected = HistoryEvents.Do.Fetch<ISelectedNode>();
     }
-
-    public void ObserveEvents()
-    {
-        HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenuOrInGame);
-        HistoryEvents.Do.Subscribe<IHighlightedNode>(SetNewHighlighted);
-        _disabledNode.OnEnable();
-    }
-
-    public void UnObserveEvents()
-    {
-        HistoryEvents.Do.Unsubscribe<IInMenu>(SaveInMenuOrInGame);
-        HistoryEvents.Do.Unsubscribe<IHighlightedNode>(SetNewHighlighted);
-        _disabledNode.OnDisable();
-    }
     
     public void OnDisable()
     {
-        EnableNodeAfterBeingDisabled();
-        UnObserveEvents();
         DoHighlighted = null;
         DoSelected = null;
         _myDataHub = null;
     }
 
-    public void OnDestroy()
-    {
-        UnObserveEvents();
-        _myDataHub = null;
-        _disabledNode = null;
-    }
+    public void OnDestroy() => _myDataHub = null;
 
     public virtual void OnStart() { }
 
-    public void UnHighlightAlwaysOn() => OnExit();
-    public virtual void DeactivateNodeByType() => OnExit();
-
-    public virtual void ClearNodeCompletely()
+    public void EnableOrDisableNode(IDisableData isDisabled)
     {
-        SetNodeAsNotSelected_NoEffects();
-        OnExit();
-    }
-
-    public void EnableNodeAfterBeingDisabled()
-    {
-        _disabledNode.IsDisabled = false;
-        _uiFunctionEvents.DoIsDisabled(IsDisabled);
-    }
-
-    public void DisableNode()
-    {
-        if(IsDisabled) return;
-        _disabledNode.IsDisabled = true;
-        SetNodeAsNotSelected_NoEffects();
-        _uiFunctionEvents.DoIsDisabled(IsDisabled);
+        if(isDisabled.IsNodeDisabled())
+            SetNodeAsNotSelected_NoEffects();
+        _uiFunctionEvents.DoIsDisabled(isDisabled);
     }
 
     public virtual void SetNodeAsActive()
     {
-        if (IsDisabled)
-            _disabledNode.FindNextFreeNode();
-        
-        ThisNodeIsHighLighted();
-        
         if (AllowKeys && InMenu)
         {
-            OnEnter();
+            OnEnteringNode();
         }
         else
         {
             if(PointerOverNode) return;
-            OnExit();
+            OnExitingNode();
         }
     }
 
-    private void SetAsHighlighted() 
+    private void ThisNodeIsSelected(INode node)
     {
-        ThisNodeIsHighLighted();
-        PointerOverNode = true;
-        _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
-    }
-
-    private void SetNotHighlighted()
-    {
-        PointerOverNode = false;
-        _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
-    }
-
-    protected void ThisNodeIsSelected(INode node)
-    {
+        if(_uiNode.CanNotStoreNodeInHistory) return;
         SelectedNode = node;
         DoSelected?.Invoke(this);
-    }
-
-    public virtual void ThisNodeIsHighLighted() => DoHighlighted?.Invoke(this);
-
-    public void ThisNodeNotHighLighted() => SetNotHighlighted();
-
-    protected void DoPressOnNode() => _uiFunctionEvents.DoIsPressed();
-
-    public void SelectedAction()
-    {
-        if (IsDisabled) return;
-        TurnNodeOnOff();
-    }
-
-    protected void SetSelectedStatus(bool isSelected, Action endAction)
-    {
-        IsSelected = isSelected;
-        _uiFunctionEvents.DoIsSelected(IsSelected);
-        endAction?.Invoke();
     }
 
     protected void SetNodeAsSelected_NoEffects()
@@ -216,66 +140,83 @@ public abstract class NodeBase : IEZEventUser, INodeBase, IEZEventDispatcher, IS
         _uiFunctionEvents.DoMuteAudio();
         if (_fromHotKey)
         {
-            SetSelectedStatus(true, null);
+            Activate();
             _fromHotKey = false;
         }
         else
         {
-            SetSelectedStatus(true, DoPressOnNode);
+            Activate(DoPressOnNode);
         }
-
-        OnExit();
     }
 
-    public void SetNodeAsNotSelected_NoEffects()
+    public virtual void SetNodeAsNotSelected_NoEffects()
     {
         _uiFunctionEvents.DoMuteAudio();
         SetSelectedStatus(false, DoPressOnNode);
-        OnExit();
+        OnExitingNode();
     }
 
-    public virtual void OnEnter() => SetAsHighlighted();
+   public virtual void OnEnteringNode() 
+    {
+        if(_myDataHub.Highlighted.IsNotNull())
+            _myDataHub.Highlighted.ThisNodeNotHighLighted();
+        DoHighlighted?.Invoke(this);
 
-    public virtual void OnExit() => SetNotHighlighted();
+        PointerOverNode = true;
+        _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
+    }
 
-    public void DoMoveToNextNode(MoveDirection moveDirection) => _uiFunctionEvents.DoOnMove(moveDirection);
+    public virtual void OnExitingNode()
+    {
+        PointerOverNode = false;
+        _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
+    }
+
+    public void DoMoveToNextNode(MoveDirection moveDirection) => Navigation.AxisMoveDirection(moveDirection);
 
     public void MenuNavigateToThisNode(MoveDirection moveDirection)
     {
         if(!MyBranch.CanvasIsEnabled)return;
         
-        OnEnter();
-        
-        if (IsDisabled)
-            DoMoveToNextNode(moveDirection);
+        OnEnteringNode();
     }
 
-    protected virtual void TurnNodeOnOff()
+    public virtual void NodeSelected()
     {
-         ThisNodeIsSelected(_uiNode);
-        
         if (IsSelected)
         {
             Deactivate();
         }
         else
         {
-            Activate();
+            Activate(DoPressOnNode);
         }
     }
 
-    protected virtual void Activate() => SetSelectedStatus(true, DoPressOnNode);
-
-    protected void Deactivate()
+    protected void Activate(Action endAction = null)
     {
-        SetSelectedStatus(false, DoPressOnNode);
-        ThisNodeIsSelected(null);
+        SetSelectedStatus(true, endAction);
+        ThisNodeIsSelected(_uiNode);
+    }
+
+    private void Deactivate()
+    {
+        if(!_historyTracker.NodeNeededForMultiSelect(_uiNode))
+            SetSelectedStatus(false, DoPressOnNode);
+        ThisNodeIsSelected(_uiNode);
+    }
+
+    private void SetSelectedStatus(bool isSelected, Action endAction)
+    {
+        IsSelected = isSelected;
+        _uiFunctionEvents.DoIsSelected(IsSelected);
+        endAction?.Invoke();
     }
 
     public void HotKeyPressed(bool setAsActive)
     {
         _fromHotKey = true;
-        ThisNodeIsHighLighted();
+        OnEnteringNode();
         ThisNodeIsSelected(_uiNode);
         if(!setAsActive) return;
         SetNodeAsSelected_NoEffects();

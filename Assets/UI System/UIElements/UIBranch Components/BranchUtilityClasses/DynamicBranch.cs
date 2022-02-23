@@ -5,13 +5,13 @@ public static class DynamicBranch
 {
     public static void AddNodeToBranch(IDynamicBranch branch)
     {
-        var noNodes = branch.ThisGroupsUiNodes.Length == 0;
+        var noNodes = branch.ThisBranchesNodes.Length == 0;
         
         branch.SetThisGroupsNode(BranchChildNodeUtil.GetChildNodes(branch.ThisBranch));
         
         if (noNodes)
         {
-            branch.DefaultStartOnThisNode = branch.ThisGroupsUiNodes.First();
+            branch.DefaultStartOnThisNode = branch.ThisBranchesNodes.First();
             branch.LastHighlighted = branch.DefaultStartOnThisNode;
             branch.LastSelected = branch.DefaultStartOnThisNode;
         }
@@ -19,9 +19,9 @@ public static class DynamicBranch
 
     public static void RemoveNodeFromBranch(IDynamicBranch branch, INode nodeToRemove)
     {
-        branch.SetThisGroupsNode(BranchChildNodeUtil.RemoveNode(branch.ThisGroupsUiNodes, nodeToRemove));
+        branch.SetThisGroupsNode(BranchChildNodeUtil.RemoveNode(branch.ThisBranchesNodes, nodeToRemove));
 
-        if (branch.ThisGroupsUiNodes.Length == 0 && !branch.IsInGameBranch())
+        if (branch.ThisBranchesNodes.Length == 0 && !branch.IsInGameBranch())
         {
             EZService.Locator.LateGet<IHistoryTrack>().ReturnToNextHomeGroup();
             return;
@@ -32,16 +32,16 @@ public static class DynamicBranch
 
     private static void SetValuesToNextNode(IDynamicBranch branch, INode nodeToRemove)
     {
-        if(branch.ThisGroupsUiNodes.Length == 0) return;
+        if(branch.ThisBranchesNodes.Length == 0) return;
         
         if (branch.LastHighlighted == nodeToRemove && branch.GetSaveOnExit == IsActive.Yes)
         {
-            branch.ThisGroupsUiNodes.Last().SetNodeAsActive();
+            branch.ThisBranchesNodes.Last().SetNodeAsActive();
         }
 
         if (branch.LastSelected == nodeToRemove)
         {
-            branch.LastSelected = branch.ThisGroupsUiNodes.Last();
+            branch.LastSelected = branch.ThisBranchesNodes.Last();
         }
     }
 

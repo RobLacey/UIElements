@@ -1,98 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using System.Linq;
 
-public interface IMoveBackInHistory
+public static class MoveBackInHistory 
 {
-    IMoveBackInHistory AddHistory(List<INode> history);
-    IMoveBackInHistory IsOnHomeScreen(bool onHomeScreen);
-    IMoveBackInHistory ActiveBranch(IBranch activeBranch);
-    INode BackOneLevelProcess();
-    INode BackToHomeProcess();
-}
-
-public class MoveBackInHistory : IMoveBackInHistory
-{
-    public MoveBackInHistory(IHistoryTrack historyTracker)
+    public static INode BackOneLevelProcess(SelectData data)
     {
-        _historyTracker = historyTracker;
-        _historyListManagement = historyTracker.HistoryListManagement;
-    }
-    
-    //Variables
-    private readonly IHistoryTrack _historyTracker;
-    private readonly IHistoryManagement _historyListManagement;
-    private IBranch _activeBranch;
-    private List<INode> _history = new List<INode>();
-    private bool _onHomeScreen, _hasHistory, _hasOnHome, _hasActiveBranch;
-
-    //Main
-    public IMoveBackInHistory AddHistory(List<INode> history)
-    {
-        _history = history;
-        _hasHistory = true;
-        return this;
-    }
-
-    public IMoveBackInHistory IsOnHomeScreen(bool onHomeScreen)
-    {
-        _onHomeScreen = onHomeScreen;
-        _hasOnHome = true;
-        return this;
-    }
-
-    public IMoveBackInHistory ActiveBranch(IBranch activeBranch)
-    {
-        _activeBranch = activeBranch;
-        _hasActiveBranch = true;
-        return this;
-    }
-
-    private void CheckForExceptionsOneLevel()
-    {
-        if (!_hasOnHome) throw new Exception("Missing On Home Data");
-        if (!_hasHistory) throw new Exception("Missing Current History");
-        if (!_hasActiveBranch) throw new Exception("Missing Active Branch");
-    }
-    
-    private void CheckForExceptionsBackHome()
-    {
-        if (!_hasHistory) throw new Exception("Missing Current History");
-        if (!_hasActiveBranch) throw new Exception("Missing Active Branch");
-        ResetExceptionChecks();
-    }
-
-    private void ResetExceptionChecks()
-    {
-        _hasHistory = false;
-        _hasActiveBranch = false;
-        _hasOnHome = false;
-    }
-
-    public INode BackOneLevelProcess()
-    {
-        CheckForExceptionsOneLevel();
-        if (_history.Count == 0) return null;
+        var lastNode = data.History.Last();
         
-        var lastNode = _history.Last();
-        
-        if (IsHomeScreenBranch(lastNode))
+        if (IsHomeScreenBranch(lastNode, data.OnHomeScreen))
         {
-            return BackToHomeProcess();
+            return BackToHomeProcess(data);
         }
         
-        _historyTracker.UpdateHistoryData(lastNode);
-
-        _history.Remove(lastNode);
-        DoMoveBackOneLevel(lastNode, _activeBranch);
-        ResetExceptionChecks();
-        return _history.Count == 0 ? null : _history.Last();
+        DoBackOneLevel(lastNode, data.ActiveBranch);
+        data.HistoryTracker.UpdateHistoryData(lastNode);
+        data.History.Remove(lastNode);
+        return data.History.Count == 0 ? null : data.History.Last();
     }
 
-    private bool IsHomeScreenBranch(INode lastNode) => lastNode.MyBranch.IsHomeScreenBranch() && !_onHomeScreen;
+    private static bool IsHomeScreenBranch(INode lastNode, bool onHomeScreen) 
+        => lastNode.MyBranch.IsHomeScreenBranch() && !onHomeScreen;
     
-    private static void DoMoveBackOneLevel(INode lastNode, IBranch activeBranch)
+    private static void DoBackOneLevel(INode lastNode, IBranch activeBranch)
     {
         if (lastNode.MyBranch.CanvasIsEnabled)
         {
@@ -100,41 +28,38 @@ public class MoveBackInHistory : IMoveBackInHistory
         }
         else
         {
-            activeBranch.StartBranchExitProcess(OutTweenType.Cancel, WithTween);
+            activeBranch.StartBranchExitProcess(OutTweenType.Cancel, ParentNotVisible);
         }
 
-        void WithTween()
+        void ParentNotVisible()
         {
             if (activeBranch.AutoClose == IsActive.No)
-                lastNode.DeactivateNode();
+                lastNode.ExitNodeByType();
             lastNode.MyBranch.MoveToThisBranch();
         }
 
         void ParentVisible()
         {
-            lastNode.DeactivateNode();
+            lastNode.ExitNodeByType();
             lastNode.MyBranch.DoNotTween();
             lastNode.MyBranch.MoveToThisBranch();
         }
     }
 
-    public INode BackToHomeProcess()
+    public static INode BackToHomeProcess(SelectData data)
     {
-        CheckForExceptionsBackHome();
-        var lastSelected = _history.First();
+        var lastSelected = data.History.First();
         StopNodeFlash();
-        _activeBranch.StartBranchExitProcess(OutTweenType.Cancel, CallBack);
+        data.ActiveBranch.StartBranchExitProcess(OutTweenType.Cancel, CallBack);
         return lastSelected;
 
-        void CallBack() => BackHomeCallBack(_history);
-        void StopNodeFlash() { lastSelected.DeactivateNode(); }
+        void CallBack() => BackHomeCallBack(data);
+        void StopNodeFlash() { lastSelected.ExitNodeByType(); }
     }
 
-    private void BackHomeCallBack(List<INode> history)
+    private static void BackHomeCallBack(SelectData data)
     {
-        if (history.Count <= 0) return;
-        _historyListManagement.CurrentHistory(history)
-                              .ClearAllHistory();
-        _historyTracker.BackToHomeScreen();
+        HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.All);
+        data.HistoryTracker.BackToHomeScreen();
     }
 }

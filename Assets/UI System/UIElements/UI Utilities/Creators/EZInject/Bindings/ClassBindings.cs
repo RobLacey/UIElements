@@ -43,7 +43,7 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<CancelOrBackButton>().To<ICancelOrBack>().WithParameters();
         _injectMaster.Bind<GroupedToggles>().To<IGroupedToggles>().WithParameters();
         _injectMaster.Bind<ToggleNotLinked>().To<IToggleNotLinked>().WithParameters();
-        _injectMaster.Bind<DisabledNode>().To<IDisabledNode>().WithParameters();
+        _injectMaster.Bind<NodeDisabling>().To<IDisabledNode>().WithParameters();
         _injectMaster.Bind<InGameNode>().To<IInGameNode>().WithParameters();
         
         //Branch Types
@@ -63,12 +63,8 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<Shake>().To<IShake>().WithParameters();
         
         //HistoryTrackerClasses
-        _injectMaster.Bind<HistoryListManagement>().To<IHistoryManagement>().WithParameters();
-        _injectMaster.Bind<MoveBackInHistory>().To<IMoveBackInHistory>().WithParameters();
         _injectMaster.Bind<ManagePopUpHistory>().To<IManagePopUpHistory>().WithParameters();
-        _injectMaster.Bind<NewSelectionProcess>().To<INewSelectionProcess>().WithParameters();
         _injectMaster.Bind<PopUpController>().To<IPopUpController>();
-        _injectMaster.Bind<MultiSelectSystem>().To<IMultiSelect>().WithParameters();
         
         //NodeSearch
         _injectMaster.Bind<NodeSearch>().To<INodeSearch>();

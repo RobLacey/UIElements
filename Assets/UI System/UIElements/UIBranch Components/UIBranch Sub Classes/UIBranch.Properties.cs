@@ -34,8 +34,8 @@ public partial class UIBranch : ICloseBranch
     public INode DefaultStartOnThisNode { get; set; }
     public INode LastSelected { get; set; }
     public INode LastHighlighted { get; set; }
-    public INode[] ThisGroupsUiNodes { get; set; } = new INode[0];
-    public void SetThisGroupsNode(INode[] groupsNodes) => ThisGroupsUiNodes = groupsNodes;
+    public INode[] ThisBranchesNodes { get; set; } = new INode[0];
+    public void SetThisGroupsNode(INode[] groupsNodes) => ThisBranchesNodes = groupsNodes;
     public IsActive GetSaveOnExit => _saveExitSelection;
     public List<GroupList> BranchGroupsList => _groupsList;
     public int GroupIndex { get; set; }

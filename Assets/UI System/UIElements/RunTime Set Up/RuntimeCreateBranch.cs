@@ -37,7 +37,7 @@ public class RuntimeCreateBranch
         }
         else
         {
-            newBranch.ThisBranchesGameObject.transform.parent = createParent;
+            newBranch.ThisBranchesGameObject.transform.SetParent(createParent, false);
         }
         
         return newBranch;

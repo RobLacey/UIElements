@@ -5,7 +5,6 @@ using EZ.Service;
 using NaughtyAttributes;
 using UIElements.Input_System;
 using UnityEngine.EventSystems;
-using Debug = UnityEngine.Debug;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(RunTimeSetter))]
@@ -35,6 +34,10 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     private ToggleData _toggleData;
     [SerializeField] 
     private MultiSelectSettings _multiSelectSettings;
+    [SerializeField] 
+    private NodeDisabling _disableSettings;
+    
+    
     [Header("Function Settings", order = 2)] [Space(20, order = 1)]
     [HorizontalLine(1, EColor.Blue , order = 3)]
 
@@ -70,7 +73,6 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     private EventSettings _events;
 
     //Variables
-    private bool _childIsMoving, _setUpFinished;
     private IUiEvents _uiNodeEvents;
     private INodeBase _nodeBase;
     private IDataHub _myDataHub;
@@ -104,8 +106,14 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     public MultiSelectSettings MultiSelectSettings => _multiSelectSettings;
     public IRunTimeSetter MyRunTimeSetter { get; private set; }
     private void SceneChanging(ISceneIsChanging args) => SceneIsChanging = true;
-    public bool IsDisabled => _nodeBase.IsDisabled;
+    private void SaveInMenuOrInGame(IInMenu args)
+    {
+        if(IsNodeDisabled()) return;
+        _nodeBase.InMenuOrInGame();
+    }
 
+    public bool IsNodeDisabled() => _disableSettings.IsDisabled == Disabled.Yes;
+    public bool PassOver() => _disableSettings.PassOver();
     
     //Main
     private void Awake()
@@ -118,6 +126,7 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         SetUpUiFunctions();
         StartNodeFactory();
         _nodeBase.OnAwake();
+        _disableSettings.OnAwake(this);
     }
 
     private void SetUpUiFunctions()
@@ -153,6 +162,7 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         LateStartSetUp();
         
         _nodeBase.OnEnable();
+        _disableSettings.OnEnable();
         
         foreach (var nodeFunctionBase in _activeFunctions)
         {
@@ -160,8 +170,17 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         }
     }
     
-    public void ObserveEvents() => HistoryEvents.Do.Subscribe<ISceneIsChanging>(SceneChanging);
-    public void UnObserveEvents() { }
+    public void ObserveEvents()
+    {
+        HistoryEvents.Do.Subscribe<ISceneIsChanging>(SceneChanging);
+        HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenuOrInGame);
+    }
+
+    public void UnObserveEvents()
+    {
+        HistoryEvents.Do.Unsubscribe<ISceneIsChanging>(SceneChanging);
+        HistoryEvents.Do.Unsubscribe<IInMenu>(SaveInMenuOrInGame);
+    }
 
     private void LateStartSetUp()
     {
@@ -176,14 +195,17 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     private void OnDisable()
     {
         _myDataHub = null;
-        HistoryEvents.Do.Unsubscribe<ISceneIsChanging>(SceneChanging);
+        UnObserveEvents();   
         
         if(SceneIsChanging) return;
         
         if(_isDynamic == IsActive.Yes)
             DynamicBranch.RemoveNodeFromBranch(MyBranch, this);
         
-        _nodeBase?.OnDisable();
+        _nodeBase.OnDisable();
+        _disableSettings.OnDisable();
+        EnableNode();
+        
         foreach (var nodeFunctionBase in _activeFunctions)
         {
             nodeFunctionBase.OnDisable();
@@ -192,7 +214,7 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
 
     private void OnDestroy()
     {
-        _nodeBase?.OnDestroy();
+        _nodeBase.OnDestroy();
         
         foreach (var nodeFunctionBase in _activeFunctions)
         {
@@ -226,43 +248,69 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         _nodeBase.Navigation = _navigation.Instance;
     }
 
-    public void SetNodeAsActive() => _nodeBase.SetNodeAsActive();
+    public void SetNodeAsActive()
+    {
+        if(IsNodeDisabled() && PassOver()) return;
+        _nodeBase.SetNodeAsActive();
+    }
+    
     public void SetAsHotKeyParent(bool setAsActive) => _nodeBase.HotKeyPressed(setAsActive);
 
-    public void DeactivateNode() => _nodeBase.DeactivateNodeByType();
+    public void ExitNodeByType() => _nodeBase.ExitNodeByType();
 
-    public void ClearNode() => _nodeBase.ClearNodeCompletely();
+    public void ClearNode() => _nodeBase.SetNodeAsNotSelected_NoEffects();
 
     // Use To Disable Node from external scripts
-    public void DisableNode() => _nodeBase.DisableNode();
-
-    public void EnableNode() => _nodeBase.EnableNodeAfterBeingDisabled();
-
-    public void ThisNodeIsHighLighted() => _nodeBase.ThisNodeIsHighLighted();
-    
-    public void ThisNodeNotHighLighted() => _nodeBase.ThisNodeNotHighLighted();
-    
-    //Input Interfaces
-    public void OnPointerEnter(PointerEventData eventData) => _nodeBase.OnEnter();
-    public void OnPointerExit(PointerEventData eventData) => _nodeBase.OnExit();
-    public void OnPointerDown(PointerEventData eventData) => _nodeBase.SelectedAction();
-    public void SetGOUIModule(IGOUIModule module) => _nodeBase.SetUpGOUIParent(module);
-
-    public void OnSubmit(BaseEventData eventData)
+    public void DisableNode()
     {
-        if(!AllowKeys) return;
-        _nodeBase.SelectedAction();
+        if(IsNodeDisabled()) return;
+        _disableSettings.IsDisabled = Disabled.Yes;
+        _nodeBase.EnableOrDisableNode(this);
     }
+
+    public void EnableNode()
+    {
+        if(!IsNodeDisabled()) return;
+        _disableSettings.IsDisabled = Disabled.No;
+        _nodeBase.EnableOrDisableNode(this);
+    }
+
+    public void ThisNodeIsHighLighted() => _nodeBase.OnEnteringNode();
+    
+    public void ThisNodeNotHighLighted() => _nodeBase.OnExitingNode();
+
+    public void SetGOUIModule(IGOUIModule module) => _nodeBase.SetUpGOUIParent(module);
 
     public void NavigateToNextMenuItem(AxisEventData eventData)
     {
-        if(!CanStart || !AllowKeys) return;
-        
+        if(!CanStart) return;
         _nodeBase.DoMoveToNextNode(eventData.moveDir);
-
     }
-    public void MenuNavigateToThisNode(MoveDirection moveDirection) => _nodeBase.MenuNavigateToThisNode(moveDirection);
-    
+    public void MenuNavigateToThisNode(MoveDirection moveDirection)
+    {
+        _nodeBase.MenuNavigateToThisNode(moveDirection);
+        if (IsNodeDisabled() && PassOver())
+            _nodeBase.DoMoveToNextNode(moveDirection);
+    }
+
+    //Unity Input Interfaces
+
+    public void OnPointerEnter(PointerEventData eventData) => _nodeBase.OnEnteringNode();
+
+    public void OnPointerExit(PointerEventData eventData) => _nodeBase.OnExitingNode();
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if(IsNodeDisabled()) return;
+        _nodeBase.NodeSelected();
+    }
+
+    public void OnSubmit(BaseEventData eventData)
+    {
+        if(!AllowKeys || IsNodeDisabled()) return;
+        _nodeBase.NodeSelected();
+    }
+
     public void OnPointerUp(PointerEventData eventData) { }
 
 

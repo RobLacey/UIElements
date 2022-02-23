@@ -33,7 +33,7 @@ public partial class HotKeys : IHotKeyPressed, IEZEventDispatcher, IServiceUser,
     private IBranch ActiveBranch => _myDatHub.ActiveBranch;
     public INode ParentNode => _parentNode;
     public IBranch MyBranch => _myBranch;
-    private INode[] ThisGroupsUiNodes => _myBranch.MyParentBranch.ThisGroupsUiNodes;
+    private INode[] ThisGroupsUiNodes => _myBranch.MyParentBranch.ThisBranchesNodes;
 
     //Main
     public void OnEnable()

@@ -19,7 +19,6 @@ public class ManagePopUpHistory : IManagePopUpHistory, IServiceUser
     private readonly IHistoryTrack _historyTracker;
     private readonly IPopUpController _popUpController = EZInject.Class.NoParams<IPopUpController>();
     private Action _noPopUpAction;
-    private UIBranch _popUpToRemove;
     private IDataHub _myDataHub;
 
     //Properties

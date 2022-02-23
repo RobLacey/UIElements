@@ -22,7 +22,7 @@ public interface IDataHub : IMonoAwake, IMonoEnable
     RectTransform MainCanvasRect { get; }
     IBranch[] AllBranches { get; }
     List<GameObject> SelectedGOs { get; }
-    INode Selected { get; }
+    List<INode> SelectedNodes { get; }
     INode Highlighted { get; }
 
 }
@@ -45,7 +45,7 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
     public RectTransform MainCanvasRect { get; }
     public IBranch[] AllBranches => Object.FindObjectsOfType<UIBranch>().ToArray<IBranch>();
     public List<GameObject> SelectedGOs { get; private set; } = new List<GameObject>();
-    public INode Selected { get; private set; }
+    public List<INode> SelectedNodes { get; private set; } = new List<INode>();
     public INode Highlighted { get; private set; }
 
     public void OnAwake() => AddService();
@@ -64,14 +64,11 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
         HistoryEvents.Do.Subscribe<IGameIsPaused>(SetIfGamePaused);
         HistoryEvents.Do.Subscribe<IActiveBranch>(SetActiveBranch);
         HistoryEvents.Do.Subscribe<IHighlightedNode>(SetHighlighted);
-        HistoryEvents.Do.Subscribe<ISelectedNode>(SetSelected);
         PopUpEvents.Do.Subscribe<INoResolvePopUp>(SetNoResolvePopUps);
         PopUpEvents.Do.Subscribe<INoPopUps>(SetNoPopUps);
     }
 
     public void UnObserveEvents() { }
-
-    private void SetSelected(ISelectedNode args) => Selected = args.SelectedNode;
     
     private void SetHighlighted(IHighlightedNode args) => Highlighted = args.Highlighted;
 
@@ -94,18 +91,22 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
     {
         if (args.NodeToUpdate is null)
         {
+            SelectedNodes.Clear();
             SelectedGOs.Clear();
             return;
         }
-        if (SelectedGOs.Contains(args.NodeToUpdate.InGameObject))
+        if (SelectedNodes.Contains((UINode)args.NodeToUpdate))
         {
+            SelectedNodes.Remove((UINode) args.NodeToUpdate);
             SelectedGOs.Remove(args.NodeToUpdate.InGameObject);
         }
         else
         {
+            SelectedNodes.Add((UINode) args.NodeToUpdate);
             if(args.NodeToUpdate.InGameObject.IsNull())return;
             SelectedGOs.Add(args.NodeToUpdate.InGameObject);
         }
     }
+
 
 }

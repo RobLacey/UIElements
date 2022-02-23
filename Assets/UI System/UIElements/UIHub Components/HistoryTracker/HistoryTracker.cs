@@ -9,39 +9,31 @@ using UnityEngine;
 public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStoreNodeHistoryData, 
                               IEZEventDispatcher, IReturnHomeGroupIndex, IServiceUser
 {
-    public HistoryTracker()
-    {
-        HistoryListManagement = EZInject.Class.WithParams<IHistoryManagement>(this);
-        SelectionProcess = EZInject.Class.WithParams<INewSelectionProcess> (this);
-        MoveBackInHistory = EZInject.Class.WithParams<IMoveBackInHistory>(this);
-        PopUpHistory = EZInject.Class.WithParams<IManagePopUpHistory>(this);
-        _multiSelectSystem = EZInject.Class.WithParams<IMultiSelect>(this);
-    }
+    public HistoryTracker() => PopUpHistory = EZInject.Class.WithParams<IManagePopUpHistory>(this);
 
     //Variables
     private readonly List<INode> _history = new List<INode>();
     private INode _lastSelected;
-    private ICancel _cancel;
-    private IMultiSelect _multiSelectSystem;
     private IDataHub _myDataHub;
+    private InputScheme _inputScheme;
 
     //Properties
     private IManagePopUpHistory PopUpHistory { get; }
-    private IMoveBackInHistory MoveBackInHistory { get; }
-    public IHistoryManagement HistoryListManagement { get; }
-    private INewSelectionProcess SelectionProcess { get; }
     public INode NodeToUpdate { get; private set; }
-    public bool NoHistory => _history.Count == 0 && !_multiSelectSystem.MultiSelectActive;
-    public bool IsPaused => _myDataHub.GamePaused;
+    public bool NoHistory => _history.Count == 0;
+    private bool IsPaused => _myDataHub.GamePaused;
     private bool CanStart => _myDataHub.SceneStarted;
     private bool OnHomeScreen => _myDataHub.OnHomeScreen;
-    private bool NoPopUps => _myDataHub.NoPopups;
     private IBranch ActiveBranch => _myDataHub.ActiveBranch;
     public INode TargetNode { get; set; }
-
+    private SelectData SelectData { get; set; }
+    public bool NodeNeededForMultiSelect(INode node)
+    {
+        return SelectData.MultiSelectIsActive & _history.Contains(node) & !_inputScheme.MultiSelectPressed();
+    }
 
     //Events
-    private Action<IReturnToHome> ReturnHome { get; set; }
+    private Action<IReturnToHome> HasReturnedToHomeScreen { get; set; }
     private Action<IReturnHomeGroupIndex> ReturnHomeGroupBranch { get; set; }
     
     //TODO Remove Test Rig
@@ -56,16 +48,21 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStore
     //Main
     public void OnEnable()
     {
+        Debug.Log("Upto : Finish changing over popUpManger to static the look at GOUI methods in here to see if needed");
         UseEZServiceLocator();
         AddService();
         FetchEvents();
         ObserveEvents();
         PopUpHistory.OnEnable();
-        _multiSelectSystem.OnEnable();
+        SelectData = new SelectData(this);
     }
 
     
-    public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
+    public void UseEZServiceLocator()
+    {
+        _myDataHub = EZService.Locator.Get<IDataHub>(this);
+        _inputScheme = EZService.Locator.Get<InputScheme>(this);
+    }
 
     public void AddService() => EZService.Locator.AddNew<IHistoryTrack>(this);
 
@@ -73,7 +70,7 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStore
    
     public void FetchEvents()
     {
-        ReturnHome = HistoryEvents.Do.Fetch<IReturnToHome>();
+        HasReturnedToHomeScreen = HistoryEvents.Do.Fetch<IReturnToHome>();
         ReturnHomeGroupBranch = HistoryEvents.Do.Fetch<IReturnHomeGroupIndex>();
         DoAddANode = HistoryEvents.Do.Fetch<IStoreNodeHistoryData>();
     }
@@ -118,88 +115,89 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStore
 
     private void CheckListsAndRemove(IBranch branchToClose)
     {
-        if (_multiSelectSystem.MultiSelectActive)
+        if (SelectData.MultiSelectIsActive)
         {
-            _multiSelectSystem.RemoveFromMultiSelect(_history, branchToClose.LastSelected);
-            branchToClose.LastSelected.DeactivateNode();
+            SelectData.AddMultiSelectData(branchToClose.LastSelected, _history);
+            MultiSelectSystem.RemoveFromMultiSelectHistory(SelectData);
+            branchToClose.LastSelected.ExitNodeByType();
         }
         else
         {
-            HistoryListManagement.CurrentHistory(_history)
-                                 .ClearGOUIBranchFromHistory(branchToClose.LastSelected);
+            SelectData.AddData(null,branchToClose.LastSelected, _history, IsPaused);
+            HistoryListManagement.ClearGOUIBranchFromHistory(SelectData);
         }
     }
 
     //Main
     private void SetSelected(ISelectedNode newNode)
     {
-        if(newNode.SelectedNode.IsNull() || !CanStart) return;
-        if(newNode.SelectedNode.CanNotStoreNodeInHistory) return;
-        
-        if (IfMultiSelectPressed(newNode)) return;
-       
-        if(_multiSelectSystem.MultiSelectActive)
-        {
-           ClearAllHistory();
-        }        
-        AddNewSelectedNode(newNode);
-    }
+        if(!CanStart) return;
 
-    private bool IfMultiSelectPressed(ISelectedNode newNode)
-    {
-        if (_multiSelectSystem.MultiSelectPressed(_history, newNode.SelectedNode))
+        if (CheckForMultiSelect(newNode))
         {
-            _lastSelected = newNode.SelectedNode;
-            return true;
+            DoMultiSelect(newNode);
+            return;
         }
-        return false;
+       
+        if(SelectData.MultiSelectIsActive)
+        {
+           ClearAllHistory(newNode.SelectedNode);
+        }
+        AddNewNodeToHistory(newNode);
     }
 
-    private void AddNewSelectedNode(ISelectedNode newNode)
+    private bool CheckForMultiSelect(ISelectedNode newNode)
     {
-        _lastSelected = SelectionProcess.NewNode(newNode.SelectedNode)
-                                        .CurrentHistory(_history)
-                                        .LastSelectedNode(_lastSelected)
-                                        .Run();
+        bool MultiSelectAllowed(INode node) => node.MultiSelectSettings.AllowMultiSelect == IsActive.Yes;
+        return _inputScheme.MultiSelectPressed() & MultiSelectAllowed(newNode.SelectedNode);
+    }
+
+    private void DoMultiSelect(ISelectedNode newNode)
+    {
+        SelectData.AddMultiSelectData(newNode.SelectedNode, _history);
+        MultiSelectSystem.MultiSelectPressed(SelectData);
+        _lastSelected = newNode.SelectedNode;
+    }
+
+    private void AddNewNodeToHistory(ISelectedNode newNode)
+    {
+        SelectData.AddData(newNode.SelectedNode, _lastSelected, _history, IsPaused);
+        _lastSelected = NewSelectionProcess.AddNewSelection(SelectData);
     }
 
     private void CloseNodesAfterDisabledNode(IDisabledNode args)
     {
-        HistoryListManagement.CurrentHistory(_history)
-                             .CloseToThisPoint(args.ThisIsTheDisabledNode)
-                             .Run();
+        SelectData.AddData(args.ThisNode, _lastSelected, _history, IsPaused);
+        HistoryListManagement.CloseToThisPointInHistory(SelectData);
     }
     
     public void BackOneLevel()
     {
-        if (_multiSelectSystem.MultiSelectActive)
+        if (SelectData.MultiSelectIsActive)
         {
             _lastSelected = _history.First();
             ClearAllHistory();
         }
         else
         {
-            _lastSelected = MoveBackInHistory.AddHistory(_history)
-                                             .ActiveBranch(ActiveBranch)
-                                             .IsOnHomeScreen(OnHomeScreen)
-                                             .BackOneLevelProcess();
+            if(_history.Count == 0) return;
+            SelectData.AddMoveBackData(_history, ActiveBranch, OnHomeScreen);
+            _lastSelected = MoveBackInHistory.BackOneLevelProcess(SelectData);
         }
     }
 
     private void SwitchToGame(IInMenu args)
     {
         if (!args.InTheMenu && CanStart)
-        {
             BackToHome();
-        }
     }
 
     public void BackToHome()
     {
         if(_history.Count == 0) return;
-        _lastSelected = MoveBackInHistory.AddHistory(_history)
-                                         .ActiveBranch(ActiveBranch)
-                                         .BackToHomeProcess();
+
+        SelectData.AddMoveBackData(_history, ActiveBranch, OnHomeScreen);
+        _lastSelected = MoveBackInHistory.BackToHomeProcess(SelectData);
     }
 
     private void SwitchGroupPressed(ISwitchGroupPressed args)
@@ -214,18 +212,16 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStore
         }
     }
 
-    private void ClearAllHistory()
+    private void ClearAllHistory(INode toSkip = null)
     {
-        _multiSelectSystem.ClearMultiSelect();
-
-        HistoryListManagement.CurrentHistory(_history)
-                             .ClearAllHistory();
+        SelectData.AddData(toSkip, _lastSelected, _history, IsPaused);
+        MultiSelectSystem.ClearMultiSelect(SelectData);
+        HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.SkipOne);
     }
     
     private void SetFromHotkey(IHotKeyPressed args)
     {
         HotKeyReturnsToHomeScreen(args.MyBranch.ScreenType);
-        
         ClearAllHistory();
         _lastSelected = args.ParentNode;
     }
@@ -233,16 +229,14 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStore
     private void HotKeyReturnsToHomeScreen(ScreenType hotKeyScreenType)
     {
         if (hotKeyScreenType != ScreenType.FullScreen && !OnHomeScreen)
-        {
             BackToHomeScreen();
-        }
     }
 
-    public void BackToHomeScreen() => ReturnHome?.Invoke(this);
+    public void BackToHomeScreen() => HasReturnedToHomeScreen?.Invoke(this);
 
     public void MoveToLastBranchInHistory()
     {
-        if (!NoPopUps && !IsPaused)
+        if (!_myDataHub.NoPopups && !IsPaused)
         {
             PopUpHistory.MoveToNextPopUp();
             return;

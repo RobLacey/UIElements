@@ -21,7 +21,7 @@ public class UIAccessories : NodeFunctionBase
     //Properties
     protected override bool CanBeHighlighted() => (_activateWhen & AccessoryEventType.Highlighted) != 0;
     protected override bool CanBePressed() => (_activateWhen & AccessoryEventType.Selected) != 0;
-    protected override bool FunctionNotActive() => _isDisabled || _activateWhen == AccessoryEventType.None;
+    protected override bool FunctionNotActive() => _isDisabled && _passOver || _activateWhen == AccessoryEventType.None;
 
 
     public override void OnAwake()

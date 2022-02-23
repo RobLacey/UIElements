@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
@@ -29,6 +28,10 @@ public class UIColour : NodeFunctionBase
     protected override bool CanBePressed() => (_scheme.ColourSettings & EventType.Pressed) != 0;
     protected override bool CanBeHighlighted() => (_scheme.ColourSettings & EventType.Highlighted) !=0;
     private bool CanBeSelected() => (_scheme.ColourSettings & EventType.Selected) != 0;
+    protected override bool FunctionNotActive()
+    {
+        return _isDisabled && _passOver;
+    }
 
     public override void OnAwake()
     {
@@ -51,6 +54,7 @@ public class UIColour : NodeFunctionBase
     protected override void SavePointerStatus(bool pointerOver)
     {
         if(FunctionNotActive()) return;
+
         
         if (pointerOver)
         {
@@ -64,6 +68,14 @@ public class UIColour : NodeFunctionBase
 
     private void PointerOverSetUp()
     {
+        if (_isDisabled && !_passOver)
+        {
+            _tweenImageToColour = SelectedHighlightColour();
+            _tweenTextToColour = SelectedHighlightColour();
+            DoColourChange(_scheme.TweenTime);
+            return;
+        }
+        
         if ((CanBePressed() || CanBeSelected()) && _isSelected)
         {
             SelectedHighlight();
@@ -108,6 +120,13 @@ public class UIColour : NodeFunctionBase
         }
         else
         {
+            if (_isDisabled)
+            {
+                _tweenImageToColour = _scheme.DisableColour;
+                _tweenTextToColour = _scheme.DisableColour;
+                DoColourChange(_scheme.TweenTime);
+                return;
+            }
             DoNormal();
         }
     }

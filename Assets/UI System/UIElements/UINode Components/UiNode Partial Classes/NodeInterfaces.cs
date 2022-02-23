@@ -1,12 +1,9 @@
-﻿
-using System;
-using System.Collections.Generic;
-using EZ.Inject;
+﻿using EZ.Inject;
 using UIElements.Input_System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public interface INode : IToggles, IParameters
+public interface INode : IToggles, IParameters, IDisableData
 {
     EscapeKey EscapeKeyType { get; }
     void SetAsHotKeyParent(bool setAsActive);
@@ -16,7 +13,7 @@ public interface INode : IToggles, IParameters
     GameObject ReturnGameObject { get; }
     GameObject InGameObject { get; set; }
     void SetNodeAsActive();
-    void DeactivateNode();
+    void ExitNodeByType();
     void ThisNodeIsHighLighted();
     void ThisNodeNotHighLighted();
     IUiEvents UINodeEvents { get; }
@@ -28,12 +25,17 @@ public interface INode : IToggles, IParameters
     void NavigateToNextMenuItem(AxisEventData eventData);
     void MenuNavigateToThisNode(MoveDirection moveDirection);
     void SetGOUIModule(IGOUIModule module);
-    bool IsDisabled { get; }
 }
 
 public interface IToggles
 {
     ToggleData ToggleData { get; }
     bool IsToggleGroup { get; }
+}
+
+public interface IDisableData
+{
+    bool IsNodeDisabled();
+    bool PassOver();
 }
         

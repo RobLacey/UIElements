@@ -176,7 +176,7 @@ public class InteractWithUi : IInteractWithUi, IEZEventUser
     {
         if(_onlyHitInGameObjects && !args.MyBranch.IsInGameBranch()) return;
         
-        var nodes = args.MyBranch.ThisGroupsUiNodes.Cast<UINode>().ToArray();
+        var nodes = args.MyBranch.ThisBranchesNodes.Cast<UINode>().ToArray();
         
         var branchesNeedSort = ProcessBranchAndNodeLists.CheckAndAddNewBranch(args.MyBranch, _activeBranches);
         var needToSort = ProcessBranchAndNodeLists.AddNewNodesToList(nodes, _activeNodes);
@@ -198,7 +198,7 @@ public class InteractWithUi : IInteractWithUi, IEZEventUser
     {
         if (_onlyHitInGameObjects && !branch.IsInGameBranch()) return;
 
-        var list = branch.ThisGroupsUiNodes.Cast<UINode>().ToArray();
+        var list = branch.ThisBranchesNodes.Cast<UINode>().ToArray();
 
         ProcessBranchAndNodeLists.CheckAndRemoveBranch(branch, _activeBranches);
         var needSort = ProcessBranchAndNodeLists.RemoveNodeFromList(list, _activeNodes);

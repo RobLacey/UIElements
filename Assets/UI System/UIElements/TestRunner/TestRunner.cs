@@ -131,9 +131,9 @@ public class TestRunner : MonoBehaviour
     [Button]
     private void RemoveNodeAtRuntime()
     {
-        if(_targetBranch.ThisGroupsUiNodes.Length > 0)
+        if(_targetBranch.ThisBranchesNodes.Length > 0)
         {
-            var last = _targetBranch.ThisGroupsUiNodes.Last();
+            var last = _targetBranch.ThisBranchesNodes.Last();
             Destroy(last.ReturnGameObject);
         }
     }

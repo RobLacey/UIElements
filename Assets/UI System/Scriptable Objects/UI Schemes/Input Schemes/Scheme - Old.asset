@@ -35,7 +35,7 @@ MonoBehaviour:
   _pauseOptionButton: 
   _cancelButton: Cancel
   _selectButton: 
-  _multiSelectButton: 
+  _multiSelectButton: Multi Select
   _upAndDownNavigate: Vertical
   _leftAndRightNavigate: Horizontal
   _posSwitchButton: Switch Positive Branch
@@ -47,7 +47,7 @@ MonoBehaviour:
   _vCursorHorizontal: 
   _vCursorVertical: 
   _hotKey1: HotKey1
-  _hotKey2: 
+  _hotKey2: HotKey2
   _hotKey3: 
   _hotKey4: 
   _hotKey5: 

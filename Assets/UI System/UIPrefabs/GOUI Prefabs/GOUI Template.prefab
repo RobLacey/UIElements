@@ -219,7 +219,9 @@ MonoBehaviour:
   _multiSelectSettings:
     _allowMultiSelect: 0
     _openChildBranch: 1
-    _multiSelectGroup: 0
+    _multiSelectGroup: 1
+  _disableSettings:
+    _passOverIfDisabled: 0
   _enabledFunctions: 195
   _navigation:
     _childBranch: {fileID: 0}
@@ -230,7 +232,6 @@ MonoBehaviour:
     _right: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
-    _overrideAlwaysHighlighted: 1
     _text: {fileID: 0}
     _images:
     - {fileID: 5921039407125897730}
@@ -461,7 +462,6 @@ MonoBehaviour:
   _stayVisible: 1
   _tweenOnHome: 0
   _saveExitSelection: 0
-  _alwaysHighlighted: 1
   _autoClose: 1
   _autoCloseDelay: 0.25
   _escapeKeyFunction: 2

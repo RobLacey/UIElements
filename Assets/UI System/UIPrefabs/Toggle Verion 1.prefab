@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3715774709485418975}
   - component: {fileID: 3715774709485418947}
-  - component: {fileID: 3715774709485418944}
   - component: {fileID: 3715774709485418945}
+  - component: {fileID: 5947886916061972541}
   m_Layer: 5
-  m_Name: Toggle Verion 1 with arrow
+  m_Name: Toggle Verion 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,18 +49,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3715774709485418949}
   m_CullTransparentMesh: 0
---- !u!114 &3715774709485418944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3715774709485418949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 694e8326df0b4a743a1b7bd95696150a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3715774709485418945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,64 +61,89 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isCancelOrBackButton: 0
-  _highlightFirstChoice: 0
-  _preseveSelection: 0
-  _preserveColour: 1
+  _buttonFunction: 0
+  _autoOpen: 1
+  _isDynamic: 1
+  _autoOpenDelay: 0
+  _escapeKeyFunction: 3
+  _toggleData:
+    _toggleGroupId: 0
+    _startAsSelected: 1
+    _tabBranch: {fileID: 0}
+  _multiSelectSettings:
+    _allowMultiSelect: 1
+    _openChildBranch: 1
+    _multiSelectGroup: 0
+  _disableSettings:
+    _disablePassThrough: 1
+  _enabledFunctions: 0
   _navigation:
     _childBranch: {fileID: 0}
-    _setNavigation: 3
-    up: {fileID: 0}
-    down: {fileID: 0}
-    left: {fileID: 0}
-    right: {fileID: 0}
-    _asButtonEvent:
-      m_PersistentCalls:
-        m_Calls: []
-    _asToggleEvent:
-      m_PersistentCalls:
-        m_Calls: []
+    _setKeyNavigation: 5
+    _up: {fileID: 0}
+    _down: {fileID: 0}
+    _left: {fileID: 0}
+    _right: {fileID: 0}
   _colours:
+    _scheme: {fileID: 0}
+    _text: {fileID: 0}
     _images: []
-    _mainText: {fileID: 0}
-    _LerpImageColours: 0
-    _LerpTextColours: 0
-    _crossFadeTime: 0.4
-    _selectedColour: {r: 0.0073928833, g: 0, b: 1, a: 1}
-    _selectedHighlightPerc: 1
-    _highlightedColour: {r: 0.30847597, g: 1, b: 0, a: 1}
-    _highlight: 0
-    _whenSelected: 0
-    _pressFlash: 0
-    _flashColour: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
-    _flashTime: 0.1
   _invertColourCorrection:
-    _titleText: {fileID: 0}
-    toggleCheckMark: {fileID: 0}
-    invertOnHighlight: 0
-    invertOnSelected: 0
-    invertedHighlightColour: {r: 1, g: 1, b: 1, a: 1}
-    invertedSelectedColour: {r: 1, g: 1, b: 1, a: 1}
-  _buttonSize:
-    _ChangeSizeOn: 0
-    _scaledType: 1
-    _scaleChangeBy: 0.05
-    _pressedHoldTime: 0.05
-  _audio:
-    _sound_Highlighted: {fileID: 0}
-    _volume_Highlighted: 0
-    _sound_Select: {fileID: 0}
-    _volume_Select: 0
-    _sound_Cancel: {fileID: 0}
-    _volume_Cancel: 0
-  _accessories:
-    _activationList: []
+    _activateWhen: 0
+    _text: {fileID: 0}
+    _image: {fileID: 0}
+    _invertedColour: {r: 1, g: 1, b: 1, a: 1}
   _swapImageOrText:
-    _mainImage: {fileID: 0}
+    _changeWhen: 0
+    _toggleIsOff: {fileID: 0}
+    _toggleIsOn: {fileID: 0}
     _textToSwap: {fileID: 0}
-    _swapToSprite: {fileID: 0}
-    _swapToText: 
-    _toggleList: []
+    _changeTextToo: 
+  _sizeAndPos:
+    _rectTransforms: {fileID: 0}
+    _scheme: {fileID: 0}
+  _accessories:
+    _activateWhen: 0
+    _accessoriesList: []
+    _outlinesToUse: []
+    _dropShadowsToUse: []
+  _audio:
+    _audioScheme: {fileID: 0}
+  _tooltips:
+    _uiCamera: {fileID: 0}
+    _scheme: {fileID: 0}
+    _listOfTooltips: []
+    _fixedPosition: {fileID: 0}
+  _events:
+    _highlightEvents:
+      _onEnterEvent:
+        m_PersistentCalls:
+          m_Calls: []
+      _onExitEvent:
+        m_PersistentCalls:
+          m_Calls: []
+    _selectClickEvents:
+      _onButtonClickEvent:
+        m_PersistentCalls:
+          m_Calls: []
+      _onDisable:
+        m_PersistentCalls:
+          m_Calls: []
+      _onToggleEvent:
+        m_PersistentCalls:
+          m_Calls: []
+--- !u!114 &5947886916061972541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3715774709485418949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00f12c3acdfb4140bd7b437f898978ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3715774709856537762
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,6 +204,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.90588236, g: 0.90588236, b: 0.90588236, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -268,6 +283,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -342,6 +359,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -415,6 +434,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.90588236, g: 0.90588236, b: 0.90588236, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

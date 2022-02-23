@@ -1,5 +1,6 @@
 ﻿using System;
 using EZ.Service;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UINavigation : NodeFunctionBase
@@ -19,12 +20,12 @@ public class UINavigation : NodeFunctionBase
     private INode _myNode;
     private readonly INavigationSettings _mySettings;
     private InputScheme _inputScheme;
-    private int Index => Array.IndexOf(_myBranch.ThisGroupsUiNodes, _myBranch.LastHighlighted);
+    private int Index => Array.IndexOf(_myBranch.ThisBranchesNodes, _myBranch.LastHighlighted);
 
     //Properties
     private IBranch ChildBranch => _mySettings.ChildBranch;
     private NavigationType SetNavigation => _mySettings.NavType;
-    private int NodeGroupSize => _myBranch.ThisGroupsUiNodes.Length;
+    private int NodeGroupSize => _myBranch.ThisBranchesNodes.Length;
     protected override bool CanBeHighlighted() => false;
     protected override bool CanBePressed() => !(ChildBranch is null);
     protected override void SavePointerStatus(bool pointerOver) { }
@@ -54,7 +55,7 @@ public class UINavigation : NodeFunctionBase
         _inputScheme = null;
     }
 
-    protected override void AxisMoveDirection(MoveDirection moveDirection)
+    public override void AxisMoveDirection(MoveDirection moveDirection)
     {
         base.AxisMoveDirection(moveDirection);
         ProcessMoves(moveDirection);
@@ -127,7 +128,7 @@ public class UINavigation : NodeFunctionBase
 
     private void CheckMoveDirection(Func<int,int> iterateMethod, MoveDirection moveDirection, int index)
     {
-        _myBranch.ThisGroupsUiNodes[iterateMethod.Invoke(index)].MenuNavigateToThisNode(moveDirection);
+        _myBranch.ThisBranchesNodes[iterateMethod.Invoke(index)].MenuNavigateToThisNode(moveDirection);
     }
 
     private protected override void ProcessPress()
