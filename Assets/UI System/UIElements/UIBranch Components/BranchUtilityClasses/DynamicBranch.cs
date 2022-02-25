@@ -23,6 +23,7 @@ public static class DynamicBranch
 
         if (branch.ThisBranchesNodes.Length == 0 && !branch.IsInGameBranch())
         {
+            //TODO remove this from the static branch
             EZService.Locator.LateGet<IHistoryTrack>().ReturnToNextHomeGroup();
             return;
         }

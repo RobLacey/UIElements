@@ -7,17 +7,13 @@ using Object = UnityEngine.Object;
 
 namespace UIElements
 {
-    public interface IGOUISwitcher : IMonoEnable, IMonoStart, IMonoDisable
-    {
-        void UseGOUISwitcher(SwitchInputType switchInputType);
-        int GOUIPlayerCount { get; }
-    }
+    public interface IGOUISwitcher : IMonoEnable, IMonoStart, IMonoDisable, ISwitch { }
     
     public class GOUISwitcher : IGOUISwitcher, IEZEventUser, IServiceUser
     {
         //Properties & Getters / Setters
-        private bool CanSwitch => _myDataHub.SceneStarted && _myDataHub.OnHomeScreen && _playerObjects.Count > 0;
-        public int GOUIPlayerCount => _playerObjects.Count;
+        private bool OneOrMorePlayers => _playerObjects.Count > 0;
+        public bool HasOnlyOneMember => _playerObjects.Count == 1;
 
 
         //Variables
@@ -66,9 +62,9 @@ namespace UIElements
             }
         }
 
-        public void UseGOUISwitcher(SwitchInputType switchInputType)
+        public void DoSwitch(SwitchInputType switchInputType)
         {
-            if(!CanSwitch) return;
+            if(!OneOrMorePlayers) return;
             
             switch (switchInputType)
             {
@@ -103,14 +99,11 @@ namespace UIElements
 
         private void RemovePlayerObject(ICloseBranch args)
         {
-            if(args.ReturnGOUIModule.IsNull()) return;
+            if (!_playerObjects.Contains(args.ReturnGOUIModule)) return;
             
-            if (_playerObjects.Contains(args.ReturnGOUIModule))
-            {
-                _index = 0;
-                _playerObjects.Remove(args.ReturnGOUIModule);
-                MoveToNextObjectOrBranch(args.TargetBranch);
-            }
+            _index = 0;
+            _playerObjects.Remove(args.ReturnGOUIModule);
+            MoveToNextObjectOrBranch(args.TargetBranch);
         }
 
         private void MoveToNextObjectOrBranch(IBranch branchToClose)
@@ -122,11 +115,11 @@ namespace UIElements
                     _playerObjects[_index].SwitchEnter();
                 }
 
-                _historyTrack.GOUIBranchHasClosed(branchToClose);
+                _historyTrack.CheckListsAndRemove(branchToClose);
             }
             else
             {
-                _historyTrack.GOUIBranchHasClosed(branchToClose, true);
+                _historyTrack.MoveToLastBranchInHistory();
             }
         }
     }

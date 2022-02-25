@@ -1,35 +1,78 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using EZ.Service;
+using UIElements;
+using UnityEngine;
 
-public static class BranchGroups
+
+public class BranchGroups: ISwitch, IServiceUser, IMonoEnable
 {
-    private static int groupIndex;
-    private static int index;
-    
-    public static void AddControlBarToGroupList(List<GroupList> groupsList,
-                                                List<IBranch> homeBranches,
-                                                IBranch myBranch)
+    public BranchGroups(IBranch branch)
     {
-        if(myBranch.ScreenType != ScreenType.FullScreen) return;
+        _thisBranch = branch;
+    }
+
+    //Variables
+    private int _index;
+    private IHub _myHub;
+    private readonly IBranch _thisBranch;
+
+    //Properties
+    public bool HasOnlyOneMember => ThisBranchesGroup.Count == 1;
+    private List<GroupList> ThisBranchesGroup => _thisBranch.BranchGroupsList;
+    private List<IBranch> HomeBranches => _myHub.HomeBranches;
+    private bool CanSwitch => ThisBranchesGroup.Count > 0;
+
+    //Main
+    public void OnEnable()
+    {
+        UseEZServiceLocator();
+        SetGroupIndex(_thisBranch.DefaultStartOnThisNode);
+    }
+    
+    public void UseEZServiceLocator() => _myHub = EZService.Locator.Get<IHub>(this);
+
+    public void SetGroupIndex(INode defaultStartPosition)
+    {
+        if(_thisBranch.ScreenType != ScreenType.FullScreen) return;
         
-        bool hasControlBar = homeBranches.Any(homeBranch => homeBranch.IsControlBar());
+        _index = 0;
+
+        if(ThisBranchesGroup.Count == 0) return;
+        
+        foreach (var branchGroup in ThisBranchesGroup)
+        {
+            if (branchGroup.GroupNodes.Any(node => ReferenceEquals(node, defaultStartPosition)))
+            {
+                return;
+            }
+            _index++;
+        }
+    }
+
+    public void AddControlBarToBranchGroup()
+    {
+        if(_thisBranch.ScreenType != ScreenType.FullScreen) return;
+        
+        bool hasControlBar = HomeBranches.Any(homeBranch => homeBranch.IsControlBar());
         if(!hasControlBar) return;
         
-        AddExistingNodesToGroupList(groupsList, myBranch);
-        AddControlBarAsNewGroup(groupsList, homeBranches);
+        ThisBranchesGroupIfEmpty();
+        AddControlBarAsNewGroup();
     }
 
-    private static void AddExistingNodesToGroupList(List<GroupList> groupsList, IBranch myBranch)
+    private void ThisBranchesGroupIfEmpty()
     {
-        if (groupsList.Count == 0)
-            groupsList.Add(GroupList(myBranch));
+        if (ThisBranchesGroup.Count == 0)
+            ThisBranchesGroup.Add(GroupList(_thisBranch));
     }
 
-    private static void AddControlBarAsNewGroup(List<GroupList> groupsList, List<IBranch> homeBranches)
+    private void AddControlBarAsNewGroup()
     {
-        foreach (var homeBranch in homeBranches.Where(homeBranch => homeBranch.IsControlBar()))
+        foreach (var homeBranch in HomeBranches.Where(homeBranch => homeBranch.IsControlBar()))
         {
-            groupsList.Add(GroupList(homeBranch));
+            ThisBranchesGroup.Add(GroupList(homeBranch));
             return;
         }
     }
@@ -45,36 +88,31 @@ public static class BranchGroups
         return newGroup;
     }
 
-    public static int SetGroupIndex(INode defaultStartPosition, List<GroupList> branchGroupsList)
-    {
-        groupIndex = 0;
-        index = 0;
-        foreach (var branchGroup in branchGroupsList)
-        {
-            if (branchGroup.GroupNodes.Any(node => ReferenceEquals(node, defaultStartPosition)))
-            {
-                groupIndex = index;
-                return groupIndex;
-            }
-            index++;
-        }
-        return groupIndex;
-    }
 
-    public static int SwitchBranchGroup(List<GroupList> groupsList, int passedIndex, SwitchInputType switchInputType)
+    public void DoSwitch(SwitchInputType switchInputType)
     {
-        int newIndex = passedIndex;
+        if(_thisBranch.ScreenType != ScreenType.FullScreen) return;
+
+        Debug.Log("Switch : " + switchInputType);
         
-        if (switchInputType == SwitchInputType.Positive)
+        if(!CanSwitch) return;
+        
+        switch (switchInputType)
         {
-            newIndex = passedIndex.PositiveIterate(groupsList.Count);
+            case SwitchInputType.Positive:
+                _index = _index.PositiveIterate(ThisBranchesGroup.Count);
+                break;
+            case SwitchInputType.Negative:
+                _index = _index.NegativeIterate(ThisBranchesGroup.Count);
+                break;
+            case SwitchInputType.Activate:
+                Debug.Log("Here");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(switchInputType), switchInputType, null);
         }
-        if (switchInputType == SwitchInputType.Negative)
-        {
-           newIndex = passedIndex.NegativeIterate(groupsList.Count);
-        }
-
-        groupsList[newIndex].StartNode.SetNodeAsActive();
-        return newIndex;
+        Debug.Log(ThisBranchesGroup[_index].StartNode);
+        ThisBranchesGroup[_index].StartNode.SetNodeAsActive();
     }
+
 }

@@ -125,12 +125,7 @@ public abstract class InputScheme : ScriptableObject, IIsAService
         }
     }
 
-    public ControlMethod ControlType
-    {
-        get => _mainControlType;
-        set => _mainControlType = value;
-    }
-
+    public ControlMethod ControlType => _mainControlType;
     public PauseOptionsOnEscape PauseOptions => _pauseOptionsOnEscape;
     public EscapeKey GlobalCancelAction => SetGlobalEscapeFunction();
     public InGameSystem InGameMenuSystem => _inGameMenuSystem;
@@ -145,6 +140,7 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     public abstract bool  LeftMouseClicked { get; }
     public abstract bool  RightMouseClicked { get; }
     public abstract bool CanSwitchToKeysOrController(bool allowKeys);
+    public abstract bool SwitchKeyPressed();
     public abstract bool MenuNavigationPressed(bool allowKeys);
     public abstract AxisEventData DoMenuNavigation();
     public abstract bool CanSwitchToMouseOrVC(bool allowKeys);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IResolvePopUpBranch : IBranchBase { }
 
-public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch
+public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch, IRemoveResolvePopUp
 {
     public ResolvePopUp(IBranch branch) : base(branch) { }   
 
@@ -17,12 +17,22 @@ public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch
 
     //Events
     private Action<IAddResolvePopUp> AddResolvePopUp { get; set; }
+    private Action<IRemoveResolvePopUp> RemoveResolvePopUps { get; set; }
+
 
     //Main
+
     public override void FetchEvents()
     {
         base.FetchEvents();
         AddResolvePopUp = PopUpEvents.Do.Fetch<IAddResolvePopUp>();
+        RemoveResolvePopUps = PopUpEvents.Do.Fetch<IRemoveResolvePopUp>();
+    }
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+        AddResolvePopUp?.Invoke(this);
     }
 
     public override void OnDisable()
@@ -47,8 +57,7 @@ public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch
         {
             AdjustCanvasOrderAdded();
         }
-
-        AddResolvePopUp?.Invoke(this);
+        
         _screenData.StoreClearScreenData(AllBranches, _myBranch, BlockRaycast.Yes);
         SetCanvas(ActiveCanvas.Yes);
         CanGoToFullscreen();
@@ -71,6 +80,7 @@ public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch
     public override void EndOfBranchExit()
     {
         base.EndOfBranchExit();
+        RemoveResolvePopUps?.Invoke(this);
         ActivateStoredPosition();
     }
 

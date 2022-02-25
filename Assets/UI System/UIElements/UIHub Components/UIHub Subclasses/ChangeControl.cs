@@ -19,8 +19,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
     private ControlMethod _controlMethod;
     private readonly bool _startInGame;
     private InputScheme _inputScheme;
-    private bool _fromSwitchPress;
-    private IHistoryTrack _myHistoryTracker;
     private IDataHub _myDataHub;
 
     //Properties
@@ -45,7 +43,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
     public void UseEZServiceLocator()
     {
         _inputScheme = EZService.Locator.Get<InputScheme>(this);
-        _myHistoryTracker = EZService.Locator.Get<IHistoryTrack>(this);
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
     }
 
@@ -59,7 +56,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
     public void ObserveEvents()
     {
         InputEvents.Do.Subscribe<IChangeControlsPressed>(ChangeControlType);
-        InputEvents.Do.Subscribe<IChangeControlsSwitchPressed>(ChangeControlSwitch);
         HistoryEvents.Do.Subscribe<IOnStart>(StartGame);
     }
     
@@ -68,7 +64,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
     public void UnObserveEvents()
     {
         InputEvents.Do.Unsubscribe<IChangeControlsPressed>(ChangeControlType);
-        InputEvents.Do.Unsubscribe<IChangeControlsSwitchPressed>(ChangeControlSwitch);
         HistoryEvents.Do.Unsubscribe<IOnStart>(StartGame);
     }
 
@@ -146,12 +141,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         }
     }
 
-    private void ChangeControlSwitch(IChangeControlsSwitchPressed args)
-    {
-        _fromSwitchPress = true;
-        ChangeControlType(args);
-    }
-
     private void ChangeControlType(IChangeControlsPressed args)
     {
         if (_inputScheme.CanSwitchToMouseOrVC(CanAllowKeys))
@@ -175,17 +164,15 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
 
     private void ActivateMouseOrVirtualCursor()
     {
-        ShowMouseCursor();
+        Cursor.visible = !UsingVirtualCursor;
         
         if (!CanAllowKeys) return;
         CanAllowKeys = false;
-        _fromSwitchPress = false;
         SetAllowKeys();
+        
         if(!SceneStarted) return;
         _myDataHub.Highlighted.ThisNodeNotHighLighted();
     }
-
-    private void ShowMouseCursor() => Cursor.visible = !UsingVirtualCursor;
 
     private void ActivateKeysOrControl()
     {
@@ -199,21 +186,12 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         SetAllowKeys();
 
         if(!SceneStarted) return;
-        SetNextHighlightedForKeys();
+        _myDataHub.ActiveBranch.LastHighlighted.SetNodeAsActive();
     }
 
     private void SetAllowKeys()
     {
         _myDataHub.SetAllowKeys(CanAllowKeys);
         AllowKeys?.Invoke(this);
-    }
-
-    private void SetNextHighlightedForKeys()
-    {
-        if(!_fromSwitchPress)
-        {
-           _myHistoryTracker.MoveToLastBranchInHistory();
-        }
-        _fromSwitchPress = false;
     }
 }

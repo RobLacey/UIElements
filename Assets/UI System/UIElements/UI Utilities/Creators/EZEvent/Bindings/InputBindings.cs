@@ -6,7 +6,6 @@ public class InputBindings : EZEventBindingsBase
     {
         //Input
         AutoRemove().CreateEvent<IPausePressed>();
-        AutoRemove().CreateEvent<ISwitchGroupPressed>();
         AutoRemove().CreateEvent<IHotKeyPressed>();
         AutoRemove().CreateEvent<IMenuGameSwitchingPressed>();
         AutoRemove().CreateEvent<ICancelPressed>();
@@ -14,15 +13,12 @@ public class InputBindings : EZEventBindingsBase
         //ChangeControl
         AutoRemove().CreateEvent<IAllowKeys>();
         AutoRemove().CreateEvent<IChangeControlsPressed>();
-        AutoRemove().CreateEvent<IChangeControlsSwitchPressed>();
         AutoRemove().CreateEvent<IVCSetUpOnStart>();
         AutoRemove().CreateEvent<IVcChangeControlSetUp>();
     }
 }
 
 public interface IPausePressed { } // This one is test
-
-public interface ISwitchGroupPressed  { }
 
 public interface IHotKeyPressed
 {
@@ -38,7 +34,6 @@ public interface IAllowKeys // This one is test
 }
 
 public interface IChangeControlsPressed { }
-public interface IChangeControlsSwitchPressed : IChangeControlsPressed { }
 
 public interface IVCSetUpOnStart
 {

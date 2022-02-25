@@ -62,10 +62,6 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<Punch>().To<IPunch>().WithParameters();
         _injectMaster.Bind<Shake>().To<IShake>().WithParameters();
         
-        //HistoryTrackerClasses
-        _injectMaster.Bind<ManagePopUpHistory>().To<IManagePopUpHistory>().WithParameters();
-        _injectMaster.Bind<PopUpController>().To<IPopUpController>();
-        
         //NodeSearch
         _injectMaster.Bind<NodeSearch>().To<INodeSearch>();
         

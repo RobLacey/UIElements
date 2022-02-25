@@ -95,16 +95,6 @@ public static class HistoryListManagement
         return true;
     }
 
-    public static void ClearGOUIBranchFromHistory(SelectData data)
-    {
-        RemoveFromHistoryData(data, data.LastSelected);
-
-        if(data.LastSelected.HasChildBranch.IsNotNull())
-            data.LastSelected.HasChildBranch.StartBranchExitProcess(OutTweenType.Cancel);
-
-        data.LastSelected.ExitNodeByType();
-    }
-
     private static void RemoveFromHistoryData(SelectData data, INode currentNode)
     {
         data.HistoryTracker.UpdateHistoryData(currentNode);

@@ -9,16 +9,13 @@ public class CancelOrBackButton : NodeBase, ICancelButtonActivated, ICancelOrBac
     public CancelOrBackButton(INode node) : base(node)
     {
         MyBranch = node.MyBranch;
-        _isPopUp = MyBranch.IsAPopUpBranch();
         EscapeKeyType = node.EscapeKeyType;
     }
 
-    private readonly bool _isPopUp;
     public EscapeKey EscapeKeyType { get; }
 
     //Events
     private Action<ICancelButtonActivated> CancelButtonActive { get; set; }
-    private Action<ICancelPopUp> CancelPopUp { get; set; }
     private Action<ICancelHoverOver> CancelHoverOver { get; set; }
 
     //Main
@@ -26,7 +23,6 @@ public class CancelOrBackButton : NodeBase, ICancelButtonActivated, ICancelOrBac
     {
         base.FetchEvents();
         CancelButtonActive = CancelEvents.Do.Fetch<ICancelButtonActivated>();
-        CancelPopUp= CancelEvents.Do.Fetch<ICancelPopUp>();
         CancelHoverOver= CancelEvents.Do.Fetch<ICancelHoverOver>();
     }
 
@@ -35,10 +31,6 @@ public class CancelOrBackButton : NodeBase, ICancelButtonActivated, ICancelOrBac
         if (CloseOnExit())
         {
             CancelHoverOver?.Invoke(this);
-        }
-        else if (_isPopUp)
-        {
-            CancelPopUp?.Invoke(this);
         }
         else
         {

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using EZ.Service;
-using UnityEngine;
+﻿using System.Linq;
 
 namespace UIElements.Input_System
 {
@@ -41,7 +38,6 @@ namespace UIElements.Input_System
         
         private static void AddToMultiSelect(SelectData data)
         {
-            data.SetCurrentGroup(data.NewNode.MultiSelectSettings.MultiSelectGroup);
             data.History.Add(data.NewNode);
             data.HistoryTracker.UpdateHistoryData(data.NewNode);
             data.MultiSelectOn();
@@ -49,17 +45,12 @@ namespace UIElements.Input_System
 
         public static void RemoveFromMultiSelectHistory(SelectData data)
         {
-            HistoryListManagement.CloseThisLevel(data, data.NewNode);
             if (data.History.Count == 0)
             {
                 ClearMultiSelect(data);
             }
         }
 
-        public static void ClearMultiSelect(SelectData selectData)
-        {
-            selectData.MultiSelectOff();
-            selectData.SetCurrentGroup(MultiSelectGroup.None);
-        }
+        public static void ClearMultiSelect(SelectData selectData) => selectData.MultiSelectOff();
     }
 }

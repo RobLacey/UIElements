@@ -6,19 +6,14 @@ public class CancelBindings : EZEventBindingsBase
     {
         //Cancel
         AutoRemove().CreateEvent<ICancelButtonActivated>();
-        AutoRemove().CreateEvent<ICancelPopUp>();
         AutoRemove().CreateEvent<ICancelHoverOver>();
     }
 }
 
-public interface ICancelButtonActivated: ICancelPopUp
+public interface ICancelButtonActivated
 {
     EscapeKey EscapeKeyType { get; }
 } 
-public interface ICancelPopUp
-{
-    IBranch MyBranch { get; }
-}
 
 public interface ICancelHoverOver
 {

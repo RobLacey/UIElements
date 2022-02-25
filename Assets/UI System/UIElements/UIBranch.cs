@@ -17,7 +17,7 @@ using UnityEngine.EventSystems;
 
 
 public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBranch, IEZEventDispatcher,
-                                IPointerEnterHandler, IPointerExitHandler, IServiceUser, ICloseBranch
+                                IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Branch Main Settings")] [HorizontalLine(1f, EColor.Blue, order = 1)]
     [SerializeField]
@@ -116,7 +116,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     private bool _tweenOnChange = true, _canActivateBranch = true;
     private bool _sceneIsChanging;
     private IBranchBase _branchTypeBaseClass;
-    private IHub _myHub;
+    public BranchGroups BranchGroupsHandler { get; private set; }
 
     //Delegates & Events
     private Action TweenFinishedCallBack { get; set; }
@@ -165,6 +165,8 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         {
             FindObjectOfType<UIHub>().AddHomeScreenBranch(this);
         }
+
+        BranchGroupsHandler = new BranchGroups(this);
     }
 
     private void CheckForValidSetUp()
@@ -177,12 +179,12 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
 
     public void OnEnable()
     {
-        UseEZServiceLocator();
         FetchEvents();
         ObserveEvents();
         SetStartPositions();
         _branchTypeBaseClass.OnEnable();
         AutoOpenCloseClass.OnEnable();
+        BranchGroupsHandler.OnEnable();
     }
 
     private void SetStartPositions()
@@ -190,8 +192,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         SetDefaultStartPosition();
         LastHighlighted = DefaultStartOnThisNode;
         LastSelected = DefaultStartOnThisNode;
-        if(_groupsList.Count <= 1) return;
-        GroupIndex = BranchGroups.SetGroupIndex(DefaultStartOnThisNode, _groupsList);
     }
 
     private void SetDefaultStartPosition()
@@ -210,8 +210,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
             DefaultStartOnThisNode = (UINode) ThisBranchesNodes.First();
         }
     }
-
-    public void UseEZServiceLocator() => _myHub = EZService.Locator.Get<IHub>(this);
 
     public void FetchEvents()
     {
@@ -243,7 +241,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         if(_sceneIsChanging) return;
         _branchTypeBaseClass.OnDisable();
         SetAsActiveBranch = null;
-        _myHub = null;
     }
 
     public void OnDestroy()
@@ -253,7 +250,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         UnObserveEvents();
         _branchTypeBaseClass.OnDestroy();
         SetAsActiveBranch = null;
-        _myHub = null;
     }
 
     private void Start()
@@ -262,7 +258,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         CheckForControlBar();
     }
 
-    private void CheckForControlBar() => BranchGroups.AddControlBarToGroupList(_groupsList, _myHub.HomeBranches, this);
+    private void CheckForControlBar() => BranchGroupsHandler.AddControlBarToBranchGroup();
 
     public void StartPopUp_RunTimeCall(bool fromPool)
     {
@@ -313,8 +309,8 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         
         if (_canActivateBranch)
             LastHighlighted.SetNodeAsActive();
-
-        GroupIndex = BranchGroups.SetGroupIndex(LastHighlighted, _groupsList);
+        
+        BranchGroupsHandler.SetGroupIndex(LastHighlighted);
     }
 
     public void StartBranchExitProcess(OutTweenType outTweenType, Action endOfTweenCallback = null)

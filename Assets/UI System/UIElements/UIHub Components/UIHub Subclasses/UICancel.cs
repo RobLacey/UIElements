@@ -59,25 +59,15 @@ public class UICancel : ICancel, IServiceUser, IEZEventUser, IMonoEnable
 
     private void ProcessCancelType(EscapeKey escapeKey)
     {
-        if (escapeKey == EscapeKey.GlobalSetting) escapeKey = GlobalEscapeSetting;
-        
         switch (escapeKey)
         {
-            case EscapeKey.BackOneLevel:
-                StartCancelProcess(BackOneLevel);
-                break;
-            case EscapeKey.BackToHome:
-                StartCancelProcess(BackToHome);
-                break;
             case EscapeKey.None:
-                break;
+                return;
             case EscapeKey.GlobalSetting:
+                escapeKey = GlobalEscapeSetting;
                 break;
         }
-    }
 
-    private void StartCancelProcess(Action endOfCancelAction) 
-        => _uiHistoryTrack.CheckForPopUpsWhenCancelPressed(endOfCancelAction);
-    private void BackOneLevel() => _uiHistoryTrack.BackOneLevel();
-    private void BackToHome() => _uiHistoryTrack.BackToHome();
+        _uiHistoryTrack.CancelHasBeenPressed(escapeKey);
+    }
 }

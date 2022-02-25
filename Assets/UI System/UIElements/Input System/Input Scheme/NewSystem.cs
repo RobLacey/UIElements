@@ -10,6 +10,11 @@ public class NewSystem : InputScheme
     public override bool LeftMouseClicked { get; } = false;
     public override bool RightMouseClicked { get; } = false;
 
+    public override bool SwitchKeyPressed()
+    {
+        return false;
+    }
+
     public override bool MenuNavigationPressed(bool allowKeys)
     {
         return false;

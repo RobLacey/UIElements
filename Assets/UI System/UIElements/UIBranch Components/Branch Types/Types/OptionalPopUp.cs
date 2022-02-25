@@ -4,7 +4,8 @@ using UnityEngine;
 
 public interface IOptionalPopUpBranch : IBranchBase { } 
 
-public class OptionalPopUpPopUp : BranchBase, IClearOptionalPopUp, IAddOptionalPopUp, IOptionalPopUpBranch
+public class OptionalPopUpPopUp : BranchBase, IAddOptionalPopUp, IOptionalPopUpBranch,
+                                  IRemoveOptionalPopUp
 {
     public OptionalPopUpPopUp(IBranch branch) : base(branch) { }
 
@@ -17,10 +18,9 @@ public class OptionalPopUpPopUp : BranchBase, IClearOptionalPopUp, IAddOptionalP
     
     //Events
     private Action<IAddOptionalPopUp> AddOptionalPopUp { get; set; }
-    private Action<IClearOptionalPopUp> ClearOptionalPopUp { get; set; }
+    private Action<IRemoveOptionalPopUp> RemoveOptionalPopUp { get; set; }
 
     //Main
-
     public override void OnEnable()
     {
         base.OnEnable();
@@ -30,17 +30,14 @@ public class OptionalPopUpPopUp : BranchBase, IClearOptionalPopUp, IAddOptionalP
     public override void OnDisable()
     {
         base.OnDisable();
-        SetCanvas(ActiveCanvas.No);
-        SetBlockRaycast(BlockRaycast.No);
-        ClearOptionalPopUp?.Invoke(this);
-        AdjustCanvasOrderRemoved();
+         AdjustCanvasOrderRemoved();
     }
 
     public override void FetchEvents()
     {
         base.FetchEvents();
         AddOptionalPopUp = PopUpEvents.Do.Fetch<IAddOptionalPopUp>();
-        ClearOptionalPopUp = PopUpEvents.Do.Fetch<IClearOptionalPopUp>();
+        RemoveOptionalPopUp = PopUpEvents.Do.Fetch<IRemoveOptionalPopUp>();
     }
 
     protected override void SaveIfOnHomeScreen(IOnHomeScreen args)
@@ -92,6 +89,13 @@ public class OptionalPopUpPopUp : BranchBase, IClearOptionalPopUp, IAddOptionalP
         SetCanvas(ActiveCanvas.Yes);
         _restoreOnHome = false;
     }
+    
+    public override void EndOfBranchExit()
+    {
+        base.EndOfBranchExit();
+        RemoveOptionalPopUp?.Invoke(this);
+        AdjustCanvasOrderRemoved();
+    }
 
     private void IfActiveResolvePopUps()
     {
@@ -115,7 +119,7 @@ public class OptionalPopUpPopUp : BranchBase, IClearOptionalPopUp, IAddOptionalP
         }
         else
         {
-            ClearOptionalPopUp.Invoke(this);
+            RemoveOptionalPopUp?.Invoke(this);
             _canvasOrderCalculator.ResetCanvasOrder();
         }
     }

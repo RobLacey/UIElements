@@ -37,8 +37,8 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     GameObject ThisBranchesGameObject { get; }
     IsActive ReturnOnlyAllowOnHomeScreen { get; }
     List<GroupList> BranchGroupsList { get; }
-    int GroupIndex { get; set; }
     GOUIModule ReturnGOUIModule { get; }
+    BranchGroups BranchGroupsHandler { get; }
 
 
     IsActive GetStayOn();

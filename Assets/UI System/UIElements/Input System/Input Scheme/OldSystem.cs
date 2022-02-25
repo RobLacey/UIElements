@@ -95,11 +95,12 @@ public class OldSystem : InputScheme
         {
             if (VCSwitchTo()) return true;
         }
+        
         return NavigationKeyPressed() || SwitchKeyPressed() && !allowKeys;
     }
 
     //TODO ADD to parent class
-    private bool SwitchKeyPressed() => PressedNegativeSwitch() || PressedPositiveSwitch() 
+    public override bool SwitchKeyPressed() => PressedNegativeSwitch() || PressedPositiveSwitch() 
                                                                || PressedNegativeGOUISwitch() 
                                                                || PressedPositiveGOUISwitch();
 

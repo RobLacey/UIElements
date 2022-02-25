@@ -132,7 +132,6 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     public override void ObserveEvents()
     {
         base.ObserveEvents();
-        InputEvents.Do.Subscribe<ISwitchGroupPressed>(CloseTooltipImmediately);
         BranchEvent.Do.Subscribe<IClearScreen>(CloseTooltipImmediately);
         InputEvents.Do.Subscribe<IHotKeyPressed>(CloseTooltipImmediately);
     }
@@ -140,7 +139,6 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     public override void UnObserveEvents()
     {
         base.UnObserveEvents();
-        InputEvents.Do.Unsubscribe<ISwitchGroupPressed>(CloseTooltipImmediately);
         BranchEvent.Do.Unsubscribe<IClearScreen>(CloseTooltipImmediately);
         InputEvents.Do.Unsubscribe<IHotKeyPressed>(CloseTooltipImmediately);
     }
@@ -202,7 +200,6 @@ public class UITooltip : NodeFunctionBase, IToolTipData
         _pointerOver = pointerOver;
     }
 
-    private void CloseTooltipImmediately(ISwitchGroupPressed args) => ImmediateClose();
     private void CloseTooltipImmediately(IClearScreen args) => ImmediateClose();
     private void CloseTooltipImmediately(IHotKeyPressed args) => ImmediateClose();
 

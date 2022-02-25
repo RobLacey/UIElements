@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using EZ.Inject;
 using EZ.Service;
 
 public interface IHistoryTrack : IParameters, IIsAService
 {
+    IDataHub MyDataHub { get; }
+    List<INode> History { get; }
     void OnEnable();
-    bool NoHistory { get; }
     bool NodeNeededForMultiSelect(INode node);
-    void GOUIBranchHasClosed(IBranch branchToClose, bool noGOUILeft = false);
+    void CheckListsAndRemove(IBranch branchToClose);
     void ReturnToNextHomeGroup();
-    void BackToHome();
-    void BackOneLevel();
+    void SwitchGroupPressed();
     void MoveToLastBranchInHistory();
-    void CheckForPopUpsWhenCancelPressed(Action endOfCancelAction);
+    void CancelHasBeenPressed(EscapeKey endOfCancelAction);
     void UpdateHistoryData(INode node);
     void BackToHomeScreen();
 }

@@ -2,11 +2,18 @@
 using EZ.Events;
 using EZ.Service;
 using UIElements;
+using UnityEngine;
 
-public interface IHomeGroup: IMonoEnable, IMonoDisable
+public interface IHomeGroup: IMonoEnable, IMonoDisable, ISwitch
 {
     void SetUpHomeGroup();
-    void SwitchHomeGroups(SwitchInputType switchInputType);
+}
+
+public interface ISwitch
+{
+    void DoSwitch(SwitchInputType switchInputType);
+    bool HasOnlyOneMember { get; }
+
 }
 
 /// <summary>
@@ -25,6 +32,7 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
     //Properties and Getters / Setters
     private IBranch[] HomeGroup => _myUIHub.HomeBranches.ToArray();
     private bool GameIsPaused => _myDataHub.GamePaused;
+    public bool HasOnlyOneMember => HomeGroup.Length == 1;
 
     //Main
     public void OnEnable()
@@ -73,7 +81,7 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
         args.TargetNode = HomeGroup[_index].LastHighlighted;
     }
 
-    public void SwitchHomeGroups(SwitchInputType switchInputType)
+    public void DoSwitch(SwitchInputType switchInputType)
     {
         if(HomeGroup.Length <=1) return;
         
@@ -86,7 +94,9 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
                 _index = _index.NegativeIterate(HomeGroup.Length);
                 break;
             case SwitchInputType.Activate:
-                break;
+                HomeGroup[_index].MoveToThisBranch();
+                _lastActiveHomeBranch = HomeGroup[_index];
+                return;
         }
         
         _lastActiveHomeBranch = HomeGroup[_index];

@@ -131,7 +131,6 @@ namespace UIElements
             HistoryEvents.Do.Subscribe<IOnStart>(CanStart);
             HistoryEvents.Do.Subscribe<IHighlightedNode>(ClearNodeWhenLeftOnWhenControlsChange);
             HistoryEvents.Do.Subscribe<ISelectedNode>(ChildIsOpen);
-            InputEvents.Do.Subscribe<IAllowKeys>(SetAllowKeys);
             GOUIEvents.Do.Subscribe<ICloseThisGOUIModule>(CloseAsOtherBranchSelectedOrCancelled);
         }
 
@@ -141,7 +140,6 @@ namespace UIElements
             HistoryEvents.Do.Unsubscribe<IOnStart>(CanStart);
             HistoryEvents.Do.Unsubscribe<IHighlightedNode>(ClearNodeWhenLeftOnWhenControlsChange);
             HistoryEvents.Do.Unsubscribe<ISelectedNode>(ChildIsOpen);
-            InputEvents.Do.Unsubscribe<IAllowKeys>(SetAllowKeys);
             GOUIEvents.Do.Unsubscribe<ICloseThisGOUIModule>(CloseAsOtherBranchSelectedOrCancelled);
         }
 
@@ -168,14 +166,7 @@ namespace UIElements
             _activateGOUI?.Invoke(false);
         }
 
-        private void OnDestroy()
-        {
-            UnObserveEvents();
-            _checkVisibility.OnDestroy();
-            _myGOUIBranch.OnDestroy();
-            if(SceneChanging) return;
-            Destroy(_myGOUIBranch.ThisBranchesGameObject);
-        }
+        private void OnDestroy() => _checkVisibility.OnDestroy();
 
         private void Start()
         {
@@ -202,15 +193,6 @@ namespace UIElements
                 _myGOUIBranch.MoveToThisBranch();
                 PointerOver = false;
             }
-        }
-
-        private void SetAllowKeys(IAllowKeys args)
-        {
-            if(!AllowKeys && _active)
-                ExitGOUI();
-            
-            if (AllowKeys && _active)
-                PointerOver = true;
         }
 
         private void ChildIsOpen(ISelectedNode args)
@@ -291,7 +273,7 @@ namespace UIElements
         private void StartInGameUi()
         {
             if(CanNotDoAction || _active) return;
-            
+
             _active = true;
             StartBranch?.Invoke(this);
             _myGOUIBranch.MoveToThisBranch();
@@ -301,6 +283,7 @@ namespace UIElements
         private void ExitInGameUi()
         {
             if (CanNotDoAction || !_active) return;
+            
             _myGOUIBranch.StartBranchExitProcess(OutTweenType.Cancel);
             _active = false;
             _checkVisibility.StopOffScreenMarker();

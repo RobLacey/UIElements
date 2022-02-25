@@ -6,12 +6,13 @@ using UIElements;
 
 public interface IMenuAndGameSwitching : IEZEventUser, IMonoEnable, IMonoStart, IMonoDisable { }
 
+
 public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDispatcher, IServiceUser
 {
     //Variables
-    private bool _noPopUps = true;
     private bool _wasInGame;
     private InputScheme _inputScheme;
+    private IDataHub _myDataHub;
 
     //Events
     private Action<IInMenu> IsInMenu { get; set; }
@@ -22,8 +23,8 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
 
     private void SaveNoPopUps(INoPopUps args)
     {
-        _noPopUps = args.NoActivePopUps;
-        if (!InTheMenu && !_noPopUps) _wasInGame = true;
+        //TODO Make Sure this all works still as withe the whole class
+        if (!InTheMenu && !_myDataHub.NoPopups) _wasInGame = true;
          PopUpEventHandler();
     }
 
@@ -34,7 +35,11 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
         ObserveEvents();
     }
     
-    public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
+    public void UseEZServiceLocator()
+    {
+        _inputScheme = EZService.Locator.Get<InputScheme>(this);
+        _myDataHub = EZService.Locator.Get<IDataHub>(this);
+    }
 
     public void FetchEvents() => IsInMenu = HistoryEvents.Do.Fetch<IInMenu>();
 
@@ -64,18 +69,18 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
 
     private void CheckForActivation(IMenuGameSwitchingPressed arg)
     {
-        if (!_noPopUps) return;
+        if (!_myDataHub.NoPopups) return;
         SwitchBetweenGameAndMenu();
     }
     
     private void PopUpEventHandler()
     {
-        if (!_noPopUps && !InTheMenu)
+        if (!_myDataHub.NoPopups && !InTheMenu)
         {
             SwitchBetweenGameAndMenu();
         }
         
-        if (_noPopUps && _wasInGame)
+        if (_myDataHub.NoPopups && _wasInGame)
         {
             _wasInGame = false;
             SwitchBetweenGameAndMenu();

@@ -38,7 +38,6 @@ public partial class UIBranch : ICloseBranch
     public void SetThisGroupsNode(INode[] groupsNodes) => ThisBranchesNodes = groupsNodes;
     public IsActive GetSaveOnExit => _saveExitSelection;
     public List<GroupList> BranchGroupsList => _groupsList;
-    public int GroupIndex { get; set; }
     public Canvas MyCanvas { get; private set; } 
     public CanvasGroup MyCanvasGroup { get; private set; }
     public IBranch MyParentBranch { get; set; }

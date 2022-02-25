@@ -18,6 +18,9 @@ public class UIData : IMonoEnable, IEZEventUser
     [SerializeField] [ReadOnly] private bool _inMenu;
     [SerializeField] private List<UINode> _selectedNodes = default;
     [SerializeField] private List<GameObject> _selectedGOs = default;
+    [SerializeField] private List<UIBranch> _activeResolvePopUps;
+    [SerializeField] private List<UIBranch> _activeOptionalPopUps;
+
 
     //Main
     public void OnEnable() => ObserveEvents();
@@ -32,7 +35,12 @@ public class UIData : IMonoEnable, IEZEventUser
         InputEvents.Do.Subscribe<IAllowKeys>(SaveAllowKeys);
         HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenu);
         BranchEvent.Do.Subscribe<ICloseBranch>(CloseAndReset);
+        PopUpEvents.Do.Subscribe<IAddResolvePopUp>(AddResolve);
+        PopUpEvents.Do.Subscribe<IAddOptionalPopUp>(AddOptional);
+        PopUpEvents.Do.Subscribe<IRemoveResolvePopUp>(RemoveResolve);
+        PopUpEvents.Do.Subscribe<IRemoveOptionalPopUp>(RemoveOptional);
     }
+
 
     public void UnObserveEvents() { }
 
@@ -62,6 +70,10 @@ public class UIData : IMonoEnable, IEZEventUser
     private void SaveOnHomeScreen(IOnHomeScreen args) => _onHomeScreen = args.OnHomeScreen;
     private void SaveAllowKeys(IAllowKeys args) => _controllingWithKeys = args.CanAllowKeys;
     private void SaveInMenu(IInMenu args) => _inMenu = args.InTheMenu;
+    private void AddResolve(IAddResolvePopUp args) => _activeResolvePopUps.Add((UIBranch)args.ThisPopUp);
+    private void AddOptional(IAddOptionalPopUp args) => _activeOptionalPopUps.Add((UIBranch)args.ThisPopUp);
+    private void RemoveResolve(IRemoveResolvePopUp args) => _activeResolvePopUps.Remove((UIBranch)args.ThisPopUp);
+    private void RemoveOptional(IRemoveOptionalPopUp args) => _activeOptionalPopUps.Remove((UIBranch)args.ThisPopUp);
 
 
     private void ManageHistory(IStoreNodeHistoryData args)

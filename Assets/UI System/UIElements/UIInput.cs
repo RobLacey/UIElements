@@ -35,8 +35,6 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     //Variables
     private bool _inMenu;
     private IDataHub _myDataHub;
-    private UINode _lastHomeScreenNode;
-    private bool _nothingSelected;
     
     //Editor
     private const string Settings = "Other Settings ";
@@ -87,7 +85,6 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     private bool NothingSelectedAction => _inputScheme.PauseOptions == PauseOptionsOnEscape.EnterPauseOrEscapeMenu;
     private IMenuAndGameSwitching MenuToGameSwitching { get; set; }
     private IChangeControl ChangeControl { get; set; }
-    private IHistoryTrack HistoryTracker { get; set; }
     private ISwitchGroup SwitchGroups { get; set; }
     private IVirtualCursor VirtualCursor { get; set; }
 
@@ -127,14 +124,9 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         UnObserveEvents();
         ChangeControl.OnDisable();
         MenuToGameSwitching.OnDisable();
-        SwitchGroups.OnDisable();
     }
 
-    public void UseEZServiceLocator()
-    {
-        _myDataHub = EZService.Locator.Get<IDataHub>(this);
-        HistoryTracker = EZService.Locator.Get<IHistoryTrack>(this);
-    }
+    public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
 
     private void SetUpHotKeys()
     {
@@ -207,8 +199,15 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
         if(!AllowKeys)
         {
+            //TODO Look At This And.....
             DoChangeControlPressed();
             SwitchGroups.ImmediateSwitch();
+            return;
+        }
+        
+        if(SwitchGroups.CanSwitchBranches())
+        {
+            SwitchGroups.SwitchGroupProcess();
             return;
         }
 
@@ -217,11 +216,6 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
             DoMenuNavigation();
             return;
         }
-
-        if(SwitchGroups.CanSwitchBranches())
-        {
-            if (SwitchGroups.SwitchGroupProcess()) return;
-        }
         
         if(_inputScheme.CanUseVirtualCursor)
         {
@@ -229,6 +223,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         }
         
         if(MultiSelectPressed) return;
+        //TODO Look At This. Might need a better way to do this
         DoChangeControlPressed();
     }
 
@@ -298,7 +293,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     private void CancelPressed() => OnCancelPressed?.Invoke(this);
 
     private bool CanEnterPauseWithNothingSelected() =>
-        (NoActivePopUps && !GameIsPaused && HistoryTracker.NoHistory)
+        (NoActivePopUps && !GameIsPaused && _myDataHub.NoHistory)
         && NothingSelectedAction;
 
 }
