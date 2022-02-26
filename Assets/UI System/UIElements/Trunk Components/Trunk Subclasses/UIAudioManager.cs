@@ -13,7 +13,7 @@ public class UIAudioManager : IAudioService, IIsAService
     private bool IsPlayingSelected { get; set; }
     private bool IsPlayingCancel { get; set; }
 
-    public UIAudioManager(IHub hub) => _myAudioSource = hub.ThisGameObject.GetComponent<AudioSource>();
+    public UIAudioManager(ITrunk trunk) => _myAudioSource = trunk.ThisGameObject.GetComponent<AudioSource>();
 
     public void OnEnable() => AddService();
 

@@ -15,13 +15,13 @@ public class BranchGroups: ISwitch, IServiceUser, IMonoEnable
 
     //Variables
     private int _index;
-    private IHub _myHub;
+    private ITrunk _myTrunk;
     private readonly IBranch _thisBranch;
 
     //Properties
     public bool HasOnlyOneMember => ThisBranchesGroup.Count == 1;
     private List<GroupList> ThisBranchesGroup => _thisBranch.BranchGroupsList;
-    private List<IBranch> HomeBranches => _myHub.HomeBranches;
+    private List<IBranch> HomeBranches => _myTrunk.HomeBranches;
     private bool CanSwitch => ThisBranchesGroup.Count > 0;
 
     //Main
@@ -31,7 +31,7 @@ public class BranchGroups: ISwitch, IServiceUser, IMonoEnable
         SetGroupIndex(_thisBranch.DefaultStartOnThisNode);
     }
     
-    public void UseEZServiceLocator() => _myHub = EZService.Locator.Get<IHub>(this);
+    public void UseEZServiceLocator() => _myTrunk = EZService.Locator.Get<ITrunk>(this);
 
     public void SetGroupIndex(INode defaultStartPosition)
     {

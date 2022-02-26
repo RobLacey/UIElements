@@ -23,6 +23,8 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     [SerializeField] [Space(10f)]
     [ValidateInput(CheckForScheme, InfoBox)]
     private InputScheme _inputScheme  = default;
+
+    [SerializeField] private Transform _VirtualCursorParent;
     
     [SerializeField] [Foldout("Hot Keys")]    
     [ReorderableList] private List<HotKeys> _hotKeySettings = new List<HotKeys>();
@@ -79,7 +81,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         }
     }
 
-    public Transform GetParentTransform => transform;
+    public Transform GetParentTransform => _VirtualCursorParent;
     private void SaveGameIsPaused(IGameIsPaused args) => _uiInputEvents.GamePausedStatus(GameIsPaused);
     public EscapeKey EscapeKeySettings => ActiveBranch.EscapeKeyType;
     private bool NothingSelectedAction => _inputScheme.PauseOptions == PauseOptionsOnEscape.EnterPauseOrEscapeMenu;
@@ -196,7 +198,20 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
             WhenCancelPressed();
             return;
         }
+        
+        if(_inputScheme.CanUseVirtualCursor)
+        {
+            if (MoveVirtualCursor()) return;
+            
+            if (_inputScheme.PressSelect())
+            {
+                var temp = (UINode)_myDataHub.Highlighted;
+                temp.OnPointerDown(null);
+                return;
+            }
+        }
 
+        //TODO Add A Hard Switch to using a VC to stop controls getting confused
         if(!AllowKeys)
         {
             //TODO Look At This And.....
@@ -204,24 +219,25 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
             SwitchGroups.ImmediateSwitch();
             return;
         }
-        
+
         if(SwitchGroups.CanSwitchBranches())
         {
             SwitchGroups.SwitchGroupProcess();
             return;
         }
-
+        
         if (_inputScheme.MenuNavigationPressed(AllowKeys))
         {
+            if (_inputScheme.PressSelect())
+            {
+                var temp = (UINode)_myDataHub.Highlighted;
+                temp.OnPointerDown(null);
+                return;
+            }
             DoMenuNavigation();
             return;
         }
-        
-        if(_inputScheme.CanUseVirtualCursor)
-        {
-            if (MoveVirtualCursor()) return;
-        }
-        
+
         if(MultiSelectPressed) return;
         //TODO Look At This. Might need a better way to do this
         DoChangeControlPressed();
@@ -236,7 +252,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     private bool MoveVirtualCursor()
     {
         if (!VirtualCursor.CanMoveVirtualCursor()) return false;
-        
+
         VirtualCursor.Update();
         return true;
     }

@@ -152,8 +152,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
             if (_inputScheme.AnyMouseClicked) return;
             ActivateKeysOrControl();
         }
-        
-        SetUpVcCorrectly();
     }
     
     private void SetUpVcCorrectly()
@@ -167,6 +165,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         Cursor.visible = !UsingVirtualCursor;
         
         if (!CanAllowKeys) return;
+        SetUpVcCorrectly();
         CanAllowKeys = false;
         SetAllowKeys();
         

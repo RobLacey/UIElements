@@ -51,8 +51,7 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
     public float Speed => _virtualCursorSetting.CursorSpeed;
     private GameObject VirtualCursorPrefab => _virtualCursorSetting.VirtualCursorPrefab;
     private InputScheme Scheme { get; set; }
-    private bool HasInput => (Scheme.VcHorizontalPressed() || Scheme.VcVerticalPressed()) 
-                             || Scheme.VcHorizontal() != 0 || Scheme.VcVertical() != 0;
+    private bool HasInput => Scheme.VcHorizontal() != 0 || Scheme.VcVertical() != 0;
     private bool Allow2D => _virtualCursorSetting.RestrictRaycastTo == GameType._2D 
                             || _virtualCursorSetting.RestrictRaycastTo == GameType.NoRestrictions;
     private bool Allow3D => _virtualCursorSetting.RestrictRaycastTo == GameType._3D 
@@ -63,13 +62,16 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
     //Main
     public void OnAwake()
     {
-        Debug.Log("Here");
         _raycastTo2D = EZInject.Class.NoParams<I2DRaycast>();
         _raycastTo3D = EZInject.Class.NoParams<I3DRaycast>();
         _moveVirtualCursor = EZInject.Class.NoParams<IMoveVirtualCursor>();
         _interactWithUi = EZInject.Class.NoParams<IInteractWithUi>();
         
         UseEZServiceLocator();
+        
+        _virtualCursorSetting = Scheme.ReturnVirtualCursorSettings;
+        SetUpVirtualCursor(_parentTransform);
+
     }
     
     public void UseEZServiceLocator()
@@ -99,9 +101,6 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
 
     public void OnStart()
     {
-        _virtualCursorSetting = Scheme.ReturnVirtualCursorSettings;
-        SetUpVirtualCursor(_parentTransform);
-        
         if(_virtualCursorSetting.OnlyHitInGameUi == IsActive.Yes)
             _interactWithUi.SetCanOnlyHitInGameObjects();
         
@@ -176,21 +175,22 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
 
     public bool CanMoveVirtualCursor()
     {
-        var canUseVirtualCursor = Scheme.CanUseVirtualCursor && !_allowKeys && (HasInput || SelectPressed);
+        var canUseVirtualCursor = Scheme.CanUseVirtualCursor && !_allowKeys && (HasInput && !SelectPressed);
         return canUseVirtualCursor;
     }
 
     public void Update()
     {
-        if(HasSelectedBeenPressed()) return;
+        if(Scheme.PressSelect()) return;
+        
         _moveVirtualCursor.Move(this);
-        if(OverAnyObject.IsNull())
-            CheckIfCursorOverGOUI();
+        if (!HasInput) return;
+        
+        // if (OverAnyObject.IsNull())
+        //     CheckIfCursorOverGOUI();
         _interactWithUi.CheckIfCursorOverUI(this);
     }
     
-    private bool HasSelectedBeenPressed() => _interactWithUi.UIObjectSelected(SelectPressed);
-
     public void PreStartMovement()
     {
         if(_canStart) return;
@@ -200,6 +200,7 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
 
     private void CheckIfCursorOverGOUI()
     {
+        Debug.Log("GOUI");
         if (Allow2D)
             _raycastTo2D.DoRaycast(CursorRect.position);
         if (Allow3D)

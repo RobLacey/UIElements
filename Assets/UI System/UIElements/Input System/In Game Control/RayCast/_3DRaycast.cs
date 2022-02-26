@@ -21,6 +21,10 @@ namespace UIElements
             var cursorPosition = _mainCamera.ScreenToWorldPoint(mousePos);
             var direction = (CameraPosition - cursorPosition).normalized;
             var hit = Physics.RaycastAll(CameraPosition, direction, _laserLength, _layerToHit);
+            
+            if(hit.Length > 0)
+                Debug.Log(hit[0].collider);
+
             return hit.Length == 0  ? null : hit[0].collider.gameObject.GetComponent<ICursorHandler>();;
         }
     }

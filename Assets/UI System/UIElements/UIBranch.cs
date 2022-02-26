@@ -163,7 +163,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         _branchTypeBaseClass.OnAwake();
         if (IsHomeScreenBranch() || IsControlBar())
         {
-            FindObjectOfType<UIHub>().AddHomeScreenBranch(this);
+            FindObjectOfType<Trunk>().AddHomeScreenBranch(this);
         }
 
         BranchGroupsHandler = new BranchGroups(this);

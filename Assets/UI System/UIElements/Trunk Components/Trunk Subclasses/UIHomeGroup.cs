@@ -26,11 +26,11 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
     private int _index = 0;
     private IBranch _lastActiveHomeBranch;
     private IBranch _activeBranch;
-    private IHub _myUIHub;
+    private ITrunk _myUITrunk;
     private IDataHub _myDataHub;
 
     //Properties and Getters / Setters
-    private IBranch[] HomeGroup => _myUIHub.HomeBranches.ToArray();
+    private IBranch[] HomeGroup => _myUITrunk.HomeBranches.ToArray();
     private bool GameIsPaused => _myDataHub.GamePaused;
     public bool HasOnlyOneMember => HomeGroup.Length == 1;
 
@@ -46,7 +46,7 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
     public void UseEZServiceLocator()
     {
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
-        _myUIHub = EZService.Locator.Get<IHub>(this);
+        _myUITrunk = EZService.Locator.Get<ITrunk>(this);
     }
     
     public void ObserveEvents()

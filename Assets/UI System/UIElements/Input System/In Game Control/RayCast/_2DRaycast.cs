@@ -15,6 +15,8 @@ namespace UIElements
             var origin = _mainCamera.ScreenToWorldPoint(mousePos);
 
             var hit = Physics2D.Raycast(origin, _direction2D, 0, _layerToHit);
+            if(hit.collider != null)
+                Debug.Log(hit.collider.name);
             return hit.collider.IsNull() ? null : hit.collider.gameObject.GetComponent<ICursorHandler>();
         }
     }

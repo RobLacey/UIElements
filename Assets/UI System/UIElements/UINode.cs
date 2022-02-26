@@ -295,7 +295,10 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
 
     //Unity Input Interfaces
 
-    public void OnPointerEnter(PointerEventData eventData) => _nodeBase.OnEnteringNode();
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        _nodeBase.OnEnteringNode();
+    }
 
     public void OnPointerExit(PointerEventData eventData) => _nodeBase.OnExitingNode();
 

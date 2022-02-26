@@ -46,11 +46,11 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStore
     //Main
     public void OnEnable()
     {
-        Debug.Log("Upto : Tough Call but am going to do a rework and make anything fullscreen a new Hub (call it a trunk). Will need a plan to work and start with an entry Method for the HUb / Trunk");
-        Debug.Log("Upto : Will also mean that I have to seperate out the GOUI objects from any Truck and need a new Hub");
-        Debug.Log("Branch Switch is broken but may not need it. So Don't use it");
-        Debug.Log("Start with adding HUb as a serialised field and removing from EZservices");
-        Debug.Log("and make dataHUb a scriptable object and remove from Services. Other things may need to come out too");
+        // Debug.Log("Upto : Tough Call but am going to do a rework and make anything fullscreen a new Hub (call it a trunk). Will need a plan to work and start with an entry Method for the HUb / Trunk");
+        // Debug.Log("Upto : Will also mean that I have to seperate out the GOUI objects from any Truck and need a new Hub");
+        // Debug.Log("Branch Switch is broken but may not need it. So Don't use it");
+        // Debug.Log("Start with adding HUb as a serialised field and removing from EZservices");
+        // Debug.Log("and make dataHUb a scriptable object and remove from Services. Other things may need to come out too");
 
         UseEZServiceLocator();
         AddService();

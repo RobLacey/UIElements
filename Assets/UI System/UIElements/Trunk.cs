@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// UIHub is the core of the system and looks after starting the system Up and general state management 
 /// </summary>
 
-public interface IHub : IParameters
+public interface ITrunk : IParameters
 {
     GameObject ThisGameObject { get; }
     List<IBranch> HomeBranches { get; }
@@ -27,12 +27,12 @@ namespace UIElements
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(CanvasScaler))]
     [RequireComponent(typeof(AudioSource))]
-    [RequireComponent(typeof(UIInput))]
+    // [RequireComponent(typeof(UIInput))]
 
-    public class UIHub : MonoBehaviour, IHub, IEZEventUser, ISetUpStartBranches, IOnStart, 
-                         IEZEventDispatcher, IIsAService, ISceneIsChanging
+    public class Trunk : MonoBehaviour, ITrunk, IEZEventUser, ISetUpStartBranches, /*IOnStart,*/ 
+                         IEZEventDispatcher, IIsAService/*, ISceneIsChanging*/
     {
-        public UIHub()
+        public Trunk()
         {
             PopUpEvents.Do.Initialise(new PopUpBindings());
             HistoryEvents.Do.Initialise(new HistoryBindings());
@@ -60,17 +60,7 @@ namespace UIElements
         [Header(UIDataTitle, order = 2)] [HorizontalLine(1f, EColor.Blue, order = 3)]
         [SerializeField] private UIData _uiData;
         
-        [SerializeField] private int _nextLevel;
 
-        [Header("Start Delay")] [Space(10f)] [HorizontalLine(1, color: EColor.Blue, order = 1)]
-    
-        [SerializeField] 
-        [Label("Delay UI Start By then..")] [Range(0, 10)]
-        protected float _delayUIStart;
-    
-        [SerializeField] 
-        [Label("..Enable Controls After..")] [Range(0, 10)] 
-        protected float _controlActivateDelay;
         
         //Editor
         [Button("Add a New Tree Structure")]
@@ -101,8 +91,8 @@ namespace UIElements
     
         //Variables
         private readonly List<IBranch> _homeBranches = new List<IBranch>();
-        private INode _lastHighlighted;
-        private bool _startingInGame, _inMenu;
+        // private INode _lastHighlighted;
+        // private bool _startingInGame, _inMenu;
         private IHistoryTrack _historyTrack;
         private IAudioService _audioService;
         private ICancel _cancelHandler;
@@ -113,36 +103,36 @@ namespace UIElements
         private const string UIDataTitle = "UI Data";
 
         //Events
-        private Action<IOnStart> OnStart { get; set; } 
+        // private Action<IOnStart> OnStart { get; set; } 
         private Action<ISetUpStartBranches> SetUpBranchesAtStart { get; set; }
-        private Action<ISceneIsChanging> SceneChanging { get; set; }
+        // private Action<ISceneIsChanging> SceneChanging { get; set; }
 
         
         //Properties & Getters/ Setters
         public IBranch StartBranch => _homeBranches.First();
         public GameObject ThisGameObject => gameObject;
         public List<IBranch> HomeBranches => _homeBranches;
-        private RectTransform MainCanvasRect => GetComponent<RectTransform>();
+        public RectTransform MainCanvasRect => GetComponent<RectTransform>();
 
 
-        //Set / Getters
-        private void SaveInMenu(IInMenu args)
-        {
-            _inMenu = args.InTheMenu;
-            if(!_inMenu) SetEventSystem(null);
-        }
+        // //Set / Getters
+        // private void SaveInMenu(IInMenu args)
+        // {
+        //     _inMenu = args.InTheMenu;
+        //     if(!_inMenu) SetEventSystem(null);
+        // }
 
         //Main
         private void Awake()
         { 
-            var uIInput = GetComponent<IInput>();
-            _startingInGame = uIInput.StartInGame();
+            // var uIInput = GetComponent<IInput>();
+            // _startingInGame = uIInput.StartInGame();
             _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
             _cancelHandler = EZInject.Class.NoParams<ICancel>();
             _audioService = EZInject.Class.WithParams<IAudioService>(this);
             AddService();
-            _myDataHub = new DataHub(MainCanvasRect);
-            _myDataHub.OnAwake();
+            // _myDataHub = new DataHub(MainCanvasRect);
+            // _myDataHub.OnAwake();
         }
 
         public void AddHomeScreenBranch(UIBranch branch)
@@ -166,121 +156,105 @@ namespace UIElements
             _cancelHandler.OnEnable();
             _audioService.OnEnable();
             _uiData.OnEnable();
-            _myDataHub.OnEnable();
+            // _myDataHub.OnEnable();
         }
         
-        public void AddService() => EZService.Locator.AddNew<IHub>(this);
+        public void AddService() => EZService.Locator.AddNew<ITrunk>(this);
 
         public void OnRemoveService() => _audioService.OnDisable();
 
         public void FetchEvents()
         {
-            OnStart = HistoryEvents.Do.Fetch<IOnStart>();
             SetUpBranchesAtStart = BranchEvent.Do.Fetch<ISetUpStartBranches>();
-            SceneChanging = HistoryEvents.Do.Fetch<ISceneIsChanging>();
+            // OnStart = HistoryEvents.Do.Fetch<IOnStart>();
+            // SceneChanging = HistoryEvents.Do.Fetch<ISceneIsChanging>();
         }
 
         public void ObserveEvents()
         {
-            HistoryEvents.Do.Subscribe<IHighlightedNode>(SetLastHighlighted);
-            HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenu);
-            InputEvents.Do.Subscribe<IAllowKeys>(SwitchedToKeys);
+            // HistoryEvents.Do.Subscribe<IHighlightedNode>(SetLastHighlighted);
+            // HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenu);
+            // InputEvents.Do.Subscribe<IAllowKeys>(SwitchedToKeys);
         }
 
         public void UnObserveEvents() { }
 
-        private void Start() => StartCoroutine(StartUIDelay());
+        //private void Start() => SetStartPositionsAndSettings();
+        // private void Start() => StartCoroutine(StartUIDelay());
 
         // ReSharper disable Unity.PerformanceAnalysis
-        private IEnumerator StartUIDelay()
-        {
-            yield return new WaitForEndOfFrame();
-            if(_delayUIStart != 0)
-                yield return new WaitForSeconds(_delayUIStart);
-            CheckIfStartingInGame();
-            SetStartPositionsAndSettings();
-            StartCoroutine(EnableStartControls());
-        }
+        // private IEnumerator StartUIDelay()
+        // {
+        //     yield return new WaitForEndOfFrame();
+        //     if(_delayUIStart != 0)
+        //         yield return new WaitForSeconds(_delayUIStart);
+        //     CheckIfStartingInGame();
+        //     SetStartPositionsAndSettings();
+        //     StartCoroutine(EnableStartControls());
+        // }
 
-        private void CheckIfStartingInGame()
-        {
-            if (_startingInGame)
-            {
-                OnStart?.Invoke(this);
-                _inMenu = false;
-            }
-            else
-            {
-                SetEventSystem(GetFirstHighlightedNodeInHomeGroup());
-                _inMenu = true;
-            }
-        }
+        // private void CheckIfStartingInGame()
+        // {
+        //     if (_startingInGame)
+        //     {
+        //         OnStart?.Invoke(this);
+        //         _inMenu = false;
+        //     }
+        //     else
+        //     {
+        //         SetEventSystem(GetFirstHighlightedNodeInHomeGroup());
+        //         _inMenu = true;
+        //     }
+        // }
 
-        private void SetStartPositionsAndSettings() => SetUpBranchesAtStart?.Invoke(this);
+        public void SetStartPositionsAndSettings() => SetUpBranchesAtStart?.Invoke(this);
 
-        private GameObject GetFirstHighlightedNodeInHomeGroup()
-        {
-            return _homeBranches.First().DefaultStartOnThisNode.ReturnGameObject;
-        }
+        // private GameObject GetFirstHighlightedNodeInHomeGroup()
+        // {
+        //     return _homeBranches.First().DefaultStartOnThisNode.ReturnGameObject;
+        // }
 
-        private IEnumerator EnableStartControls()
-        {
-            if(_controlActivateDelay != 0)
-                yield return new WaitForSeconds(_controlActivateDelay);
-            
-            if(!_startingInGame)
-            {
-                OnStart?.Invoke(this);
-            }            
-            SetEventSystem(GetFirstHighlightedNodeInHomeGroup());
-        }
+        // private IEnumerator EnableStartControls()
+        // {
+        //     if(_controlActivateDelay != 0)
+        //         yield return new WaitForSeconds(_controlActivateDelay);
+        //     
+        //     if(!_startingInGame)
+        //     {
+        //         OnStart?.Invoke(this);
+        //     }            
+        //     SetEventSystem(GetFirstHighlightedNodeInHomeGroup());
+        // }
     
-        private void SetLastHighlighted(IHighlightedNode args)
-        {
-            _lastHighlighted = args.Highlighted;
-            if(_inMenu) 
-                SetEventSystem(_lastHighlighted.ReturnGameObject);
-        }
+        // private void SetLastHighlighted(IHighlightedNode args)
+        // {
+        //     _lastHighlighted = args.Highlighted;
+        //     if(_inMenu) 
+        //         SetEventSystem(_lastHighlighted.ReturnGameObject);
+        // }
 
-        private void SwitchedToKeys(IAllowKeys args) => SetEventSystem(GetCorrectLastHighlighted());
+        // private void SwitchedToKeys(IAllowKeys args) => SetEventSystem(GetCorrectLastHighlighted());
+        //
+        // private GameObject GetCorrectLastHighlighted()
+        // {
+        //     return _lastHighlighted is null ? GetFirstHighlightedNodeInHomeGroup() : 
+        //         _lastHighlighted.ReturnGameObject;
+        // }
 
-        private GameObject GetCorrectLastHighlighted()
-        {
-            return _lastHighlighted is null ? GetFirstHighlightedNodeInHomeGroup() : 
-                _lastHighlighted.ReturnGameObject;
-        }
+        // private static void SetEventSystem(GameObject newGameObject) 
+        //     => EventSystem.current.SetSelectedGameObject(newGameObject);
 
-        private static void SetEventSystem(GameObject newGameObject) 
-            => EventSystem.current.SetSelectedGameObject(newGameObject);
 
-        public void LoadNextLevel()
-        {
-            SceneChanging?.Invoke(this);
-            CloseServices();
-            StartCoroutine(Load());
-        }
+        // private void CloseServices()
+        // {
+        //     BranchEvent.Do.Purge();
+        //     GOUIEvents.Do.Purge();
+        //     PopUpEvents.Do.Purge();
+        //     HistoryEvents.Do.Purge();
+        //     InputEvents.Do.Purge();
+        //     CancelEvents.Do.Purge();
+        //     EZService.Locator.Purge();
+        // }
 
-        private void CloseServices()
-        {
-            BranchEvent.Do.Purge();
-            GOUIEvents.Do.Purge();
-            PopUpEvents.Do.Purge();
-            HistoryEvents.Do.Purge();
-            InputEvents.Do.Purge();
-            CancelEvents.Do.Purge();
-            EZService.Locator.Purge();
-        }
-
-        private IEnumerator Load()
-        {
-            yield return new WaitForSeconds(1);
-            SceneManager.LoadScene(_nextLevel);
-        }
-
-        private void OnApplicationQuit()
-        {
-            SceneChanging?.Invoke(this);
-            CloseServices();
-        }
     }
 }

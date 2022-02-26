@@ -24,7 +24,7 @@ public class RuntimeCreateBranch
         return CreateBranch(template, parent);
     }
     
-    private Transform HubTransform() => Object.FindObjectOfType<UIHub>().transform;
+    private Transform HubTransform() => Object.FindObjectOfType<Trunk>().transform;
 
     //Main
     private IBranch CreateBranch(UIBranch template, Transform createParent)

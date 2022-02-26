@@ -15,7 +15,7 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     //Properties
     private bool CannotTweenOnHome => _myBranch.TweenOnHome == DoTween.DoNothing 
                                       && (!_justReturnedHome && _myBranch.GetStayOn() == IsActive.Yes);
-    private bool IsControlBar => _myBranch.IsControlBar();
+    private bool IsControlBar => _myBranch.IsControlBar() && CanStart;
 
     protected override void SaveIfOnHomeScreen(IOnHomeScreen args)
     {
@@ -57,9 +57,8 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     //Main
     private void SetUpOnStart(IOnStart args)
     {
-        SetCanvas(ActiveCanvas.Yes);
-        SetControlBarCanvasOrder();
-        SetBlockRaycast(BlockRaycast.Yes);
+         SetControlBarCanvasOrder();
+         SetBlockRaycast(BlockRaycast.Yes);
     }
 
     private void SetControlBarCanvasOrder()
@@ -87,13 +86,15 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     {
         base.SetUpBranch(newParentController);
         
-        if(!CanStart || !InMenu) return;
+        if(!InMenu) return;
         
         if(!IsControlBar)
             _canvasOrderCalculator.SetCanvasOrder();
         
         if (CannotTweenOnHome || IsControlBar || _myBranch.CanvasIsEnabled)
+        {
             _myBranch.DoNotTween();
+        }     
         
         SetCanvas(ActiveCanvas.Yes);
         
@@ -130,9 +131,11 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     
     public override void SetCanvas(ActiveCanvas active)
     {
+        if(IsControlBar && CanStart) return;
+        
         if(!GameIsPaused && NoResolvePopUps)
         {
-            base.SetCanvas(IsControlBar ? ActiveCanvas.Yes : active);
+            base.SetCanvas(/*IsControlBar ? ActiveCanvas.Yes : */active);
         }
         else
         {

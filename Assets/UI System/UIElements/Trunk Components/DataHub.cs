@@ -10,7 +10,8 @@ using UnityEngine;
 public interface IDataHub : IMonoAwake, IMonoEnable
 {
     bool SceneStarted { get; }
-    bool InMenu { get; }
+    void SetStarted();
+    bool InMenu { get; set; }
     bool GamePaused { get; }
     bool OnHomeScreen { get; }
     void SetOnHomeScreen(bool IsOnHomeScreen);
@@ -38,7 +39,7 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
     }
 
     public bool SceneStarted { get; private set; }
-    public bool InMenu { get; private set; }
+    public bool InMenu { get;  set; }
     public bool GamePaused { get; private set; }
     public bool OnHomeScreen { get; set; } = true;
     public bool AllowKeys { get; private set; }
@@ -66,7 +67,6 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
     public void ObserveEvents()
     {
         HistoryEvents.Do.Subscribe<IStoreNodeHistoryData>(ManageHistory);
-        HistoryEvents.Do.Subscribe<IOnStart>(SetStarted);
         HistoryEvents.Do.Subscribe<IInMenu>(SetIfInMenu);
         HistoryEvents.Do.Subscribe<IGameIsPaused>(SetIfGamePaused);
         HistoryEvents.Do.Subscribe<IActiveBranch>(SetActiveBranch);
@@ -98,7 +98,7 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
 
     private void SetIfInMenu(IInMenu args) => InMenu = args.InTheMenu;
 
-    private void SetStarted(IOnStart args) => SceneStarted = true;
+    public void SetStarted() => SceneStarted = true;
     
     private void ManageHistory(IStoreNodeHistoryData args)
     {

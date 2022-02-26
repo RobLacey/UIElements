@@ -105,7 +105,7 @@ public class OldSystem : InputScheme
                                                                || PressedPositiveGOUISwitch();
 
     //TODO ADD to parent class
-    private bool NavigationKeyPressed() => HorizontalNavPressed() || VerticalNavPressed();
+    private bool NavigationKeyPressed() => HorizontalNavPressed() || VerticalNavPressed() || PressSelect();
 
     public override bool MenuNavigationPressed(bool allowKeys) => allowKeys && NavigationKeyPressed();
 
@@ -113,7 +113,6 @@ public class OldSystem : InputScheme
     {
         int upDownInput = CheckInput.GetAxisRaw(_upAndDownNavigate);
         int leftRightInput = CheckInput.GetAxisRaw(_leftAndRightNavigate);
-
         return CheckInput.MenuNavCalc(upDownInput, leftRightInput);
     }
 

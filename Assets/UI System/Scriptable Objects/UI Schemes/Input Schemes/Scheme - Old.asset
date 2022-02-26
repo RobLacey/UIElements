@@ -19,22 +19,22 @@ MonoBehaviour:
     _cursor: {fileID: 0}
     _hotSpot: {x: 0, y: 0}
   _inGameMenuSystem: 1
-  _useVirtualCursor: 1
+  _useVirtualCursor: 0
   _virtualCursorSettings:
     _restrictRaycastTo: 2
-    _virtualCursorPrefab: {fileID: 0}
+    _virtualCursorPrefab: {fileID: 766753675201208392, guid: c68b6dd03c66fa94b8c11ef4d321378c, type: 3}
     _onlyHitInGameUi: 1
-    _cursorSpeed: 7
+    _cursorSpeed: 20
     _inGameObjectLayersToHit:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 32
     _raycastLength: 1000
   _startGameWhere: 0
   _pauseOptionsOnEscape: 1
   _globalEscapeFunction: 1
   _pauseOptionButton: 
   _cancelButton: Cancel
-  _selectButton: 
+  _selectButton: Submit
   _multiSelectButton: Multi Select
   _upAndDownNavigate: Vertical
   _leftAndRightNavigate: Horizontal
@@ -43,9 +43,9 @@ MonoBehaviour:
   _posNextGOUIButton: Switch GOUI Pos
   _negNextGOUIButton: Switch GOUI Neg
   _switchToMenusButton: 
-  _switchToVC: 
-  _vCursorHorizontal: 
-  _vCursorVertical: 
+  _switchToVC: Virtual Cursor
+  _vCursorHorizontal: VC Horizontal
+  _vCursorVertical: VC Vertical
   _hotKey1: HotKey1
   _hotKey2: HotKey2
   _hotKey3: 
