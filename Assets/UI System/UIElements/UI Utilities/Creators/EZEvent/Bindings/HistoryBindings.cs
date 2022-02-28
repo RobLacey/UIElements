@@ -1,4 +1,5 @@
-﻿using EZ.Events;using UIElements;
+﻿using System.Collections.Generic;
+using EZ.Events;
 
 public class HistoryBindings : EZEventBindingsBase
 {
@@ -74,6 +75,7 @@ public interface IReturnHomeGroupIndex
 }
 
 public interface ISceneIsChanging { }
+
 
 
 

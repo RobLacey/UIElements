@@ -2,12 +2,8 @@
 using EZ.Events;
 using EZ.Service;
 using UIElements;
-using UnityEngine;
 
-public interface IHomeGroup: IMonoEnable, IMonoDisable, ISwitch
-{
-    void SetUpHomeGroup();
-}
+public interface IHomeGroup: IMonoEnable, IMonoDisable, ISwitch { }
 
 public interface ISwitch
 {
@@ -22,15 +18,19 @@ public interface ISwitch
 /// </summary>
 public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
 {
+    public UIHomeGroup(IHomeGroupSettings settings)
+    {
+        HomeGroup = settings.GroupsBranches.ToArray();
+    }
+
     //Variables
     private int _index = 0;
     private IBranch _lastActiveHomeBranch;
     private IBranch _activeBranch;
-    private ITrunk _myUITrunk;
     private IDataHub _myDataHub;
 
     //Properties and Getters / Setters
-    private IBranch[] HomeGroup => _myUITrunk.HomeBranches.ToArray();
+    private IBranch[] HomeGroup { get; }
     private bool GameIsPaused => _myDataHub.GamePaused;
     public bool HasOnlyOneMember => HomeGroup.Length == 1;
 
@@ -46,7 +46,6 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
     public void UseEZServiceLocator()
     {
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
-        _myUITrunk = EZService.Locator.Get<ITrunk>(this);
     }
     
     public void ObserveEvents()
@@ -59,10 +58,10 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
 
     public void UnObserveEvents() { }
 
-    public void SetUpHomeGroup() => _activeBranch = HomeGroup[_index];
-
     private void SaveHighlighted(IHighlightedNode args)
     {
+        if (_activeBranch.IsNull()) _activeBranch = HomeGroup[_index];
+        
         if (IsHomeScreenBranchAndNoChildrenOpen())
         {
             SearchHomeBranchesAndSet(args.Highlighted.MyBranch);
@@ -146,4 +145,5 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
             branch.MoveToThisBranch();
         }
     }
+
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using EZ.Service;
 using NaughtyAttributes;
-using UIElements;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -144,6 +143,7 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     public abstract bool MenuNavigationPressed(bool allowKeys);
     public abstract AxisEventData DoMenuNavigation();
     public abstract bool CanSwitchToMouseOrVC(bool allowKeys);
+    public abstract bool SwitchToVCPressed();
     protected abstract float MouseXAxis { get; }
     protected abstract float MouseYAxis { get; }
     public abstract Vector3 GetMouseOrVcPosition();
@@ -164,7 +164,6 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     public abstract bool VcHorizontalPressed();
     public abstract bool VcVerticalPressed();
     public abstract bool MultiSelectPressed();
-    private protected abstract bool VCSwitchTo();
     public abstract bool PressSelect();
     public abstract bool HotKeyChecker(HotKey hotKey);
 

@@ -150,6 +150,10 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     //Main
     private void Awake()
     {
+        
+        Debug.Log("Upto : Remove Branch Group List & Find old refernces to Trunk class");
+        
+        
         CheckForValidSetUp();
         ThisBranchesNodes = BranchChildNodeUtil.GetChildNodes(this);
         MyCanvasGroup = GetComponent<CanvasGroup>();
@@ -161,10 +165,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         AutoOpenCloseClass = EZInject.Class.WithParams<IAutoOpenClose>(this); 
         _branchTypeBaseClass = BranchFactory.Factory.PassThisBranch(this).CreateType(_branchType);
         _branchTypeBaseClass.OnAwake();
-        if (IsHomeScreenBranch() || IsControlBar())
-        {
-            FindObjectOfType<Trunk>().AddHomeScreenBranch(this);
-        }
 
         BranchGroupsHandler = new BranchGroups(this);
     }
@@ -255,10 +255,10 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     private void Start()
     {
         _branchTypeBaseClass.OnStart();
-        CheckForControlBar();
+        //CheckForControlBar();
     }
 
-    private void CheckForControlBar() => BranchGroupsHandler.AddControlBarToBranchGroup();
+   // private void CheckForControlBar() => BranchGroupsHandler.AddControlBarToBranchGroup();
 
     public void StartPopUp_RunTimeCall(bool fromPool)
     {

@@ -6,13 +6,7 @@ namespace UIElements
 
     public class _3DRaycast : RaycastBase
     {
-        public override void OnStart()
-        {
-            base.OnStart();
-            _laserLength = _inputScheme.ReturnVirtualCursorSettings.RaycastLength;
-        }
-
-        private float _laserLength;
+        public _3DRaycast(IVcSettings settings) : base(settings) { }
 
         protected override ICursorHandler RaycastToObj(Vector3 virtualCursorPos)
         {
@@ -20,11 +14,8 @@ namespace UIElements
             mousePos.z = -10;
             var cursorPosition = _mainCamera.ScreenToWorldPoint(mousePos);
             var direction = (CameraPosition - cursorPosition).normalized;
-            var hit = Physics.RaycastAll(CameraPosition, direction, _laserLength, _layerToHit);
+            var hit = Physics.RaycastAll(CameraPosition, direction, LaserLength, LayerToHit);
             
-            if(hit.Length > 0)
-                Debug.Log(hit[0].collider);
-
             return hit.Length == 0  ? null : hit[0].collider.gameObject.GetComponent<ICursorHandler>();;
         }
     }

@@ -91,11 +91,10 @@ public class OldSystem : InputScheme
     {
         if (ControlType == ControlMethod.MouseOnly) return false;
         
-        if (CanUseVirtualCursor && !allowKeys)
+        if (CanUseVirtualCursor)
         {
-            if (VCSwitchTo()) return true;
+            return (SwitchToVCPressed() || SwitchKeyPressed()) && !allowKeys;
         }
-        
         return NavigationKeyPressed() || SwitchKeyPressed() && !allowKeys;
     }
 
@@ -107,7 +106,7 @@ public class OldSystem : InputScheme
     //TODO ADD to parent class
     private bool NavigationKeyPressed() => HorizontalNavPressed() || VerticalNavPressed() || PressSelect();
 
-    public override bool MenuNavigationPressed(bool allowKeys) => allowKeys && NavigationKeyPressed();
+    public override bool MenuNavigationPressed(bool allowKeys) => /*allowKeys &&*/ NavigationKeyPressed();
 
     public override AxisEventData DoMenuNavigation()
     {
@@ -120,10 +119,11 @@ public class OldSystem : InputScheme
     {
         if (ControlType == ControlMethod.KeysOrControllerOnly) return false;
 
-        if (CanUseVirtualCursor && allowKeys)
+        if (CanUseVirtualCursor)
         {
-            return VCSwitchTo();
+            return SwitchToVCPressed() && allowKeys;
         }
+        
         return MouseXAxis != 0 || MouseYAxis != 0;
     }
 
@@ -156,7 +156,7 @@ public class OldSystem : InputScheme
     public override bool MultiSelectPressed() => CheckInput.Held(_multiSelectButton);
     public override float VcHorizontal() => CheckInput.GetAxis(_vCursorHorizontal);
     public override float VcVertical() =>  CheckInput.GetAxis((_vCursorVertical));
-    private protected override bool VCSwitchTo() => CheckInput.Pressed(_switchToVC); 
+    public override bool SwitchToVCPressed() => CheckInput.Pressed(_switchToVC); 
     public override bool PressSelect() =>  CheckInput.Pressed(_selectButton);
 
     public override bool HotKeyChecker(HotKey hotKey)

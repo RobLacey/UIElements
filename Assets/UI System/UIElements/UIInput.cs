@@ -211,19 +211,17 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
             }
         }
 
-        //TODO Add A Hard Switch to using a VC to stop controls getting confused
-        if(!AllowKeys)
-        {
-            //TODO Look At This And.....
-            DoChangeControlPressed();
-            SwitchGroups.ImmediateSwitch();
-            return;
-        }
-
         if(SwitchGroups.CanSwitchBranches())
         {
-            SwitchGroups.SwitchGroupProcess();
-            return;
+            if(!AllowKeys)
+            {
+                SwitchGroups.ImmediateSwitch();
+            }
+            else
+            {
+                SwitchGroups.SwitchGroupProcess();
+                return;
+            }
         }
         
         if (_inputScheme.MenuNavigationPressed(AllowKeys))
@@ -234,12 +232,14 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
                 temp.OnPointerDown(null);
                 return;
             }
-            DoMenuNavigation();
-            return;
+            if(AllowKeys)
+            {
+                DoMenuNavigation();
+                return;
+            }           
         }
 
         if(MultiSelectPressed) return;
-        //TODO Look At This. Might need a better way to do this
         DoChangeControlPressed();
     }
 
@@ -251,7 +251,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
     private bool MoveVirtualCursor()
     {
-        if (!VirtualCursor.CanMoveVirtualCursor()) return false;
+        if (!VirtualCursor.CanMoveVirtualCursor) return false;
 
         VirtualCursor.Update();
         return true;

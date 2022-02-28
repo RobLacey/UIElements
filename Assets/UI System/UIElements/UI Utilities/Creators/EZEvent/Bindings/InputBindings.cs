@@ -13,9 +13,7 @@ public class InputBindings : EZEventBindingsBase
         //ChangeControl
         AutoRemove().CreateEvent<IAllowKeys>();
         AutoRemove().CreateEvent<IChangeControlsPressed>();
-        AutoRemove().CreateEvent<IVCSetUpOnStart>();
-        AutoRemove().CreateEvent<IVcChangeControlSetUp>();
-    }
+   }
 }
 
 public interface IPausePressed { } // This one is test
@@ -34,13 +32,6 @@ public interface IAllowKeys // This one is test
 }
 
 public interface IChangeControlsPressed { }
-
-public interface IVCSetUpOnStart
-{
-    bool ShowCursorOnStart { get; }
-}
-
-public interface IVcChangeControlSetUp{ }
 
 public interface ICancelPressed // This one is test
 {

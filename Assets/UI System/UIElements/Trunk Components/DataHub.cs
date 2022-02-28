@@ -7,7 +7,7 @@ using EZ.Service;
 using UIElements;
 using UnityEngine;
 
-public interface IDataHub : IMonoAwake, IMonoEnable
+public interface IDataHub : IMonoAwake, IMonoEnable, ISwitchData
 {
     bool SceneStarted { get; }
     void SetStarted();
@@ -20,15 +20,20 @@ public interface IDataHub : IMonoAwake, IMonoEnable
     bool NoResolvePopUp { get; }
     bool NoPopups { get; }
     bool NoHistory { get; }
-    IBranch ActiveBranch { get; }
+    IBranch ActiveBranch { get; set; }
     RectTransform MainCanvasRect { get; }
     IBranch[] AllBranches { get; }
     List<GameObject> SelectedGOs { get; }
     List<INode> History { get; }
     List<IBranch> ActiveResolvePopUps { get; }
     List<IBranch> ActiveOptionalPopUps { get; }
-    INode Highlighted { get; }
+    INode Highlighted { get; set; }
+}
 
+public interface ISwitchData
+{
+    List<IBranch> ActiveTrunkGroup { get; set; }
+    IHomeGroup CurrentSwitcher { get; set; }
 }
 
 public class DataHub: IEZEventUser, IIsAService, IDataHub
@@ -45,16 +50,19 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
     public bool AllowKeys { get; private set; }
     public bool NoPopups  => ActiveOptionalPopUps.Count == 0 & ActiveResolvePopUps.Count == 0;
     public bool NoHistory => History.Count == 0;
-    public IBranch ActiveBranch { get; private set; }
+    public IBranch ActiveBranch { get; set; }
     public RectTransform MainCanvasRect { get; }
     public IBranch[] AllBranches => Object.FindObjectsOfType<UIBranch>().ToArray<IBranch>();
+    public List<IBranch> ActiveTrunkGroup { get; set; }
+    public IHomeGroup CurrentSwitcher { get; set; }
+
     public bool NoResolvePopUp => ActiveResolvePopUps.Count == 0;
     public List<IBranch> ActiveResolvePopUps { get; } = new List<IBranch>();
     public List<IBranch> ActiveOptionalPopUps { get; } = new List<IBranch>();
     public List<INode> History { get; private set; } = new List<INode>();
 
     public List<GameObject> SelectedGOs { get; private set; } = new List<GameObject>();
-    public INode Highlighted { get; private set; }
+    public INode Highlighted { get; set; }
 
     public void OnAwake() => AddService();
 

@@ -1,16 +1,14 @@
-﻿using System;
-using EZ.Events;
+﻿using EZ.Events;
 using EZ.Inject;
 using EZ.Service;
 using UIElements;
-using UnityEngine;
 
 
 public interface ISwitchGroup: IMonoEnable, IMonoStart
 {
     bool CanSwitchBranches();
     void SwitchGroupProcess();
-    public void ImmediateSwitch();
+    void ImmediateSwitch();
 }
 
 public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
@@ -18,7 +16,6 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     public SwitchGroups()
     { 
         _gouiSwitcher = EZInject.Class.NoParams<IGOUISwitcher>();
-        _homeGroup = EZInject.Class.NoParams<IHomeGroup>();
         UseEZServiceLocator();
     }
 
@@ -32,7 +29,7 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     //Variables
     private InputScheme _inputScheme;
     private readonly IGOUISwitcher _gouiSwitcher;
-    private readonly IHomeGroup _homeGroup;
+    private IHomeGroup HomeGroup => _myDataHub.CurrentSwitcher;
     private IHistoryTrack _historyTracker;
     private IDataHub _myDataHub;
     private SwitchType _lastSwitchType = SwitchType.Normal;
@@ -48,14 +45,13 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     public void OnEnable()
     {
         _gouiSwitcher.OnEnable();
-        _homeGroup.OnEnable();
+        //_homeGroup.OnEnable();
         if (_inputScheme.WhereToStartGame == InMenuOrGame.InGameControl)
             _lastSwitchType = SwitchType.GOUI;
     }
     
     public void OnStart()
     {
-        _homeGroup.SetUpHomeGroup();
         _gouiSwitcher.OnStart();
     }
     
@@ -69,7 +65,7 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
         if (_myDataHub.OnHomeScreen)
         {
             if(Switch(_gouiSwitcher, GOUIButtonsPressed, SwitchType.GOUI, _inputScheme.PressedPositiveGOUISwitch()) || 
-               Switch(_homeGroup, SwitcherButtonsPressed, SwitchType.Normal, _inputScheme.PressedPositiveSwitch())) return;
+               Switch(HomeGroup, SwitcherButtonsPressed, SwitchType.Normal, _inputScheme.PressedPositiveSwitch())) return;
         }
 
         Switch(_myDataHub.ActiveBranch.BranchGroupsHandler, SwitcherButtonsPressed, SwitchType.Normal,
@@ -93,7 +89,6 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
 
         _lastSwitchType = switchType;
         group.DoSwitch(inputCheck ? SwitchInputType.Positive : SwitchInputType.Negative);
-        Debug.Log("End");
 
         return true;
     }

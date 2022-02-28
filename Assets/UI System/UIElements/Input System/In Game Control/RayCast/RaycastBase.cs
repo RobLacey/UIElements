@@ -3,32 +3,32 @@ using UnityEngine;
 
 namespace UIElements
 {
-    public abstract class RaycastBase : I2DRaycast, I3DRaycast, IServiceUser
+    public abstract class RaycastBase : I2DRaycast, I3DRaycast
     {
+        protected RaycastBase(IVcSettings settings) => _settings = settings.VCSettings;
+
         //Variables
         private ICursorHandler _lastGameObject;
-        protected LayerMask _layerToHit;
         protected readonly Camera _mainCamera = Camera.main;
-        protected InputScheme _inputScheme;
+        private readonly VirtualCursorSettings _settings;
         
         //Properties
         protected Vector3 CameraPosition => _mainCamera.transform.position;
+        protected float LaserLength => _settings.RaycastLength;
+        protected LayerMask LayerToHit => _settings.LayerToHit;
 
         //Main
-        public void OnEnable() => UseEZServiceLocator();
-
-        public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
-
-
-        public virtual void OnStart() => _layerToHit = _inputScheme.ReturnVirtualCursorSettings.LayerToHit;
-
         public void WhenInMenu()
         {
             if(_lastGameObject.IsNull()) return;
             _lastGameObject = null;
         }
 
-        public void DoRaycast(Vector3 virtualCursorPos) => OverGameObj(RaycastToObj(virtualCursorPos));
+        public bool DoRaycast(Vector3 virtualCursorPos)
+        {
+            OverGameObj(RaycastToObj(virtualCursorPos));
+            return _lastGameObject.IsNotNull();
+        }
 
         protected abstract ICursorHandler RaycastToObj(Vector3 virtualCursorPos);
 
@@ -53,7 +53,7 @@ namespace UIElements
             return true;
         }
 
-        private void ExitLastObject()
+        public void ExitLastObject()
         {
             if (_lastGameObject.IsNull()) return;
             

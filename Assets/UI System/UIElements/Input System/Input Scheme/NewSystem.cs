@@ -119,7 +119,7 @@ public class NewSystem : InputScheme
         return false;
     }
 
-    private protected override bool VCSwitchTo()
+    public override bool SwitchToVCPressed()
     {
         return false;
     }

@@ -2,9 +2,10 @@
 
 namespace UIElements
 {
-    public interface IRaycast : IMonoStart, IMonoEnable
+    public interface IRaycast
     {
-        void DoRaycast(Vector3 virtualCursorPos);
+        bool DoRaycast(Vector3 virtualCursorPos);
         void WhenInMenu();
+        void ExitLastObject();
     }
 }

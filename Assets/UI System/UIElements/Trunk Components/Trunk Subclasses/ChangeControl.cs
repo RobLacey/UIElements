@@ -10,8 +10,7 @@ using UnityEngine;
 
 public interface IChangeControl : IEZEventUser, IMonoEnable, IMonoStart, IMonoDisable { }
 
-public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVCSetUpOnStart, 
-                             IVcChangeControlSetUp, IServiceUser
+public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IServiceUser
 {
     public ChangeControl(IInput input) => _startInGame = input.StartInGame();
 
@@ -24,13 +23,11 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
     //Properties
     public bool CanAllowKeys { get; private set; }
     private bool UsingVirtualCursor => _inputScheme.CanUseVirtualCursor;
-    public bool ShowCursorOnStart { get; private set; }
+    private bool ShowCursorOnStart { get; set; }
     private bool SceneStarted { get; set; }
 
     //Events
     private Action<IAllowKeys> AllowKeys { get; set; }
-    private Action<IVCSetUpOnStart> VcStartSetUp { get; set; }
-    private Action<IVcChangeControlSetUp> SetVcUsage { get; set; }
 
     //Main
     public void OnEnable()
@@ -46,12 +43,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
     }
 
-    public void FetchEvents()
-    {
-        AllowKeys = InputEvents.Do.Fetch<IAllowKeys>();
-        VcStartSetUp = InputEvents.Do.Fetch<IVCSetUpOnStart>();
-        SetVcUsage = InputEvents.Do.Fetch<IVcChangeControlSetUp>();
-    }
+    public void FetchEvents() => AllowKeys = InputEvents.Do.Fetch<IAllowKeys>();
 
     public void ObserveEvents()
     {
@@ -80,7 +72,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
                             || !_inputScheme.HideMouseCursor;
 
         ShowMouseCursorOnStart();
-        VcStartSetUp?.Invoke(this);
     }
 
     private void ShowMouseCursorOnStart()
@@ -105,8 +96,6 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         {
             SetUpKeysOrCtrl();
         }
-        
-        SetUpVcCorrectly();
         SceneStarted = true;
     }
 
@@ -146,26 +135,20 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         if (_inputScheme.CanSwitchToMouseOrVC(CanAllowKeys))
         {
             ActivateMouseOrVirtualCursor();
+            return;
         }
-        else if(_inputScheme.CanSwitchToKeysOrController(CanAllowKeys))
+        
+        if(_inputScheme.CanSwitchToKeysOrController(CanAllowKeys))
         {
-            if (_inputScheme.AnyMouseClicked) return;
             ActivateKeysOrControl();
         }
     }
     
-    private void SetUpVcCorrectly()
-    {
-        if(!UsingVirtualCursor) return;
-        SetVcUsage?.Invoke(this);
-    }
-
     private void ActivateMouseOrVirtualCursor()
     {
         Cursor.visible = !UsingVirtualCursor;
         
         if (!CanAllowKeys) return;
-        SetUpVcCorrectly();
         CanAllowKeys = false;
         SetAllowKeys();
         
@@ -184,7 +167,8 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, IVC
         CanAllowKeys = true;
         SetAllowKeys();
 
-        if(!SceneStarted) return;
+       if(!SceneStarted) return;
+
         _myDataHub.ActiveBranch.LastHighlighted.SetNodeAsActive();
     }
 

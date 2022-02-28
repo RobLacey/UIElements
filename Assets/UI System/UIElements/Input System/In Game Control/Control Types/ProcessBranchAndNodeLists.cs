@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[Obsolete("IInteractWithUi has been replaced and this is for the old one that compares Rect's", true)]
 public static class ProcessBranchAndNodeLists
 {
     public static bool AddNewNodesToList(IEnumerable<UINode> list, IDictionary<UINode, RectTransform> activeNodes)

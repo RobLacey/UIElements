@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using EZ.Events;
+using EZ.Inject;
 using EZ.Service;
 using UIElements;
 using UnityEngine;
@@ -7,9 +9,8 @@ using Object = UnityEngine.Object;
 
 public interface IVirtualCursor :IMonoEnable, IMonoStart
 {
-    IBranch OverAnyObject { get; set; }
     RectTransform CursorRect { get; }
-    bool CanMoveVirtualCursor();
+    bool CanMoveVirtualCursor { get; }
     void PreStartMovement();
     void Update();
 }
@@ -21,8 +22,13 @@ public interface ICursorSettings
     Vector3 Position { get; }
 }
 
+public interface IVcSettings : IParameters
+{
+    VirtualCursorSettings VCSettings { get; }
+}
+
 [Serializable]
-public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, ICursorSettings, IServiceUser, IMonoAwake
+public class VirtualCursor : IEZEventUser, IVirtualCursor, ICursorSettings, IServiceUser, IMonoAwake, IVcSettings
 {
     public VirtualCursor(IVirtualCursorSettings settings)
     {
@@ -31,85 +37,79 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
     }
     
     //Variables
-    private IRaycast _raycastTo2D, _raycastTo3D;
     private Canvas _cursorCanvas;
-    private bool _allowKeys;
     private IInteractWithUi _interactWithUi;
     private IMoveVirtualCursor _moveVirtualCursor;
     private ICanvasOrderData _canvasOrderData;
-    private VirtualCursorSettings _virtualCursorSetting;
-    private bool _canStart;
     private Transform _parentTransform;
+    private List<IRaycast> _gouiCasts = new List<IRaycast>();
+    private IDataHub _myDataHub;
 
     //Properties & Setters / Getters
-    public LayerMask LayerToHit => _virtualCursorSetting.LayerToHit;
-    public float LaserLength => _virtualCursorSetting.RaycastLength;
+    public VirtualCursorSettings VCSettings => Scheme.ReturnVirtualCursorSettings;
     public bool SelectPressed => Scheme.PressSelect();
-    public IBranch OverAnyObject { get; set; }
     public Vector3 Position => CursorRect.transform.position;
     public RectTransform CursorRect { get; private set; }
-    public float Speed => _virtualCursorSetting.CursorSpeed;
-    private GameObject VirtualCursorPrefab => _virtualCursorSetting.VirtualCursorPrefab;
+    public float Speed => VCSettings.CursorSpeed;
+    private GameObject VirtualCursorPrefab => VCSettings.VirtualCursorPrefab;
     private InputScheme Scheme { get; set; }
     private bool HasInput => Scheme.VcHorizontal() != 0 || Scheme.VcVertical() != 0;
-    private bool Allow2D => _virtualCursorSetting.RestrictRaycastTo == GameType._2D 
-                            || _virtualCursorSetting.RestrictRaycastTo == GameType.NoRestrictions;
-    private bool Allow3D => _virtualCursorSetting.RestrictRaycastTo == GameType._3D 
-                            || _virtualCursorSetting.RestrictRaycastTo == GameType.NoRestrictions;
-    private void CanStart(IOnStart args) => _canStart = true;
-    private void SaveAllowKeys(IAllowKeys args) => _allowKeys = args.CanAllowKeys;
+    private bool Allow2D => VCSettings.RestrictRaycastTo == GameType._2D 
+                            || VCSettings.RestrictRaycastTo == GameType.NoRestrictions;
+    private bool Allow3D => VCSettings.RestrictRaycastTo == GameType._3D 
+                            || VCSettings.RestrictRaycastTo == GameType.NoRestrictions;
+
+    private bool ShowCursorOnStart => (Scheme.ControlType == ControlMethod.MouseOnly
+                                       || Scheme.ControlType == ControlMethod.AllowBothStartWithMouse) 
+                                        || !Scheme.HideMouseCursor;
+    public bool CanMoveVirtualCursor => HasInput && !SelectPressed && !_myDataHub.AllowKeys;
+
+    private void SaveAllowKeys(IAllowKeys args)
+    {
+        ShowVC_Cursor();
+        _interactWithUi.ClearLastHit();
+    }
+    private void CancelPressed(ICancelPressed args) => _interactWithUi.ClearLastHit();
 
     //Main
     public void OnAwake()
     {
-        _raycastTo2D = EZInject.Class.NoParams<I2DRaycast>();
-        _raycastTo3D = EZInject.Class.NoParams<I3DRaycast>();
         _moveVirtualCursor = EZInject.Class.NoParams<IMoveVirtualCursor>();
         _interactWithUi = EZInject.Class.NoParams<IInteractWithUi>();
-        
-        UseEZServiceLocator();
-        
-        _virtualCursorSetting = Scheme.ReturnVirtualCursorSettings;
-        SetUpVirtualCursor(_parentTransform);
-
     }
-    
+
     public void UseEZServiceLocator()
     {
         Scheme = EZService.Locator.Get<InputScheme>(this);
         _canvasOrderData = EZService.Locator.Get<ICanvasOrderData>(this);
+        _myDataHub = EZService.Locator.Get<IDataHub>(this);
     }
 
     public void OnEnable()
     {
+        UseEZServiceLocator();
         ObserveEvents();
         _interactWithUi.OnEnable();
         _moveVirtualCursor.OnEnable();
-        _raycastTo2D.OnEnable();
-        _raycastTo3D.OnEnable();
     }
 
     public void ObserveEvents()
     {
         InputEvents.Do.Subscribe<IAllowKeys>(SaveAllowKeys);
-        InputEvents.Do.Subscribe<IVCSetUpOnStart>(SetCursorForStartUp);
-        HistoryEvents.Do.Subscribe<IOnStart>(CanStart);
-        InputEvents.Do.Subscribe<IVcChangeControlSetUp>(DoVCStartCheck);
+        InputEvents.Do.Subscribe<ICancelPressed>(CancelPressed);
     }
 
     public void UnObserveEvents() { }
 
     public void OnStart()
     {
-        if(_virtualCursorSetting.OnlyHitInGameUi == IsActive.Yes)
-            _interactWithUi.SetCanOnlyHitInGameObjects();
-        
-        _raycastTo2D.OnStart();
-        _raycastTo3D.OnStart();
+        SetUpVirtualCursor(_parentTransform);
         _moveVirtualCursor.OnStart();
         SetStartingCanvasOrder();
+        SetUpGouiRaycasts();
+        SetCursorForStartUp();
     }
-    
+
     private void SetUpVirtualCursor(Transform transform)
     {
         var newVirtualCursor = Object.Instantiate(VirtualCursorPrefab, transform, true);
@@ -124,12 +124,20 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
         _cursorCanvas.enabled = Scheme.CanUseVirtualCursor;
     }
 
-
-    private void DoVCStartCheck(IVcChangeControlSetUp args)
+    private void SetUpGouiRaycasts()
     {
-        if(!Scheme.CanUseVirtualCursor) return;
-        
-        if (_allowKeys)
+        if (Allow2D)
+             _gouiCasts.Add(EZInject.Class.WithParams<I2DRaycast>(this));
+
+        if (Allow3D)
+            _gouiCasts.Add(EZInject.Class.WithParams<I3DRaycast>(this));
+    }
+
+    private void SetCursorForStartUp() => _cursorCanvas.enabled = ShowCursorOnStart;
+
+    private void ShowVC_Cursor()
+    {
+        if (_myDataHub.AllowKeys)
         {
             TurnOffAndResetCursor();
         }
@@ -142,68 +150,56 @@ public class VirtualCursor : IRaycastController, IEZEventUser, IVirtualCursor, I
     private void SetStartingCanvasOrder() 
         => SetCanvasOrderUtil.Set(_canvasOrderData.ReturnVirtualCursorCanvasOrder, _cursorCanvas);
 
-
     private void TurnOffAndResetCursor()
     {
         if (Scheme.HideMouseCursor)
             _cursorCanvas.enabled = false;
-        _raycastTo2D.WhenInMenu();
-        _raycastTo3D.WhenInMenu();
-        OverAnyObject = null;
-    }
-
-    private void SetCursorForStartUp(IVCSetUpOnStart args)
-    {
-        if(!Scheme.CanUseVirtualCursor) return;
         
-        if (args.ShowCursorOnStart)
+        foreach (var gOuiCast in _gouiCasts)
         {
-            ActivateCursor();
-        }
-        else
-        {
-            _cursorCanvas.enabled = false;
+            gOuiCast.WhenInMenu();
         }
     }
 
     private void ActivateCursor()
     {
         _cursorCanvas.enabled = true;
-        CheckIfCursorOverGOUI();
-        _interactWithUi.CheckIfCursorOverUI(this);
-    }
-
-    public bool CanMoveVirtualCursor()
-    {
-        var canUseVirtualCursor = Scheme.CanUseVirtualCursor && !_allowKeys && (HasInput && !SelectPressed);
-        return canUseVirtualCursor;
-    }
-
-    public void Update()
-    {
-        if(Scheme.PressSelect()) return;
-        
-        _moveVirtualCursor.Move(this);
-        if (!HasInput) return;
-        
-        // if (OverAnyObject.IsNull())
-        //     CheckIfCursorOverGOUI();
-        _interactWithUi.CheckIfCursorOverUI(this);
+        DoRaycasts();
     }
     
+    public void Update()
+    {
+        _moveVirtualCursor.Move(this);
+        if (!HasInput) return;
+        DoRaycasts();
+    }
+
+    private void DoRaycasts()
+    {
+        _interactWithUi.CheckIfCursorOverUI(this);
+        if (_interactWithUi.OverNothingUI())
+        {
+            foreach (var gOuiCast in _gouiCasts)
+            {
+                gOuiCast.ExitLastObject();
+            }
+            return;
+        }
+        CheckIfCursorOverGOUI();
+    }
+
     public void PreStartMovement()
     {
-        if(_canStart) return;
-        if (Scheme.CanUseVirtualCursor && !HasInput)
+        if(_myDataHub.SceneStarted) return;
+        if (!HasInput)
             _moveVirtualCursor.Move(this);
     }
 
     private void CheckIfCursorOverGOUI()
     {
-        Debug.Log("GOUI");
-        if (Allow2D)
-            _raycastTo2D.DoRaycast(CursorRect.position);
-        if (Allow3D)
-            _raycastTo3D.DoRaycast(CursorRect.position);
+        foreach (var gOuiCast in _gouiCasts)
+        {
+            if(gOuiCast.DoRaycast(CursorRect.position)) return;
+        }
     }
 }

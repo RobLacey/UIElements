@@ -55,11 +55,7 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     }
 
     //Main
-    private void SetUpOnStart(IOnStart args)
-    {
-         SetControlBarCanvasOrder();
-         SetBlockRaycast(BlockRaycast.Yes);
-    }
+    private void SetUpOnStart(IOnStart args) => SetBlockRaycast(BlockRaycast.Yes);
 
     private void SetControlBarCanvasOrder()
     {
@@ -71,14 +67,8 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     
     protected override void SetUpBranchesOnStart(ISetUpStartBranches args)
     {
-        if (args.StartBranch == _myBranch)
-        {
-            _myBranch.DefaultStartOnThisNode.ThisNodeIsHighLighted();
-        }
-        else
-        {
-            _myBranch.DontSetBranchAsActive();
-        }
+        SetControlBarCanvasOrder();
+        _myBranch.DontSetBranchAsActive();
         _myBranch.MoveToThisBranch();
     }
 

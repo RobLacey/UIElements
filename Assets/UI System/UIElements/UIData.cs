@@ -5,8 +5,8 @@ using NaughtyAttributes;
 using UIElements;
 using UnityEngine;
 
-[Serializable]
-public class UIData : IMonoEnable, IEZEventUser
+
+public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser
 {
     [SerializeField] private UINode _lastHighlighted = default;
     [SerializeField] private GameObject _lastHighlightedGO = default;
@@ -25,6 +25,8 @@ public class UIData : IMonoEnable, IEZEventUser
     //Main
     public void OnEnable() => ObserveEvents();
 
+    private void OnDisable() => UnObserveEvents();
+
     public void ObserveEvents()
     {
         HistoryEvents.Do.Subscribe<IStoreNodeHistoryData>(ManageHistory);
@@ -42,7 +44,22 @@ public class UIData : IMonoEnable, IEZEventUser
     }
 
 
-    public void UnObserveEvents() { }
+    public void UnObserveEvents()
+    {
+        HistoryEvents.Do.Unsubscribe<IStoreNodeHistoryData>(ManageHistory);
+        HistoryEvents.Do.Unsubscribe<IHighlightedNode>(SaveLastHighlighted);
+        HistoryEvents.Do.Unsubscribe<ISelectedNode>(SaveLastSelected);
+        HistoryEvents.Do.Unsubscribe<IActiveBranch>(SaveActiveBranch);
+        HistoryEvents.Do.Unsubscribe<IOnHomeScreen>(SaveOnHomeScreen);
+        InputEvents.Do.Unsubscribe<IAllowKeys>(SaveAllowKeys);
+        HistoryEvents.Do.Unsubscribe<IInMenu>(SaveInMenu);
+        BranchEvent.Do.Unsubscribe<ICloseBranch>(CloseAndReset);
+        PopUpEvents.Do.Unsubscribe<IAddResolvePopUp>(AddResolve);
+        PopUpEvents.Do.Unsubscribe<IAddOptionalPopUp>(AddOptional);
+        PopUpEvents.Do.Unsubscribe<IRemoveResolvePopUp>(RemoveResolve);
+        PopUpEvents.Do.Unsubscribe<IRemoveOptionalPopUp>(RemoveOptional);
+
+    }
 
     private void CloseAndReset(ICloseBranch args)
     {

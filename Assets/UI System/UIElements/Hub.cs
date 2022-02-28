@@ -1,20 +1,46 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using EZ.Events;
+using EZ.Inject;
 using EZ.Service;
 using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace UIElements
 {
-    [RequireComponent(typeof(UIInput))]
+    public interface IHub : IParameters
+{
+    AudioSource UI_AudioSource { get; }
+}
 
-    public class Hub : MonoBehaviour, IServiceUser, IEZEventUser, ISceneIsChanging, IOnStart
+    [RequireComponent(typeof(Canvas))]
+    [RequireComponent(typeof(CanvasScaler))]
+
+    [RequireComponent(typeof(UIInput))]
+    [RequireComponent(typeof(AudioSource))]
+
+
+    public class Hub : MonoBehaviour, IHub, IServiceUser, IEZEventUser, ISceneIsChanging, IOnStart, IIsAService
     {
+        
+        public Hub()
+        {
+            PopUpEvents.Do.Initialise(new PopUpBindings());
+            HistoryEvents.Do.Initialise(new HistoryBindings());
+            InputEvents.Do.Initialise(new InputBindings());
+            GOUIEvents.Do.Initialise(new GOUIEventsBindings());
+            BranchEvent.Do.Initialise(new BranchBindings());
+            CancelEvents.Do.Initialise(new CancelBindings());
+            EZService.Locator.Initialise();
+        }
+
         [SerializeField] private Trunk _rootMenu;
         [SerializeField] private int _nextLevel;
+        [SerializeField] private AudioSource _uiAudioSource;
+        
         [Header("Start Delay")] [Space(10f)] [HorizontalLine(1, color: EColor.Blue, order = 1)]
     
         [SerializeField] 
@@ -24,12 +50,23 @@ namespace UIElements
         [SerializeField] 
         [Label("..Enable Controls After..")] [Range(0, 10)] 
         protected int _controlActivateDelay;
+        
+        [Space(10f, order = 1)] 
+        [Header(CanvasOrderTitle, order = 2)] [HorizontalLine(1f, EColor.Blue, order = 3)]
+        
+        [SerializeField] 
+        private CanvasOrderData _canvasSortingOrderSettings;
 
         
         //Variables
-        private INode _lastHighlighted;
         private bool _startingInGame, _inMenu;
         private IDataHub _myDataHub;
+        private IAudioService _audioService;
+        private const string CanvasOrderTitle = "Canvas Sorting Order Setting for Branch Types";
+
+
+        public AudioSource UI_AudioSource => _uiAudioSource;
+
 
         //Events
         private Action<IOnStart> OnStart { get; set; } 
@@ -38,10 +75,12 @@ namespace UIElements
         private void Awake()
         {
             var uIInput = GetComponent<IInput>();
+            AddService();
 
             _startingInGame = uIInput.StartInGame();
-            _myDataHub = new DataHub(_rootMenu.MainCanvasRect);
+            _myDataHub = new DataHub(GetComponent<RectTransform>());
             _myDataHub.OnAwake();
+            _audioService = EZInject.Class.WithParams<IAudioService>(this);
         }
 
         private void OnEnable()
@@ -49,11 +88,14 @@ namespace UIElements
             UseEZServiceLocator();
             ObserveEvents();
             _myDataHub.OnEnable();
+            _audioService.OnEnable();
+            _canvasSortingOrderSettings.OnEnable();
         }
 
         private void OnDisable()
         {
             UnObserveEvents();
+            _audioService.OnDisable();
         }
 
         public void UseEZServiceLocator()
@@ -66,18 +108,31 @@ namespace UIElements
         
         public void ObserveEvents()
         {
-           // InputEvents.Do.Subscribe<IAllowKeys>(SwitchedToKeys);
-            HistoryEvents.Do.Subscribe<IHighlightedNode>(SetLastHighlighted);
-
+            
         }
 
         public void UnObserveEvents()
         {
             
         }
+        
+        public void AddService()
+        {
+            EZService.Locator.AddNew<IHub>(this);
+        }
 
+        public void OnRemoveService()
+        {
+            
+        }
 
-        private void Start() => StartCoroutine(StartUIDelay());
+        private void Start()
+        {
+            _myDataHub.Highlighted = _rootMenu.GroupsBranches.First().DefaultStartOnThisNode;
+            _myDataHub.ActiveBranch = _rootMenu.GroupsBranches.First();
+
+            StartCoroutine(StartUIDelay());
+        }
 
         
         private IEnumerator StartUIDelay()
@@ -94,13 +149,10 @@ namespace UIElements
         {
             if (_startingInGame)
             {
-                // OnStart?.Invoke(this);
-                // _myDataHub.SetStarted();
                 _inMenu = false;
             }
             else
             {
-              //  SetEventSystem(GetFirstHighlightedNodeInHomeGroup());
                 _inMenu = true;
             }
 
@@ -114,18 +166,14 @@ namespace UIElements
             if(_controlActivateDelay != 0)
                 yield return new WaitForSeconds(_controlActivateDelay);
             
-            // if(!_startingInGame)
-            // {
-                 _myDataHub.SetStarted();
-                OnStart?.Invoke(this);
-            //}            
-         //   SetEventSystem(GetFirstHighlightedNodeInHomeGroup());
+            _myDataHub.SetStarted();
+            _rootMenu.OnStart();
+            OnStart?.Invoke(this);
         }
 
         private void SaveInMenu(IInMenu args)
         {
             _inMenu = args.InTheMenu;
-           // if(!_inMenu) SetEventSystem(null);
         }
 
 
@@ -158,30 +206,6 @@ namespace UIElements
             CancelEvents.Do.Purge();
             EZService.Locator.Purge();
         }
-
-        private void SetLastHighlighted(IHighlightedNode args)
-        {
-            _lastHighlighted = args.Highlighted;
-            // if(_inMenu) 
-            //     SetEventSystem(_lastHighlighted.ReturnGameObject);
-        }
-
-       // private void SwitchedToKeys(IAllowKeys args) => SetEventSystem(GetCorrectLastHighlighted());
-
-        // private static void SetEventSystem(GameObject newGameObject) 
-        //     => EventSystem.current.SetSelectedGameObject(newGameObject);
-        //
-        // private GameObject GetCorrectLastHighlighted()
-        // {
-        //     return _lastHighlighted is null ? GetFirstHighlightedNodeInHomeGroup() : 
-        //                _lastHighlighted.ReturnGameObject;
-        // }
-        //
-        // private GameObject GetFirstHighlightedNodeInHomeGroup()
-        // {
-        //     return _rootMenu.StartBranch.DefaultStartOnThisNode.ReturnGameObject;
-        // }
-
 
     }
 }

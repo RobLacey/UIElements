@@ -24,7 +24,11 @@ public class RuntimeCreateBranch
         return CreateBranch(template, parent);
     }
     
-    private Transform HubTransform() => Object.FindObjectOfType<Trunk>().transform;
+    private Transform HubTransform()
+    {
+        //TODO Change This as wont work in new system
+        return Object.FindObjectOfType<Trunk>().transform;
+    }
 
     //Main
     private IBranch CreateBranch(UIBranch template, Transform createParent)

@@ -18,7 +18,7 @@ public class ClassBindings : EZInjectBindingBase
         
         //Hub Classes
         _injectMaster.Bind<UIAudioManager>().To<IAudioService>().WithParameters();
-        _injectMaster.Bind<UIHomeGroup>().To<IHomeGroup>();
+        _injectMaster.Bind<UIHomeGroup>().To<IHomeGroup>().WithParameters();
         _injectMaster.Bind<HistoryTracker>().To<IHistoryTrack>();
         _injectMaster.Bind<UICancel>().To<ICancel>();
         _injectMaster.Bind<ReturnControlFromEditor>().To<IReturnFromEditor>();
@@ -73,10 +73,10 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<ChangeControl>().To<IChangeControl>().WithParameters();
         
         //InGameControl
-        _injectMaster.Bind<_2DRaycast>().To<I2DRaycast>();
-        _injectMaster.Bind<_3DRaycast>().To<I3DRaycast>();
+        _injectMaster.Bind<_2DRaycast>().To<I2DRaycast>().WithParameters();
+        _injectMaster.Bind<_3DRaycast>().To<I3DRaycast>().WithParameters();
         _injectMaster.Bind<GOUISwitcher>().To<IGOUISwitcher>();
-        _injectMaster.Bind<InteractWithUi>().To<IInteractWithUi>();
+        _injectMaster.Bind<VcInteractionUI>().To<IInteractWithUi>();
         _injectMaster.Bind<MoveVirtualCursor>().To<IMoveVirtualCursor>();
         _injectMaster.Bind<VirtualCursor>().To<IVirtualCursor>().WithParameters();
         

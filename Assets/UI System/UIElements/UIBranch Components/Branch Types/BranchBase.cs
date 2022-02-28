@@ -5,7 +5,7 @@ using UnityEngine;
 
 
 public class BranchBase : IEZEventUser, IOnHomeScreen, IClearScreen, IServiceUser, IBranchBase, IBranchParams,
-                          IEZEventDispatcher, ICanInteractWithBranch, ICannotInteractWithBranch, ICanvasCalcParms, ISetPositionParms 
+                          IEZEventDispatcher, ICanvasCalcParms, ISetPositionParms 
                           
 {
     protected BranchBase(IBranch branch)
@@ -29,8 +29,6 @@ public class BranchBase : IEZEventUser, IOnHomeScreen, IClearScreen, IServiceUse
     //Events
     private Action<IOnHomeScreen> SetIsOnHomeScreen { get; set; }
     private Action<IClearScreen> DoClearScreen { get; set; }
-    private Action<ICanInteractWithBranch> AddThisBranch { get; } = BranchEvent.Do.Fetch<ICanInteractWithBranch>();
-    private Action<ICannotInteractWithBranch> RemoveThisBranch { get; } = BranchEvent.Do.Fetch<ICannotInteractWithBranch>();
 
     //Properties & Set/Getters
     protected bool InMenu => _myDataHub.InMenu;
@@ -192,19 +190,7 @@ public class BranchBase : IEZEventUser, IOnHomeScreen, IClearScreen, IServiceUse
         ActivateChildTabBranches(ActiveCanvas.No);
     }
     
-    public virtual void SetCanvas(ActiveCanvas active)
-    {
-        _myCanvas.enabled = active == ActiveCanvas.Yes;
-        
-        if (active == ActiveCanvas.Yes)
-        {
-            AddThisBranch?.Invoke(this);
-        }
-        else
-        {
-            RemoveThisBranch?.Invoke(this);
-        }
-    }
+    public virtual void SetCanvas(ActiveCanvas active) => _myCanvas.enabled = active == ActiveCanvas.Yes;
 
     public virtual void SetBlockRaycast(BlockRaycast active)
     {

@@ -9,11 +9,13 @@ using UnityEngine;
 /// </summary>
 public class UIAudioManager : IAudioService, IIsAService
 {
+    public UIAudioManager(IHub hub) => _myAudioSource = hub.UI_AudioSource;
+
+    //Variables
     private AudioSource _myAudioSource;
     private bool IsPlayingSelected { get; set; }
     private bool IsPlayingCancel { get; set; }
 
-    public UIAudioManager(ITrunk trunk) => _myAudioSource = trunk.ThisGameObject.GetComponent<AudioSource>();
 
     public void OnEnable() => AddService();
 

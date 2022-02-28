@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf72707778a495380664443a05e90e8, type: 3}
   m_Name: Scheme - Old
   m_EditorClassIdentifier: 
-  _mainControlType: 3
+  _mainControlType: 2
   _hideMouseCursor: 1
   _customMouseCursor: 1
   _cursorSettings:
@@ -24,10 +24,10 @@ MonoBehaviour:
     _restrictRaycastTo: 2
     _virtualCursorPrefab: {fileID: 766753675201208392, guid: c68b6dd03c66fa94b8c11ef4d321378c, type: 3}
     _onlyHitInGameUi: 1
-    _cursorSpeed: 20
+    _cursorSpeed: 5
     _inGameObjectLayersToHit:
       serializedVersion: 2
-      m_Bits: 32
+      m_Bits: 1
     _raycastLength: 1000
   _startGameWhere: 0
   _pauseOptionsOnEscape: 1
@@ -44,8 +44,8 @@ MonoBehaviour:
   _negNextGOUIButton: Switch GOUI Neg
   _switchToMenusButton: 
   _switchToVC: Virtual Cursor
-  _vCursorHorizontal: VC Horizontal
-  _vCursorVertical: VC Vertical
+  _vCursorHorizontal: Horizontal
+  _vCursorVertical: Vertical
   _hotKey1: HotKey1
   _hotKey2: HotKey2
   _hotKey3: 

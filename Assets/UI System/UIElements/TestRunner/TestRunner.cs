@@ -12,7 +12,6 @@ using Random = UnityEngine.Random;
 
 public class TestRunner : MonoBehaviour
 {
-    [SerializeField] private UIData _uiData;
     [SerializeField] [Space(20, order = 1)] private int _nextScene  = 6;
     [SerializeField] private EventsForTest _eventsForTest = default;
     [SerializeField] [Foldout("Test Text Settings")] private string _test1Text = default;
@@ -62,7 +61,6 @@ public class TestRunner : MonoBehaviour
 
     private void OnEnable()
     {
-        _uiData.OnEnable();
         _popUpPrefabs.OnEnable();
     }
     
