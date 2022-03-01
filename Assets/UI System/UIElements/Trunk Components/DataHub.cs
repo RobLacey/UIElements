@@ -34,6 +34,9 @@ public interface ISwitchData
 {
     List<IBranch> ActiveTrunkGroup { get; set; }
     IHomeGroup CurrentSwitcher { get; set; }
+    public Trunk CurrentTrunk { get; set; }
+
+    Trunk RootTrunk { get; set; }
 }
 
 public class DataHub: IEZEventUser, IIsAService, IDataHub
@@ -55,7 +58,8 @@ public class DataHub: IEZEventUser, IIsAService, IDataHub
     public IBranch[] AllBranches => Object.FindObjectsOfType<UIBranch>().ToArray<IBranch>();
     public List<IBranch> ActiveTrunkGroup { get; set; }
     public IHomeGroup CurrentSwitcher { get; set; }
-
+    public Trunk CurrentTrunk { get; set; }
+    public Trunk RootTrunk { get; set; }
     public bool NoResolvePopUp => ActiveResolvePopUps.Count == 0;
     public List<IBranch> ActiveResolvePopUps { get; } = new List<IBranch>();
     public List<IBranch> ActiveOptionalPopUps { get; } = new List<IBranch>();

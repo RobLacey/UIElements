@@ -1,10 +1,12 @@
 ﻿using System;
 using NaughtyAttributes;
+using UIElements;
 using UnityEngine;
 
 public interface INavigationSettings : IComponentSettings
 {
     IBranch ChildBranch { get; }
+    Trunk NewTrunk { get; }
     NavigationType NavType { get; }
     UINode Up { get; }
     UINode Down { get; }
@@ -15,8 +17,11 @@ public interface INavigationSettings : IComponentSettings
 [Serializable]
 public class NavigationSettings :INavigationSettings
 {
+    //TODO Can only have one or the other of these two
     [SerializeField] 
     [AllowNesting] [Label("Move To When Clicked")] [HideIf("CantNavigate")] private UIBranch _childBranch = default;
+    [SerializeField] 
+    [AllowNesting] [Label("Move To Trunk")] [HideIf("CantNavigate")] private Trunk _newTrunk = default;
     [SerializeField] 
     private NavigationType _setKeyNavigation = NavigationType.None;
     [SerializeField] 
@@ -44,6 +49,7 @@ public class NavigationSettings :INavigationSettings
         set => _childBranch = (UIBranch) value;
     }
 
+    public Trunk NewTrunk => _newTrunk;
     private void SetNewChild(IBranch newChild) => ChildBranch = newChild;
     public NavigationType NavType => _setKeyNavigation;
     public UINode Up => _up;

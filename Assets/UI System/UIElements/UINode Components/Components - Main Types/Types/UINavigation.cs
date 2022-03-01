@@ -27,7 +27,8 @@ public class UINavigation : NodeFunctionBase
     private NavigationType SetNavigation => _mySettings.NavType;
     private int NodeGroupSize => _myBranch.ThisBranchesNodes.Length;
     protected override bool CanBeHighlighted() => false;
-    protected override bool CanBePressed() => !(ChildBranch is null);
+    protected override bool CanBePressed() => ChildBranch.IsNotNull() || _mySettings.NewTrunk.IsNotNull();
+    //protected override bool CanBePressed() => !(ChildBranch is null);
     protected override void SavePointerStatus(bool pointerOver) { }
     protected override bool FunctionNotActive() => SetNavigation == NavigationType.None;
 
@@ -142,6 +143,13 @@ public class UINavigation : NodeFunctionBase
     private void NavigateToChildBranch(IBranch moveToo)
     {
         if(MultiSelectAllowed) return;
+
+        if (_mySettings.NewTrunk.IsNotNull())
+        {
+            _myBranch.ParentTrunk.OnExitTrunk();
+            _mySettings.NewTrunk.OnStartTrunk();
+            return;
+        }
         
         if (moveToo.IsInternalBranch())
         {

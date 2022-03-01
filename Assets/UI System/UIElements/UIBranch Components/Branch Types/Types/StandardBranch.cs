@@ -21,8 +21,8 @@ public class StandardBranch : BranchBase, IStandardBranch
         CanGoToFullscreen();
         SetNewParentBranch(newParentController);
         
-        if(_myBranch.ScreenType == ScreenType.FullScreen)
-            _screenData.StoreClearScreenData(AllBranches, _myBranch, BlockRaycast.Yes);
+        // if(_myBranch.ParentTrunk == ScreenType.FullScreen)
+        //     _screenData.StoreClearScreenData(AllBranches, _myBranch, BlockRaycast.Yes);
     }
 
     protected override void ClearBranchForFullscreen(IClearScreen args)

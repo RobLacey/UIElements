@@ -37,7 +37,6 @@ public partial class UIBranch : ICloseBranch
     public INode[] ThisBranchesNodes { get; set; } = new INode[0];
     public void SetThisGroupsNode(INode[] groupsNodes) => ThisBranchesNodes = groupsNodes;
     public IsActive GetSaveOnExit => _saveExitSelection;
-    public List<GroupList> BranchGroupsList => _groupsList;
     public Canvas MyCanvas { get; private set; } 
     public CanvasGroup MyCanvasGroup { get; private set; }
     public IBranch MyParentBranch { get; set; }
@@ -47,6 +46,8 @@ public partial class UIBranch : ICloseBranch
     public IAutoOpenClose AutoOpenCloseClass { get; private set; }
     public bool PointerOverBranch => AutoOpenCloseClass.PointerOverBranch;
     public float Timer => _timer;
+    public Trunk ParentTrunk { get; set; }
+
 
     public IsActive SetSaveLastSelectionOnExit
     {
@@ -63,12 +64,6 @@ public partial class UIBranch : ICloseBranch
     {
         get => _moveType;
         set => _moveType = value;
-    }
-
-    public ScreenType ScreenType
-    {
-        get => _screenType;
-        set => _screenType = value;
     }
 
     public DoTween TweenOnHome
@@ -95,5 +90,7 @@ public partial class UIBranch : ICloseBranch
     public IsActive ReturnOnlyAllowOnHomeScreen => _onlyAllowOnHomeScreen;
     public IBranch TargetBranch => this;
     public GOUIModule ReturnGOUIModule => _branchTypeBaseClass.ReturnGOUIModule() as GOUIModule;
+    
+    
 
 }

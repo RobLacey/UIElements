@@ -5,7 +5,6 @@ using NaughtyAttributes;
 using UIElements;
 using UnityEngine;
 
-
 public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser
 {
     [SerializeField] private UINode _lastHighlighted = default;

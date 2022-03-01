@@ -1,5 +1,4 @@
-﻿using EZ.Events;
-using EZ.Inject;
+﻿using EZ.Inject;
 using EZ.Service;
 using UIElements;
 
@@ -45,7 +44,6 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     public void OnEnable()
     {
         _gouiSwitcher.OnEnable();
-        //_homeGroup.OnEnable();
         if (_inputScheme.WhereToStartGame == InMenuOrGame.InGameControl)
             _lastSwitchType = SwitchType.GOUI;
     }
@@ -67,9 +65,6 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
             if(Switch(_gouiSwitcher, GOUIButtonsPressed, SwitchType.GOUI, _inputScheme.PressedPositiveGOUISwitch()) || 
                Switch(HomeGroup, SwitcherButtonsPressed, SwitchType.Normal, _inputScheme.PressedPositiveSwitch())) return;
         }
-
-        Switch(_myDataHub.ActiveBranch.BranchGroupsHandler, SwitcherButtonsPressed, SwitchType.Normal,
-               _inputScheme.PressedPositiveSwitch());
     }
 
     private bool Switch(ISwitch group, bool switchPressed, SwitchType switchType, bool inputCheck)

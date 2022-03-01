@@ -80,7 +80,7 @@ public partial class HotKeys : IHotKeyPressed, IEZEventDispatcher, IServiceUser,
 
     private void GetParentNode()
     {
-        if (_myBranch.ScreenType != ScreenType.FullScreen)
+        if (!_myBranch.IsHomeScreenBranch())
         {
             GetImmediateParentNode();
         }

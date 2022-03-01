@@ -7,6 +7,7 @@ using EZ.Service;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UIElements
@@ -36,8 +37,9 @@ namespace UIElements
             CancelEvents.Do.Initialise(new CancelBindings());
             EZService.Locator.Initialise();
         }
-
-        [SerializeField] private Trunk _rootMenu;
+        
+        [Required("Must have a start point")]
+        [SerializeField] private Trunk _rootTrunk;
         [SerializeField] private int _nextLevel;
         [SerializeField] private AudioSource _uiAudioSource;
         
@@ -62,6 +64,10 @@ namespace UIElements
         private bool _startingInGame, _inMenu;
         private IDataHub _myDataHub;
         private IAudioService _audioService;
+        private IHistoryTrack _historyTrack;
+        private ICancel _cancelHandler;
+
+
         private const string CanvasOrderTitle = "Canvas Sorting Order Setting for Branch Types";
 
 
@@ -80,7 +86,11 @@ namespace UIElements
             _startingInGame = uIInput.StartInGame();
             _myDataHub = new DataHub(GetComponent<RectTransform>());
             _myDataHub.OnAwake();
+            _myDataHub.RootTrunk = _rootTrunk;
             _audioService = EZInject.Class.WithParams<IAudioService>(this);
+            _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
+            _cancelHandler = EZInject.Class.NoParams<ICancel>();
+
         }
 
         private void OnEnable()
@@ -90,6 +100,9 @@ namespace UIElements
             _myDataHub.OnEnable();
             _audioService.OnEnable();
             _canvasSortingOrderSettings.OnEnable();
+            _historyTrack.OnEnable();
+            _cancelHandler.OnEnable();
+
         }
 
         private void OnDisable()
@@ -128,8 +141,8 @@ namespace UIElements
 
         private void Start()
         {
-            _myDataHub.Highlighted = _rootMenu.GroupsBranches.First().DefaultStartOnThisNode;
-            _myDataHub.ActiveBranch = _rootMenu.GroupsBranches.First();
+            _myDataHub.Highlighted = _rootTrunk.GroupsBranches.First().DefaultStartOnThisNode;
+            _myDataHub.ActiveBranch = _rootTrunk.GroupsBranches.First();
 
             StartCoroutine(StartUIDelay());
         }
@@ -159,7 +172,7 @@ namespace UIElements
             _myDataHub.InMenu = _inMenu;
         }
 
-        private void SetStartPositionsAndSettings() => _rootMenu.SetStartPositionsAndSettings();
+        private void SetStartPositionsAndSettings() => _rootTrunk.SetStartPositionsAndSettings();
 
         private IEnumerator EnableStartControls()
         {
@@ -167,7 +180,7 @@ namespace UIElements
                 yield return new WaitForSeconds(_controlActivateDelay);
             
             _myDataHub.SetStarted();
-            _rootMenu.OnStart();
+            _rootTrunk.OnStartTrunk();
             OnStart?.Invoke(this);
         }
 

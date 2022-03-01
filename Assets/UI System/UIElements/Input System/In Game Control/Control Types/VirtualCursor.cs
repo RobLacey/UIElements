@@ -176,6 +176,8 @@ public class VirtualCursor : IEZEventUser, IVirtualCursor, ICursorSettings, ISer
 
     private void DoRaycasts()
     {
+        
+        //TODO add a timer to restrict raycast to every other frame or user set value
         _interactWithUi.CheckIfCursorOverUI(this);
         if (_interactWithUi.OverNothingUI())
         {

@@ -179,18 +179,32 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IReturnToHome, IStore
     
     private void SetFromHotkey(IHotKeyPressed args)
     {
-        HotKeyReturnsToHomeScreen(args.MyBranch.ScreenType);
+        //TODO REplace with new method
+        HotKeyReturnsToHomeScreen(args.MyBranch.ParentTrunk == MyDataHub.RootTrunk);
         ClearAllHistory();
         _lastSelected = args.ParentNode;
     }
     
-    private void HotKeyReturnsToHomeScreen(ScreenType hotKeyScreenType)
+    private void HotKeyReturnsToHomeScreen(bool isRootTrunk)
     {
-        if (hotKeyScreenType != ScreenType.FullScreen && !OnHomeScreen)
+        if (isRootTrunk)
+        {
+            MyDataHub.RootTrunk.OnStartTrunk();
             BackToHomeScreen();
+        }
+        
     }
+    // private void HotKeyReturnsToHomeScreen(ScreenType hotKeyScreenType)
+    // {
+    //     if (hotKeyScreenType != ScreenType.FullScreen && !OnHomeScreen)
+    //         BackToHomeScreen();
+    // }
 
-    public void BackToHomeScreen() => HasReturnedToHomeScreen?.Invoke(this);
+    public void BackToHomeScreen()
+    {
+        HasReturnedToHomeScreen?.Invoke(this);
+    }
+    // public void BackToHomeScreen() => HasReturnedToHomeScreen?.Invoke(this);
 
     public void CancelHasBeenPressed(EscapeKey endOfCancelAction)
     {

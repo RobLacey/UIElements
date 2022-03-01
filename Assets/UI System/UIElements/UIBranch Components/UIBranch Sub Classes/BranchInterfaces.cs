@@ -18,7 +18,7 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
 
     INode DefaultStartOnThisNode { get; }
     CanvasGroup MyCanvasGroup { get; }
-    ScreenType ScreenType { get; set; }
+    Trunk ParentTrunk { get; set; }
     EscapeKey EscapeKeyType { get; set; }
     WhenToMove WhenToMove { set; }
     bool CanvasIsEnabled { get; }
@@ -36,9 +36,6 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     INode LastHighlighted { get; }
     GameObject ThisBranchesGameObject { get; }
     IsActive ReturnOnlyAllowOnHomeScreen { get; }
-    List<GroupList> BranchGroupsList { get; }
-    GOUIModule ReturnGOUIModule { get; }
-    BranchGroups BranchGroupsHandler { get; }
 
 
     IsActive GetStayOn();
@@ -92,6 +89,7 @@ public interface IDynamicBranch : IThisBranch
     void SetThisGroupsNode(INode[] groupsNodes);
     bool IsInGameBranch();
 }
+
 
 
 

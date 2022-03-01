@@ -64,7 +64,6 @@ public class BranchFactory
 
     private static void CreateHomeScreenBranch(IBranch branch)
     {
-        branch.ScreenType = ScreenType.Overlay;
         branch.EscapeKeyType = EscapeKey.None;
 
         if (!branch.IsControlBar())
@@ -96,7 +95,6 @@ public class BranchFactory
     private static void CreateOptionalPopUp(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.ScreenType = ScreenType.Overlay;
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
@@ -106,7 +104,6 @@ public class BranchFactory
     private static void CreateTimedPopUp(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.ScreenType = ScreenType.Overlay;
         branch.TweenOnHome = DoTween.DoNothing;
         branch.WhenToMove = WhenToMove.Immediately;
         branch.SetStayOn = IsActive.No;
@@ -134,7 +131,6 @@ public class BranchFactory
         branch.SetNotAControlBar();
         branch.WhenToMove = WhenToMove.Immediately;
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
-        branch.ScreenType = ScreenType.Overlay;
         branch.TweenOnHome = DoTween.DoNothing;
         branch.CanvasOrder = OrderInCanvas.Manual;
         branch.SetSaveLastSelectionOnExit = IsActive.No;

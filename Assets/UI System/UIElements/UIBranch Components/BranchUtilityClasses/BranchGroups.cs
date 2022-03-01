@@ -5,8 +5,8 @@ using EZ.Service;
 using UIElements;
 using UnityEngine;
 
-
-public class BranchGroups: ISwitch, IServiceUser, IMonoEnable
+[Obsolete("Has been made obsolete by using Homegroup for everything", true)]
+public class BranchGroups /*: ISwitch, IServiceUser, IMonoEnable*/
 {
     public BranchGroups(IBranch branch)
     {
@@ -19,6 +19,7 @@ public class BranchGroups: ISwitch, IServiceUser, IMonoEnable
     private readonly IBranch _thisBranch;
 
     //Properties
+    /*
     public bool HasOnlyOneMember => ThisBranchesGroup.Count == 1;
     private List<GroupList> ThisBranchesGroup => _thisBranch.BranchGroupsList;
     private List<IBranch> HomeBranches => _myDataHub.ActiveTrunkGroup;
@@ -116,5 +117,6 @@ public class BranchGroups: ISwitch, IServiceUser, IMonoEnable
         Debug.Log(ThisBranchesGroup[_index].StartNode);
         ThisBranchesGroup[_index].StartNode.SetNodeAsActive();
     }
+    */
 
 }

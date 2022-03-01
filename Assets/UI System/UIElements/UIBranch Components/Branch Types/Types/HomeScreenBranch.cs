@@ -101,10 +101,10 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
 
     private void CheckChildOfControlBar()
     {
-        if (_myBranch.LastSelected.HasChildBranch.ScreenType == ScreenType.Overlay && !OnHomeScreen)
-        {
-            _historyTrack.BackToHomeScreen();
-        }
+        // if (_myBranch.LastSelected.HasChildBranch.ParentTrunk == ScreenType.Overlay && !OnHomeScreen)
+        // {
+        //     _historyTrack.BackToHomeScreen();
+        // }
     }
 
     public override void SetBlockRaycast(BlockRaycast active)

@@ -6,6 +6,7 @@ using EZ.Inject;
 using EZ.Service;
 using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// UIHub is the core of the system and looks after starting the system Up and general state management 
@@ -20,16 +21,18 @@ namespace UIElements
 {
     public class Trunk : MonoBehaviour, IHomeGroupSettings, ISetUpStartBranches, IEZEventDispatcher, IServiceUser
     {
+        [SerializeField] 
+        [Label("Overlay Or Fullscreen")]
+        private ScreenType _screenType = ScreenType.Overlay;
 
         [Space(10f, order = 1)]
         [Header(StartOnTitle, order = 2)] [HorizontalLine(1f, EColor.Blue, order = 3)]
-        [SerializeField] private List<UIBranch> _homeBranches;
-        
+        [SerializeField] private List<UIBranch> _branches;
+
+
         //Variables
         private IDataHub _myDataHub;
-        private IHistoryTrack _historyTrack;
-        private ICancel _cancelHandler;
-        private IHomeGroup _homeGroup;
+        private IHomeGroup _switcher;
         private const string StartOnTitle = "Set On Which Branch To Start On";
 
         //Events
@@ -37,23 +40,21 @@ namespace UIElements
 
         
         //Properties & Getters/ Setters
-        public List<IBranch> GroupsBranches => _homeBranches.ToList<IBranch>();
+        public List<IBranch> GroupsBranches => _branches.ToList<IBranch>();
+        public ScreenType ScreenType => _screenType;
 
         //Main
         private void Awake()
         { 
-            _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
-            _cancelHandler = EZInject.Class.NoParams<ICancel>();
-            _homeGroup = EZInject.Class.WithParams<IHomeGroup>(this);
+            // _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
+            _switcher = EZInject.Class.WithParams<IHomeGroup>(this);
         }
 
         private void OnEnable()
         {
             UseEZServiceLocator();
             FetchEvents();
-            _historyTrack.OnEnable();
-            _cancelHandler.OnEnable();
-            _homeGroup.OnEnable();
+           // _switcher.OnEnable();
         }
         
         public void UseEZServiceLocator()
@@ -68,19 +69,39 @@ namespace UIElements
 
         private void OnDisable()
         {
-            _homeGroup.OnDisable();
+            _switcher.OnDisable();
         }
 
         private void Start()
         {
             _myDataHub.ActiveTrunkGroup = GroupsBranches;
+            foreach (var uiBranch in _branches)
+            {
+                uiBranch.ParentTrunk = this;
+            }
         }
 
-        public void OnStart()
+        public void OnStartTrunk()
         {
-            _myDataHub.CurrentSwitcher = _homeGroup;
+            OnEnable();
+            _switcher.OnEnable();
+            Debug.Log("Enter : " + name);
+            _myDataHub.CurrentTrunk = this;
+            _myDataHub.CurrentSwitcher = _switcher;
             _myDataHub.ActiveTrunkGroup = GroupsBranches;
-            _homeBranches.First().MoveToThisBranch();
+            _switcher.ActivateHomeGroupBranch(null);
+            _branches.First().MoveToThisBranch();
+        }
+        
+        public void OnExitTrunk()
+        {
+            _switcher.OnDisable();
+            OnDisable();
+            Debug.Log("Exit : " + name);
+            foreach (var uiBranch in _branches)
+            {
+                uiBranch.StartBranchExitProcess(OutTweenType.MoveToChild);
+            }
         }
 
         public void SetStartPositionsAndSettings() => SetUpBranchesAtStart?.Invoke(this);

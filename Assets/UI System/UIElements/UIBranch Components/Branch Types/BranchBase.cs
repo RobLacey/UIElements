@@ -13,7 +13,7 @@ public class BranchBase : IEZEventUser, IOnHomeScreen, IClearScreen, IServiceUse
         _myBranch = branch.ThisBranch;
         _myCanvas = _myBranch.MyCanvas;
         _myCanvasGroup = _myBranch.MyCanvasGroup;
-        MyScreenType = _myBranch.ScreenType;
+        //MyScreenType = _myBranch.ParentTrunk.ScreenType;
     }
     
     //Variables
@@ -214,15 +214,15 @@ public class BranchBase : IEZEventUser, IOnHomeScreen, IClearScreen, IServiceUse
     
     protected void CanGoToFullscreen()
     {
-        if (MyScreenType != ScreenType.FullScreen || !OnHomeScreen) return;
-        InvokeDoClearScreen();
-        InvokeOnHomeScreen(false);
+        // if (MyScreenType != ScreenType.FullScreen || !OnHomeScreen) return;
+        // InvokeDoClearScreen();
+        // InvokeOnHomeScreen(false);
     }
     
     protected void CanGoToFullscreen_Paused()
     {
-        if (MyScreenType != ScreenType.FullScreen) return;
-        InvokeDoClearScreen();
+        // if (MyScreenType != ScreenType.FullScreen) return;
+        // InvokeDoClearScreen();
     }
 
     protected void ActivateStoredPosition()

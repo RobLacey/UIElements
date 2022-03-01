@@ -2,8 +2,12 @@
 using EZ.Events;
 using EZ.Service;
 using UIElements;
+using UnityEngine;
 
-public interface IHomeGroup: IMonoEnable, IMonoDisable, ISwitch { }
+public interface IHomeGroup : IMonoEnable, IMonoDisable, ISwitch
+{
+    void ActivateHomeGroupBranch(IReturnToHome args);
+}
 
 public interface ISwitch
 {
@@ -56,7 +60,13 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
         HistoryEvents.Do.Subscribe<IHighlightedNode>(SaveHighlighted);
     }
 
-    public void UnObserveEvents() { }
+    public void UnObserveEvents()
+    {
+        HistoryEvents.Do.Unsubscribe<IReturnToHome>(ActivateHomeGroupBranch);
+        HistoryEvents.Do.Unsubscribe<IActiveBranch>(SetActiveHomeBranch);
+        HistoryEvents.Do.Unsubscribe<IReturnHomeGroupIndex>(ReturnHomeGroup);
+        HistoryEvents.Do.Unsubscribe<IHighlightedNode>(SaveHighlighted);
+    }
 
     private void SaveHighlighted(IHighlightedNode args)
     {
@@ -104,12 +114,12 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
 
     private void SetActiveHomeBranch(IActiveBranch args)
     {
-        _activeBranch = args.ActiveBranch;
-        if(DontDoSearch(_activeBranch)) return;
-        if(_lastActiveHomeBranch == _activeBranch) return;
-        
-        _lastActiveHomeBranch = _activeBranch;
-        FindHomeScreenBranch(_activeBranch);
+        // _activeBranch = _myDataHub.ActiveBranch;
+        // if(DontDoSearch(_activeBranch)) return;
+        // if(_lastActiveHomeBranch == _activeBranch) return;
+        //
+        // _lastActiveHomeBranch = _activeBranch;
+        // FindHomeScreenBranch(_activeBranch);
     }
 
     private bool DontDoSearch(IBranch newBranch) 
@@ -117,15 +127,15 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
                                               || newBranch.IsInGameBranch() 
                                               || GameIsPaused;
 
-    private void FindHomeScreenBranch(IBranch newBranch)
-    {
-        while (!newBranch.IsHomeScreenBranch() && !DontDoSearch(newBranch))
-        {
-            newBranch = newBranch.MyParentBranch;
-        }
-        
-        SearchHomeBranchesAndSet(newBranch);
-    }
+    // private void FindHomeScreenBranch(IBranch newBranch)
+    // {
+    //     while (!newBranch.IsHomeScreenBranch() && !DontDoSearch(newBranch))
+    //     {
+    //         newBranch = newBranch.MyParentBranch;
+    //     }
+    //     
+    //     SearchHomeBranchesAndSet(newBranch);
+    // }
 
     private void SearchHomeBranchesAndSet(IBranch newBranch)
     {
@@ -134,8 +144,9 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
         _index = Array.IndexOf(HomeGroup, newBranch);
     }
 
-    private void ActivateHomeGroupBranch(IReturnToHome args)
+    public void ActivateHomeGroupBranch(IReturnToHome args)
     {
+        Debug.Log(HomeGroup.Length + " : " + _index);
         HomeGroup[_index].MoveToThisBranch();
         
         foreach (var branch in HomeGroup)
@@ -145,5 +156,4 @@ public class UIHomeGroup : IEZEventUser, IHomeGroup, IServiceUser
             branch.MoveToThisBranch();
         }
     }
-
 }

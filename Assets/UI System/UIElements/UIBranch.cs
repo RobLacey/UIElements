@@ -57,13 +57,15 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     [OnValueChanged(SetUpCanvasOrder)] 
     private int _orderInCanvas;
 
+    /*
     [SerializeField] 
-    [HideIf(EConditionOperator.Or, OptionalBranch, TimedBranch, HomeScreenBranch, ControlBarBranch, InGamUIBranch)]
+    [ShowIf(EConditionOperator.Or, OptionalBranch, TimedBranch, ResolveBranch/*, HomeScreenBranch ControlBarBranch, InGamUIBranch#1#)]
     [Label("Overlay Or Fullscreen")]
     private ScreenType _screenType = ScreenType.Overlay;
+    */
     
     [SerializeField] 
-    [HideIf(EConditionOperator.Or, AnyPopUpBranch, Fullscreen, ControlBarBranch, InGamUIBranch)]
+    [HideIf(EConditionOperator.Or, AnyPopUpBranch, /*Fullscreen,*/ ControlBarBranch, InGamUIBranch)]
     [ValidateInput(ValidInAndOutTweens, MessageINAndOutTweens)]
     [Label("Visible When Child Active")]
     private IsActive _stayVisible = IsActive.No;
@@ -91,12 +93,6 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     [ShowIf(EConditionOperator.Or, StandardBranch)]
     private EscapeKey _escapeKeyFunction = EscapeKey.GlobalSetting;
 
-    [SerializeField]
-    [HideIf(EConditionOperator.Or, AnyPopUpBranch, HomeScreenBranch, InGamUIBranch, Overlay)] 
-    [Label("Branch Groups List (Leave blank if NO groups needed)")]
-    [InfoBox("")]
-    [ReorderableList] private List<GroupList> _groupsList;
-
     [Header("Events & Create New Buttons", order = 2)][HorizontalLine(1f, EColor.Blue, order = 3)] 
     [Space(20, order = 1)]
     [SerializeField] 
@@ -116,14 +112,11 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     private bool _tweenOnChange = true, _canActivateBranch = true;
     private bool _sceneIsChanging;
     private IBranchBase _branchTypeBaseClass;
-    public BranchGroups BranchGroupsHandler { get; private set; }
 
     //Delegates & Events
     private Action TweenFinishedCallBack { get; set; }
     private  Action<IActiveBranch> SetAsActiveBranch { get; set; }        
     private Action<ICloseBranch> CloseAndResetBranch { get; set; }
-
-    
 
     //Getters & Setters
     private void SceneIsChanging(ISceneIsChanging args) => _sceneIsChanging = true;
@@ -165,8 +158,14 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         AutoOpenCloseClass = EZInject.Class.WithParams<IAutoOpenClose>(this); 
         _branchTypeBaseClass = BranchFactory.Factory.PassThisBranch(this).CreateType(_branchType);
         _branchTypeBaseClass.OnAwake();
+        SetStartPositions();
+    }
 
-        BranchGroupsHandler = new BranchGroups(this);
+    private void SetStartPositions()
+    {
+        SetDefaultStartPosition();
+        LastHighlighted = DefaultStartOnThisNode;
+        LastSelected = DefaultStartOnThisNode;
     }
 
     private void CheckForValidSetUp()
@@ -181,17 +180,8 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     {
         FetchEvents();
         ObserveEvents();
-        SetStartPositions();
         _branchTypeBaseClass.OnEnable();
         AutoOpenCloseClass.OnEnable();
-        BranchGroupsHandler.OnEnable();
-    }
-
-    private void SetStartPositions()
-    {
-        SetDefaultStartPosition();
-        LastHighlighted = DefaultStartOnThisNode;
-        LastSelected = DefaultStartOnThisNode;
     }
 
     private void SetDefaultStartPosition()
@@ -201,14 +191,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
             DefaultStartOnThisNode = _startOnThisNode;
             return;
         }        
-        if (_groupsList.Count > 0)
-        {
-            DefaultStartOnThisNode = _groupsList.First().StartNode;
-        }
-        else
-        {
-            DefaultStartOnThisNode = (UINode) ThisBranchesNodes.First();
-        }
+        DefaultStartOnThisNode = (UINode) ThisBranchesNodes.First();
     }
 
     public void FetchEvents()
@@ -252,13 +235,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         SetAsActiveBranch = null;
     }
 
-    private void Start()
-    {
-        _branchTypeBaseClass.OnStart();
-        //CheckForControlBar();
-    }
-
-   // private void CheckForControlBar() => BranchGroupsHandler.AddControlBarToBranchGroup();
+    private void Start() => _branchTypeBaseClass.OnStart();
 
     public void StartPopUp_RunTimeCall(bool fromPool)
     {
@@ -310,7 +287,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         if (_canActivateBranch)
             LastHighlighted.SetNodeAsActive();
         
-        BranchGroupsHandler.SetGroupIndex(LastHighlighted);
+        //BranchGroupsHandler.SetGroupIndex(LastHighlighted);
     }
 
     public void StartBranchExitProcess(OutTweenType outTweenType, Action endOfTweenCallback = null)
