@@ -54,11 +54,11 @@ namespace UIElements
                     return _pauseMenu;
                 case BranchType.Standard:
                     return SetStandardCanvasOrder(calculator);
-                case BranchType.Internal:
+                case BranchType.InternalObsolete:
                     return SetStandardCanvasOrder(calculator);
                 case BranchType.InGameObject:
                     return _inGameObject;
-                case BranchType.HomeScreen:
+                case BranchType.HomeScreenObsolete:
                     return SetStandardCanvasOrder(calculator);
                 default:
                     return 0;

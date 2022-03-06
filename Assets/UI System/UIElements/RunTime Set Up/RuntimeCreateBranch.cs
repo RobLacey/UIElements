@@ -27,7 +27,7 @@ public class RuntimeCreateBranch
     private Transform HubTransform()
     {
         //TODO Change This as wont work in new system
-        return Object.FindObjectOfType<Trunk>().transform;
+        return Object.FindObjectOfType<Hub>().transform;
     }
 
     //Main

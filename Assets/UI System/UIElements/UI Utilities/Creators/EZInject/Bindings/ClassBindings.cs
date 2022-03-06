@@ -18,7 +18,7 @@ public class ClassBindings : EZInjectBindingBase
         
         //Hub Classes
         _injectMaster.Bind<UIAudioManager>().To<IAudioService>().WithParameters();
-        _injectMaster.Bind<UIHomeGroup>().To<IHomeGroup>().WithParameters();
+        _injectMaster.Bind<SwitchTrunkGroup>().To<ISwitchTrunkGroup>().WithParameters();
         _injectMaster.Bind<HistoryTracker>().To<IHistoryTrack>();
         _injectMaster.Bind<UICancel>().To<ICancel>();
         _injectMaster.Bind<ReturnControlFromEditor>().To<IReturnFromEditor>();
@@ -47,7 +47,7 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<InGameNode>().To<IInGameNode>().WithParameters();
         
         //Branch Types
-        _injectMaster.Bind<HomeScreenBranch>().To<IHomeScreenBranch>().WithParameters();
+        //_injectMaster.Bind<HomeScreenBranch>().To<IHomeScreenBranch>().WithParameters();
         _injectMaster.Bind<StandardBranch>().To<IStandardBranch>().WithParameters();
         _injectMaster.Bind<ResolvePopUp>().To<IResolvePopUpBranch>().WithParameters();
         _injectMaster.Bind<OptionalPopUpPopUp>().To<IOptionalPopUpBranch>().WithParameters();
@@ -62,8 +62,8 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<Punch>().To<IPunch>().WithParameters();
         _injectMaster.Bind<Shake>().To<IShake>().WithParameters();
         
-        //NodeSearch
-        _injectMaster.Bind<NodeSearch>().To<INodeSearch>();
+        // //NodeSearch
+        // _injectMaster.Bind<NodeSearch>().To<INodeSearch>();
         
         //ScreenData
         _injectMaster.Bind<ScreenData>().To<IScreenData>().WithParameters();

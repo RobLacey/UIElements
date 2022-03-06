@@ -18,11 +18,11 @@ public class BranchFactory
     {
         switch (branchType)
         {
-            case BranchType.HomeScreen:
-            {
-                CreateHomeScreenBranch(_branch);
-                return ieJect.WithParams<IHomeScreenBranch>(_branch);
-            }            
+            // case BranchType.HomeScreen:
+            // {
+            //     CreateHomeScreenBranch(_branch);
+            //     return ieJect.WithParams<IHomeScreenBranch>(_branch);
+            // }            
             case BranchType.Standard:
             {
                 CreateStandardBranch(_branch);
@@ -48,11 +48,11 @@ public class BranchFactory
                 CreatePauseMenu(_branch);
                 return ieJect.WithParams<IPauseBranch>(_branch);
             }
-            case BranchType.Internal:
-            {
-                CreateInternal(_branch);
-                return ieJect.WithParams<IStandardBranch>(_branch);
-            }
+            // case BranchType.Internal:
+            // {
+            //     CreateInternal(_branch);
+            //     return ieJect.WithParams<IStandardBranch>(_branch);
+            // }
             case BranchType.InGameObject:
                 CreateInGameUi(_branch);
                 return ieJect.WithParams<IGOUIBranch>(_branch);
@@ -62,31 +62,39 @@ public class BranchFactory
     }
 
 
-    private static void CreateHomeScreenBranch(IBranch branch)
-    {
-        branch.EscapeKeyType = EscapeKey.None;
-
-        if (!branch.IsControlBar())
-        {
-            branch.CanvasOrder = OrderInCanvas.Default;
-            return;
-        }
-        
-        branch.SetStayOn = IsActive.No;
-        branch.TweenOnHome = DoTween.DoNothing;
-    }
+    // private static void CreateHomeScreenBranch(IBranch branch)
+    // {
+    //     branch.EscapeKeyType = EscapeKey.None;
+    //
+    //     if (!branch.IsControlBar())
+    //     {
+    //         branch.CanvasOrder = OrderInCanvas.Default;
+    //         return;
+    //     }
+    //     
+    //     branch.SetStayOn = IsActive.No;
+    //     branch.TweenOnSceneStart = DoTween.DoNothing;
+    // }
 
     private static void CreateStandardBranch(IBranch branch)
     {
+        if (branch.IsControlBar())
+        {
+            branch.SetStayOn = IsActive.Yes;
+            branch.TweenOnSceneStart = DoTween.DoNothing;
+            return;
+        }
+
+        //branch.CanvasOrder = OrderInCanvas.Default;
         branch.SetNotAControlBar();
-        branch.TweenOnHome = DoTween.DoNothing;
+        //branch.TweenOnSceneStart = DoTween.DoNothing;
     }
 
     private static void CreateResolvePopUp(IBranch branch)
     {
         branch.SetNotAControlBar();
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
-        branch.TweenOnHome = DoTween.DoNothing;
+        branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
         branch.SetSaveLastSelectionOnExit = IsActive.No;
@@ -104,7 +112,7 @@ public class BranchFactory
     private static void CreateTimedPopUp(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.TweenOnHome = DoTween.DoNothing;
+        branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.WhenToMove = WhenToMove.Immediately;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
@@ -115,14 +123,14 @@ public class BranchFactory
     {
         branch.SetNotAControlBar();
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
-        branch.TweenOnHome = DoTween.DoNothing;
+        branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.CanvasOrder = OrderInCanvas.Manual;
     }
     
     private static void CreateInternal(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.TweenOnHome = DoTween.DoNothing;
+        branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
     }
     
@@ -131,7 +139,7 @@ public class BranchFactory
         branch.SetNotAControlBar();
         branch.WhenToMove = WhenToMove.Immediately;
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
-        branch.TweenOnHome = DoTween.DoNothing;
+        branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.CanvasOrder = OrderInCanvas.Manual;
         branch.SetSaveLastSelectionOnExit = IsActive.No;
         branch.SetStayOn = IsActive.Yes;

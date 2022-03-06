@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using EZ.Events;
 using UIElements;
 using UnityEngine;
@@ -15,12 +16,12 @@ public class BranchBindings : EZEventBindingsBase
     }
 }
 
-public interface ISetUpStartBranches  { } 
-
-public interface IClearScreen 
+public interface ISetUpStartBranches
 {
-    IBranch IgnoreThisBranch { get; }
-}
+    List<IBranch> GroupsBranches { get; }
+} 
+
+public interface IClearScreen  { }
 
 public interface IEndTween
 {
