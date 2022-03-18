@@ -9,27 +9,17 @@ public interface IScaleTween: ITweenBase { }
 [Serializable]
 public class ScaleTween : TweenBase, IScaleTween
 {
-    public override void SetUpTweens(List<BuildTweenData> buildObjectsList,
-                                     TweenScheme tweenScheme,
-                                     Action<BuildTweenData> effectCall)
-    {
-        base.SetUpTweens(buildObjectsList, tweenScheme, effectCall);
-
-        foreach (var item in _buildList)
-        {
-            item.Element.transform.localScale = item.ScaleSettings.StartScale;
-        }
-    }
-
-    protected override Tween DoTweenProcess(BuildTweenData item, TweenCallback callback)
-    {
-        return item.Element.DOScale(item._scaleTo, _tweenTime)
-                   .SetId($"{_tweenName}{item.Element.GetInstanceID()}")
-                   .SetEase(_tweenEase)
-                   .SetAutoKill(true)
-                   .Play()
-                   .OnComplete(callback);
-    }
+    // public override void SetUpTweens(List<BuildTweenData> buildObjectsList,
+    //                                  TweenScheme tweenScheme,
+    //                                  Action<BuildTweenData> effectCall)
+    // {
+    //     base.SetUpTweens(buildObjectsList, tweenScheme, effectCall);
+    //
+    //     // foreach (var item in _buildList)
+    //     // {
+    //     //     item.Element.transform.localScale = item.ScaleSettings.StartScale;
+    //     // }
+    // }
 
     public override void StartTween(TweenType tweenType, TweenCallback tweenCallback)
     {
@@ -39,10 +29,22 @@ public class ScaleTween : TweenBase, IScaleTween
         base.StartTween(tweenType, tweenCallback);
     }
 
+    protected override Tween DoTweenProcess(BuildTweenData item, TweenCallback callback)
+    {
+        var id = $"{_tweenName}{item.Element.GetInstanceID()}";
+        return item.Element.DOScale(item._scaleTo, _tweenTime * _elipsedTime)
+                   .SetId(id)
+                   .SetEase(_tweenEase)
+                   .SetAutoKill(true)
+                   .Play()
+                   .OnComplete(callback);
+    }
+
     protected override void RewindTweens()
     {
         foreach (var item in _buildList) 
         {
+            if(item.Element.localScale != item.ScaleSettings.PresetScale) return;
             item.Element.transform.localScale = item.ScaleSettings.StartScale;
         }
     }
@@ -67,7 +69,7 @@ public class ScaleTween : TweenBase, IScaleTween
         {
             foreach (var uIObject in _listToUse)
             {
-                uIObject._scaleTo = uIObject.ScaleSettings.MidScale;
+                uIObject._scaleTo = uIObject.ScaleSettings.PresetScale;
             }
         }
         else

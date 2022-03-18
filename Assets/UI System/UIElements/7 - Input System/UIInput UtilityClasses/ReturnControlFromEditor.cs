@@ -1,4 +1,5 @@
-﻿using EZ.Service;
+﻿using System;
+using EZ.Service;
 using UnityEngine.EventSystems;
 
 public interface IReturnFromEditor
@@ -6,6 +7,7 @@ public interface IReturnFromEditor
     bool CanReturn(bool inMenu, IBranch activeBranch);
 }
 
+[Obsolete("Not needed anymore", true)]
 public class ReturnControlFromEditor : IReturnFromEditor, IServiceUser
 {
     private InputScheme _scheme;

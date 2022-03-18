@@ -13,8 +13,9 @@ public class HistoryBindings : EZEventBindingsBase
         AutoRemove().CreateEvent<IOnStart>();
         AutoRemove().CreateEvent<IGameIsPaused>();
         AutoRemove().CreateEvent<IInMenu>();
-        AutoRemove().CreateEvent<IReturnHomeGroupIndex>();
+        //AutoRemove().CreateEvent<IReturnHomeGroupIndex>();
         AutoRemove().CreateEvent<IAddTrunk>();
+        AutoRemove().CreateEvent<IRemoveTrunk>();
         
         //Node
         AutoRemove().CreateEvent<IHighlightedNode>();
@@ -25,6 +26,8 @@ public class HistoryBindings : EZEventBindingsBase
         
         //Branch
         AutoRemove().CreateEvent<IActiveBranch>();
+        AutoRemove().CreateEvent<IAddActiveBranch>();
+        AutoRemove().CreateEvent<IRemoveActiveBranch>();
     }
 }
 
@@ -56,7 +59,15 @@ public interface ISelectedNode
 
 public interface IActiveBranch
 {
-    IBranch ActiveBranch { get; }
+    IBranch ThisBranch { get; }
+}
+public interface IAddActiveBranch
+{
+    IBranch ThisBranch { get; }
+}
+public interface IRemoveActiveBranch
+{
+    IBranch ThisBranch { get; }
 }
 
 public interface IDisabledNode
@@ -69,11 +80,15 @@ public interface IStoreNodeHistoryData
     INode NodeToUpdate { get; }
 }
 
-public interface IReturnHomeGroupIndex { }
+//public interface IReturnHomeGroupIndex { }
 
 public interface ISceneIsChanging { }
 
 public interface IAddTrunk
+{
+    Trunk ThisTrunk { get; }
+}
+public interface IRemoveTrunk
 {
     Trunk ThisTrunk { get; }
 }

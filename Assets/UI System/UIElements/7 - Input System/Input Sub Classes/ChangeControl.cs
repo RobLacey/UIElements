@@ -19,6 +19,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, ISe
     private readonly bool _startInGame;
     private InputScheme _inputScheme;
     private IDataHub _myDataHub;
+    private IHistoryTrack _historyTracker;
 
     //Properties
     public bool CanAllowKeys { get; private set; }
@@ -41,6 +42,7 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, ISe
     {
         _inputScheme = EZService.Locator.Get<InputScheme>(this);
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
+        _historyTracker = EZService.Locator.Get<IHistoryTrack>(this);
     }
 
     public void FetchEvents() => AllowKeys = InputEvents.Do.Fetch<IAllowKeys>();
@@ -168,8 +170,8 @@ public class ChangeControl : IChangeControl, IAllowKeys, IEZEventDispatcher, ISe
         SetAllowKeys();
 
        if(!SceneStarted) return;
-
-        _myDataHub.ActiveBranch.LastHighlighted.SetNodeAsActive();
+        
+       _historyTracker.MoveToLastBranchInHistory();
     }
 
     private void SetAllowKeys()

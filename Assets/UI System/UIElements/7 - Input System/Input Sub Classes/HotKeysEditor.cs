@@ -32,8 +32,10 @@ public partial class HotKeys
             _oldBranchType = _myBranch;
             return;
         }
-
+#if UNITY_EDITOR
+        
         UIEditorDialogue.WarningDialogue(Title, message, "OK");
+#endif
         _myBranch = _oldBranchType;
     }
 }

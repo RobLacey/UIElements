@@ -32,12 +32,14 @@ public class GOUIBranch : BranchBase, IGOUIBranch
     {
         base.ObserveEvents();
         GOUIEvents.Do.Subscribe<IStartGOUIBranch>(StartGOUIBranch);
+        BranchEvent.Do.Subscribe<IClearScreen>(ClearBranchForFullscreen);
     }
 
     public override void UnObserveEvents()
     {
         base.UnObserveEvents();
         GOUIEvents.Do.Unsubscribe<IStartGOUIBranch>(StartGOUIBranch);
+        BranchEvent.Do.Unsubscribe<IClearScreen>(ClearBranchForFullscreen);
     }
 
     public override void OnDisable()
@@ -59,7 +61,7 @@ public class GOUIBranch : BranchBase, IGOUIBranch
 
     protected override void SaveIfOnHomeScreen(IOnHomeScreen args)
     {
-        base.SaveIfOnHomeScreen(args);
+       // base.SaveIfOnHomeScreen(args);
         
         if(_myGOUIModule.IsNull()) return;
         
@@ -79,7 +81,7 @@ public class GOUIBranch : BranchBase, IGOUIBranch
 
     private void StartGOUIBranch(IStartGOUIBranch args)
     {
-        if (ReferenceEquals(args.TargetBranch, _myBranch))
+        if (ReferenceEquals(args.TargetBranch, ThisBranch))
         {
             _canStartGOUI = true;
         }
@@ -107,7 +109,7 @@ public class GOUIBranch : BranchBase, IGOUIBranch
         _myGOUIModule = module;
         _setScreenPosition.InGameObjectPosition = module.GOUITransform;
 
-        var nodes = _myBranch.ThisBranchesGameObject.GetComponentsInChildren<INode>();
+        var nodes = ThisBranch.ThisBranchesGameObject.GetComponentsInChildren<INode>();
         
         foreach (var node in nodes)
         {
@@ -118,18 +120,22 @@ public class GOUIBranch : BranchBase, IGOUIBranch
     public override IGOUIModule ReturnGOUIModule() => _myGOUIModule;
 
     //Main
-    public override bool CanStartBranch() => _canStartGOUI || AlwaysOn || CanAllowKeys;
+    public override bool CanStartBranch()
+    {
+        AddActiveBranch?.Invoke(this);
+        return _canStartGOUI || AlwaysOn || CanAllowKeys;
+    }
 
     public override void SetUpBranch(IBranch newParentController = null)
     {
-        bool AlwaysOnActivated() => AlwaysOn && _myBranch.CanvasIsEnabled;
+        bool AlwaysOnActivated() => AlwaysOn && ThisBranch.CanvasIsEnabled;
 
         base.SetUpBranch(newParentController);
         _canvasOrderCalculator.SetCanvasOrder();
         
-        if(_myBranch.CanvasIsEnabled || AlwaysOnActivated() || !_canStartGOUI )
+        if(ThisBranch.CanvasIsEnabled || AlwaysOnActivated() || !_canStartGOUI )
         {
-            _myBranch.DoNotTween();
+            ThisBranch.DoNotTween();
         }
         
         if(_myGOUIModule.PointerOver)
@@ -141,9 +147,8 @@ public class GOUIBranch : BranchBase, IGOUIBranch
         _setScreenPosition.StartSetting();
     }
 
-    protected override void ClearBranchForFullscreen(IClearScreen args)
+    protected void ClearBranchForFullscreen(IClearScreen args)
     {
-        base.ClearBranchForFullscreen(args);
         _canvasOrderCalculator.ResetCanvasOrder();
     }
 
@@ -169,9 +174,9 @@ public class GOUIBranch : BranchBase, IGOUIBranch
         _setScreenPosition.Stop();
     }
     
-    public override void EndOfBranchExit()
-    {
-        base.EndOfBranchExit();
-        _canvasOrderCalculator.ResetCanvasOrder();
-    }
+    // public override void EndOfBranchExit()
+    // {
+    //     base.EndOfBranchExit();
+    //     _canvasOrderCalculator.ResetCanvasOrder();
+    // }
 }

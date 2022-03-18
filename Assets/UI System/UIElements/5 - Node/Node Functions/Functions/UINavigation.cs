@@ -1,5 +1,4 @@
 ﻿using System;
-using EZ.Service;
 using UnityEngine.EventSystems;
 
 public class UINavigation : NodeFunctionBase
@@ -18,24 +17,16 @@ public class UINavigation : NodeFunctionBase
     private IBranch _myBranch;
     private INode _myNode;
     private readonly INavigationSettings _mySettings;
-    private InputScheme _inputScheme;
-    private int Index => Array.IndexOf(_myBranch.ThisBranchesNodes, _myBranch.LastHighlighted);
 
     //Properties
-    //private IBranch ChildBranch => _mySettings.ChildBranch;
-    //private Trunk NewTrunk => _mySettings.NewTrunk;
+    private int Index => Array.IndexOf(_myBranch.ThisBranchesNodes, _myBranch.LastHighlighted);
     private NavigationType SetNavigation => _mySettings.NavType;
     private int NodeGroupSize => _myBranch.ThisBranchesNodes.Length;
     protected override bool CanBeHighlighted() => false;
 
     protected override bool CanBePressed() => false;
-    //protected override bool CanBePressed() => !(ChildBranch is null);
     protected override void SavePointerStatus(bool pointerOver) { }
     protected override bool FunctionNotActive() => SetNavigation == NavigationType.None;
-
-    private bool MultiSelectAllowed => _inputScheme.MultiSelectPressed() &&
-                                       _myNode.MultiSelectSettings.OpenChildBranch == IsActive.No
-                                       && _myNode.MultiSelectSettings.AllowMultiSelect == IsActive.Yes ;
 
     //Main
     public override void OnAwake()
@@ -45,18 +36,6 @@ public class UINavigation : NodeFunctionBase
         _myBranch = _myNode.MyBranch;
     }
     
-    public override void UseEZServiceLocator()
-    {
-        base.UseEZServiceLocator();
-        _inputScheme = EZService.Locator.Get<InputScheme>(this);
-    }
-
-    public override void OnDisable()
-    {
-        base.OnDisable();
-        _inputScheme = null;
-    }
-
     public override void AxisMoveDirection(MoveDirection moveDirection)
     {
         base.AxisMoveDirection(moveDirection);
@@ -133,34 +112,5 @@ public class UINavigation : NodeFunctionBase
         _myBranch.ThisBranchesNodes[iterateMethod.Invoke(index)].MenuNavigateToThisNode(moveDirection);
     }
 
-    private protected override void ProcessPress()
-    {
-        // if(FunctionNotActive() || !CanBePressed()) return;
-        //
-        // if (!_isSelected) return;
-        // NavigateToChildBranch(ChildBranch);
-    }
-
-    [Obsolete("Moved to History Tracker", true)]
-    private void NavigateToChildBranch(IBranch moveToo)
-    {
-        // if(MultiSelectAllowed) return;
-        //
-        // if (_mySettings.NewTrunk.IsNotNull())
-        // {
-        //     _myBranch.ParentTrunk.OnExitTrunk(()=> _mySettings.NewTrunk.OnStartTrunk(), _myBranch);
-        //     return;
-        // }
-        //
-        // if (moveToo.IsInternalBranch())
-        // {
-        //     ToChildBranchProcess();
-        // }
-        // else
-        // {
-        //     _myBranch.StartBranchExitProcess(OutTweenType.MoveToChild, ToChildBranchProcess);
-        // }
-        //
-        // void ToChildBranchProcess() => moveToo.MoveToThisBranch(_myBranch);
-    }
+    private protected override void ProcessPress() { }
 }

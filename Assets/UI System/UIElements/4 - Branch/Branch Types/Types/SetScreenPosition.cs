@@ -15,7 +15,7 @@ public class SetScreenPosition : IServiceUser, ISetScreenPosition
     public SetScreenPosition(ISetPositionParms branch)
     {
         _mainCamera = Camera.main;
-        _myBranch = branch.MyBranch;
+        _myBranch = branch.ThisBranch;
         _myRectTransform = _myBranch.MyCanvas.GetComponent<RectTransform>();
     }
 

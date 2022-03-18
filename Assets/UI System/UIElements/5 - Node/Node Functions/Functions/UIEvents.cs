@@ -10,6 +10,8 @@ public class UIEvents : NodeFunctionBase
         _eventSettings = settings;
     }
 
+    private bool _pointerOver;
+
     private UnityEvent OnEnterEvent => _eventSettings.OnEnterEvent;
     private UnityEvent OnExitEvent => _eventSettings.OnExitEvent;
     private UnityEvent OnButtonClickedEvent => _eventSettings.OnButtonClickEvent;
@@ -26,6 +28,8 @@ public class UIEvents : NodeFunctionBase
     {
         if (FunctionNotActive()) return;
 
+        _pointerOver = pointerOver;
+        
         if (pointerOver)
         {
             OnEnterEvent?.Invoke();
@@ -39,7 +43,8 @@ public class UIEvents : NodeFunctionBase
     private protected override void ProcessPress()
     {
         if (FunctionNotActive()) return;
-        OnButtonClickedEvent?.Invoke();
+        if(_pointerOver)
+            OnButtonClickedEvent?.Invoke();
         OnToggleEvent?.Invoke(_isSelected);
     }
 

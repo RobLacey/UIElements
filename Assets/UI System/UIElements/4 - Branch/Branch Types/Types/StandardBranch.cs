@@ -9,13 +9,13 @@ public class StandardBranch : BranchBase, IStandardBranch
     public StandardBranch(IBranch branch) : base(branch) { }
     
     private ICanvasOrderData _canvasOrderData;
-    private bool _isOnRootTrunk;
+   // private bool _isOnRootTrunk;
 
-    private IBranch[] AllBranches => _myDataHub.AllBranches;
-    private bool IsControlBar => _myBranch.IsControlBar() && CanStart;
+    //private IBranch[] AllBranches => _myDataHub.AllBranches;
+    private bool IsControlBar => ThisBranch.IsControlBar() && CanStart;
     
-    private bool OnlyTweenOnSceneStart => _myBranch.TweenOnSceneStart == DoTween.DoNothing 
-                                      && _myDataHub.SceneStarted;
+    // private bool OnlyTweenOnSceneStart => _myBranch.TweenOnSceneStart == DoTween.DoNothing 
+    //                                   && _myDataHub.SceneStarted;
 
 
     public override void UseEZServiceLocator()
@@ -42,32 +42,20 @@ public class StandardBranch : BranchBase, IStandardBranch
         SetCanvas(ActiveCanvas.No);
     }
 
+    protected override void SetUpBranchesOnStart(ISetUpStartBranches args) => SetControlBarCanvasOrder();
+
     private void SetUpOnStart(IOnStart args)
     {
-        if(_isOnRootTrunk)
+        if(_myCanvas.enabled)
             SetBlockRaycast(BlockRaycast.Yes);
-    }
-
-    protected override void SetUpBranchesOnStart(ISetUpStartBranches args)
-    {
-        if(!args.GroupsBranches.Contains(_myBranch))
-        {
-            base.SetUpBranchesOnStart(args);
-            return;
-        }
-
-        _isOnRootTrunk = true;
-        SetControlBarCanvasOrder();
-        _myBranch.DontSetBranchAsActive();
-        _myBranch.MoveToThisBranch();
     }
 
     private void SetControlBarCanvasOrder()
     {
         if(!IsControlBar) return;
         
-        _myBranch.MyCanvas.overrideSorting = true;
-        _myBranch.MyCanvas.sortingOrder = _canvasOrderData.ReturnControlBarCanvasOrder();
+        ThisBranch.MyCanvas.overrideSorting = true;
+        ThisBranch.MyCanvas.sortingOrder = _canvasOrderData.ReturnControlBarCanvasOrder();
     }
 
     public override void SetUpBranch(IBranch newParentController = null)
@@ -77,16 +65,20 @@ public class StandardBranch : BranchBase, IStandardBranch
         if(!IsControlBar)
             _canvasOrderCalculator.SetCanvasOrder();
         
-        if(OnlyTweenOnSceneStart || IsControlBar || _myCanvas.enabled)
-            _myBranch.DoNotTween();
-        
+        if(/*OnlyTweenOnSceneStart ||*/ IsControlBar || ThisBranch.IsAlreadyActive)
+        {
+            //Debug.Log($"Cant Tween : {ThisBranch} :  {_myCanvas.enabled} ");
+            ThisBranch.DoNotTween();
+        }        
         SetCanvas(ActiveCanvas.Yes);
         //CanGoToFullscreen();
         
-        if(!_isOnRootTrunk)
-        {
+       // Debug.Log($"New Parent : {newParentController} for {_myBranch}");
+        //TODO Check I still need this
+        // if(!_isOnRootTrunk)
+        // {
             SetNewParentBranch(newParentController);
-        }
+       // }
         // else
         // {
         //     // if(!OnHomeScreen && _isOnRootTrunk)
@@ -97,17 +89,16 @@ public class StandardBranch : BranchBase, IStandardBranch
         //     _screenData.StoreClearScreenData(AllBranches, _myBranch, BlockRaycast.Yes);
     }
 
-    protected override void ClearBranchForFullscreen(IClearScreen args)
-    {
-       // if(_isTabBranch) return;
-        base.ClearBranchForFullscreen(args);
-        _canvasOrderCalculator.ResetCanvasOrder();
-    }
+    // protected override void ClearBranchForFullscreen(IClearScreen args)
+    // {
+    //    // if(_isTabBranch) return;
+    //     base.ClearBranchForFullscreen(args);
+    // }
 
     private void SetNewParentBranch(IBranch newParentController) 
     {
         if(newParentController is null) return;
-        _myBranch.MyParentBranch = newParentController;
+        ThisBranch.MyParentBranch = newParentController;
     }
 
     // public override void SetBlockRaycast(BlockRaycast active)
@@ -141,6 +132,4 @@ public class StandardBranch : BranchBase, IStandardBranch
             base.SetCanvas(active);
         }
     }
-
-
 }

@@ -18,10 +18,10 @@ public class ClassBindings : EZInjectBindingBase
         
         //Hub Classes
         _injectMaster.Bind<UIAudioManager>().To<IAudioService>().WithParameters();
-        _injectMaster.Bind<SwitchTrunkGroup>().To<ISwitchTrunkGroup>().WithParameters();
+        _injectMaster.Bind<SwitchTrunkGroup>().To<ISwitchTrunkGroup>();
         _injectMaster.Bind<HistoryTracker>().To<IHistoryTrack>();
         _injectMaster.Bind<UICancel>().To<ICancel>();
-        _injectMaster.Bind<ReturnControlFromEditor>().To<IReturnFromEditor>();
+        //_injectMaster.Bind<ReturnControlFromEditor>().To<IReturnFromEditor>();
         _injectMaster.Bind<SwitchGroups>().To<ISwitchGroup>();
 
         //Tweens
@@ -41,8 +41,8 @@ public class ClassBindings : EZInjectBindingBase
         //NodeBase Types
         _injectMaster.Bind<Standard>().To<IStandard>().WithParameters();
         _injectMaster.Bind<CancelOrBackButton>().To<ICancelOrBack>().WithParameters();
-        _injectMaster.Bind<GroupedToggles>().To<IGroupedToggles>().WithParameters();
-        _injectMaster.Bind<ToggleNotLinked>().To<IToggleNotLinked>().WithParameters();
+        _injectMaster.Bind<Toggle>().To<IToggle>().WithParameters();
+        //_injectMaster.Bind<ToggleNotLinked>().To<IToggleNotLinked>().WithParameters();
         _injectMaster.Bind<NodeDisabling>().To<IDisabledNode>().WithParameters();
         _injectMaster.Bind<InGameNode>().To<IInGameNode>().WithParameters();
         

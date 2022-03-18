@@ -17,10 +17,10 @@ public class TimedPopUp : BranchBase, ITimedPopUpBranch
     public override bool CanStartBranch()
     {
         if (GameIsPaused || !CanStart || !NoResolvePopUps) return false;
-        if (!OnHomeScreen && _myBranch.ReturnOnlyAllowOnHomeScreen == IsActive.Yes) return false;
-
+        if (!OnHomeScreen && ThisBranch.CanOnlyAllowOnHomeScreen) return false;
+        AddActiveBranch?.Invoke(this);
         SetIfRunningOrNot();
-        _myBranch.DontSetBranchAsActive();
+        ThisBranch.DontSetAsActiveBranch();
         return true;
     }
 
@@ -34,7 +34,7 @@ public class TimedPopUp : BranchBase, ITimedPopUpBranch
         }
         else
         {
-            _myBranch.DoNotTween();
+            ThisBranch.DoNotTween();
         }
     }
 
@@ -47,7 +47,7 @@ public class TimedPopUp : BranchBase, ITimedPopUpBranch
 
     private IEnumerator TimedPopUpProcess()
     {
-        yield return new WaitForSeconds(_myBranch.Timer);
+        yield return new WaitForSeconds(ThisBranch.Timer);
         ExitTimedPopUp();
     }
     
@@ -55,18 +55,18 @@ public class TimedPopUp : BranchBase, ITimedPopUpBranch
     {
         AdjustCanvasOrderRemoved();
         _running = false;
-        _myBranch.StartBranchExitProcess(OutTweenType.Cancel);
+        ThisBranch.StartBranchExitProcess(OutTweenType.Cancel);
     }
 
     private void AdjustCanvasOrderAdded()
     {
-        timedPopUps.Add(_myBranch.MyCanvas);
+        timedPopUps.Add(ThisBranch.MyCanvas);
         _canvasOrderCalculator.ProcessActiveCanvasses(timedPopUps);
     }
 
     private void AdjustCanvasOrderRemoved()
     {
-        timedPopUps.Remove(_myBranch.MyCanvas);
+        timedPopUps.Remove(ThisBranch.MyCanvas);
         _canvasOrderCalculator.ProcessActiveCanvasses(timedPopUps);
     }
 }

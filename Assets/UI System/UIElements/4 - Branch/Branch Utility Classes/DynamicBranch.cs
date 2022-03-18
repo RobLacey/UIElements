@@ -24,7 +24,7 @@ public static class DynamicBranch
         if (branch.ThisBranchesNodes.Length == 0 && !branch.IsInGameBranch())
         {
             //TODO Add Functionality to move the current active switcher to the next object as this group is empty. Need to check switcher is active and focused
-            EZService.Locator.LateGet<IHistoryTrack>().ReturnToNextHomeGroup();
+            //EZService.Locator.LateGet<IHistoryTrack>().ReturnToNextHomeGroup();
             return;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public interface IResolvePopUpBranch : IBranchBase { }
@@ -9,11 +10,11 @@ public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch, I
     public ResolvePopUp(IBranch branch) : base(branch) { }   
 
     //Variables
-    private static readonly List<Canvas> resolvePopUps = new List<Canvas>();
+    //private static readonly List<Canvas> resolvePopUps = new List<Canvas>();
     
     //Properties
-    public IBranch ThisPopUp => _myBranch;
-    private IBranch[] AllBranches => _myDataHub.AllBranches;
+    public IBranch ThisPopUp => ThisBranch;
+    private List<IBranch> AllBranches => _myDataHub.AllActiveBranches;
 
     //Events
     private Action<IAddResolvePopUp> AddResolvePopUp { get; set; }
@@ -45,7 +46,9 @@ public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch, I
     {
         //TODO add to buffer goes here for when paused. trigger from SaveOnHome?
         if(!CanStart || GameIsPaused) return false;  
-        if (!OnHomeScreen && _myBranch.ReturnOnlyAllowOnHomeScreen == IsActive.Yes) return false;
+        if (!OnHomeScreen && ThisBranch.CanOnlyAllowOnHomeScreen) return false;
+        AddActiveBranch?.Invoke(this);
+
         return true;
     }
     
@@ -53,12 +56,12 @@ public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch, I
     {
         base.SetUpBranch(newParentController);
         
-        if (!_myBranch.CanvasIsEnabled)
+        if (!ThisBranch.CanvasIsEnabled)
         {
             AdjustCanvasOrderAdded();
         }
         
-        _screenData.StoreClearScreenData(AllBranches, _myBranch, BlockRaycast.Yes);
+        _screenData.StoreClearScreenData(AllBranches, ThisBranch, BlockRaycast.Yes);
         SetCanvas(ActiveCanvas.Yes);
         //CanGoToFullscreen();
     }
@@ -84,15 +87,19 @@ public class ResolvePopUp : BranchBase, IAddResolvePopUp, IResolvePopUpBranch, I
         ActivateStoredPosition();
     }
 
+    //TODO Repeated in Optional Class so move to base or new class
     private void AdjustCanvasOrderAdded()
     {
-        resolvePopUps.Add(_myBranch.MyCanvas);
-        _canvasOrderCalculator.ProcessActiveCanvasses(resolvePopUps);
+        _canvasOrderCalculator.ProcessActiveCanvasses(ReturnActivePopUpsCanvases());
     }
-    
+
     private void AdjustCanvasOrderRemoved()
     {
-        resolvePopUps.Remove(_myCanvas);
-        _canvasOrderCalculator.ProcessActiveCanvasses(resolvePopUps);
+        _canvasOrderCalculator.ProcessActiveCanvasses(ReturnActivePopUpsCanvases());
+    }
+
+    private List<Canvas> ReturnActivePopUpsCanvases()
+    {
+        return _myDataHub.ActiveOptionalPopUps.Select(popUp => popUp.MyCanvas).ToList();
     }
 }

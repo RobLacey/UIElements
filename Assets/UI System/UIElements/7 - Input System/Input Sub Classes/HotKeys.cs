@@ -103,7 +103,7 @@ public partial class HotKeys : IHotKeyPressed, IEZEventDispatcher, IServiceUser,
         //Todo Need to review all of this. Need to work out what to select and what to add to history
         var myTrunk = _myBranch.ParentTrunk;
         var toTest = _myBranch.MyParentBranch;
-
+        Debug.Log("This needs to be reviewed and won't work");
         while (!toTest.ParentTrunk == myTrunk)
         {
             toTest = toTest.MyParentBranch;

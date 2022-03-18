@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface INavigationSettings : IComponentSettings
 {
-    IBranch ChildBranch { get; }
+     IBranch ChildBranch { get; }
     NavigationType NavType { get; }
     UINode Up { get; }
     UINode Down { get; }
@@ -16,7 +16,6 @@ public interface INavigationSettings : IComponentSettings
 [Serializable]
 public class NavigationSettings :INavigationSettings
 {
-    //TODO Can only have one or the other of these two
     [SerializeField] 
     [AllowNesting] [Label("Move To When Clicked")] [HideIf("CantNavigate")] private UIBranch _childBranch = default;
     [SerializeField] 
@@ -45,7 +44,7 @@ public class NavigationSettings :INavigationSettings
         get => _childBranch;
         set => _childBranch = (UIBranch) value;
     }
-
+    
     private void SetNewChild(IBranch newChild) => ChildBranch = newChild;
     public NavigationType NavType => _setKeyNavigation;
     public UINode Up => _up;

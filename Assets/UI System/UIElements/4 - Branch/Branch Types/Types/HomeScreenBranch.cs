@@ -15,15 +15,15 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     private bool _justReturnedHome = false;
     
     //Properties
-    private bool CannotTweenOnHome => _myBranch.TweenOnSceneStart == DoTween.DoNothing 
-                                      && (!_justReturnedHome && _myBranch.StayVisibleMovingToChild() == IsActive.Yes);
-     private bool IsControlBar => _myBranch.IsControlBar() && CanStart;
+    private bool CannotTweenOnHome => /*_myBranch.TweenOnSceneStart == DoTween.DoNothing 
+                                      && (*/!_justReturnedHome && ThisBranch.StayVisibleMovingToChild() == IsActive.Yes;
+     private bool IsControlBar => ThisBranch.IsControlBar() && CanStart;
 
-    protected override void SaveIfOnHomeScreen(IOnHomeScreen args)
-    {
-        base.SaveIfOnHomeScreen(args);
-        _justReturnedHome = true;
-    }
+    // protected override void SaveIfOnHomeScreen(IOnHomeScreen args)
+    // {
+    //     // base.SaveIfOnHomeScreen(args);
+    //     // _justReturnedHome = true;
+    // }
 
     //Main
     // public override void UseEZServiceLocator()
@@ -85,9 +85,9 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
         if(!IsControlBar)
             _canvasOrderCalculator.SetCanvasOrder();
         
-        if (CannotTweenOnHome || IsControlBar || _myBranch.CanvasIsEnabled)
+        if (CannotTweenOnHome || IsControlBar || ThisBranch.CanvasIsEnabled)
         {
-            _myBranch.DoNotTween();
+            ThisBranch.DoNotTween();
         }     
         
         SetCanvas(ActiveCanvas.Yes);

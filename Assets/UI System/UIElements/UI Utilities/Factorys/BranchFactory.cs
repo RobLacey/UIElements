@@ -81,7 +81,7 @@ public class BranchFactory
         if (branch.IsControlBar())
         {
             branch.SetStayOn = IsActive.Yes;
-            branch.TweenOnSceneStart = DoTween.DoNothing;
+           // branch.TweenOnSceneStart = DoTween.DoNothing;
             return;
         }
 
@@ -94,7 +94,7 @@ public class BranchFactory
     {
         branch.SetNotAControlBar();
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
-        branch.TweenOnSceneStart = DoTween.DoNothing;
+      //  branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
         branch.SetSaveLastSelectionOnExit = IsActive.No;
@@ -112,7 +112,7 @@ public class BranchFactory
     private static void CreateTimedPopUp(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.TweenOnSceneStart = DoTween.DoNothing;
+       // branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.WhenToMove = WhenToMove.Immediately;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
@@ -123,14 +123,14 @@ public class BranchFactory
     {
         branch.SetNotAControlBar();
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
-        branch.TweenOnSceneStart = DoTween.DoNothing;
+      //  branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.CanvasOrder = OrderInCanvas.Manual;
     }
     
     private static void CreateInternal(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.TweenOnSceneStart = DoTween.DoNothing;
+       // branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
     }
     
@@ -139,7 +139,7 @@ public class BranchFactory
         branch.SetNotAControlBar();
         branch.WhenToMove = WhenToMove.Immediately;
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
-        branch.TweenOnSceneStart = DoTween.DoNothing;
+       // branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.CanvasOrder = OrderInCanvas.Manual;
         branch.SetSaveLastSelectionOnExit = IsActive.No;
         branch.SetStayOn = IsActive.Yes;

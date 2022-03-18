@@ -17,11 +17,15 @@ public partial class UINode
 
     private bool CheckAutoOpenCloseStatus()
     {
-         return (_buttonFunction == ButtonFunction. ToggleGroup 
+         return (ToggleQualifies() 
                  || _buttonFunction == ButtonFunction. Standard
-                 || _buttonFunction == ButtonFunction.InGameUi) 
-                 && _autoOpen == IsActive.Yes;
+                 || _buttonFunction == ButtonFunction.InGameUi) ;
     }
+
+    private bool ToggleQualifies() 
+        => _buttonFunction == ButtonFunction.Toggle & _toggleData.HasToggleGroup;
+    // private bool ToggleQualifies() 
+    //     => _buttonFunction == ButtonFunction.Toggle & _toggleData.ReturnToggleId != ToggleGroup.None;
 
     private bool UseNavigation()
     {
@@ -36,5 +40,5 @@ public partial class UINode
     private bool NeedAudio() => (_enabledFunctions & Setting.Audio) != 0;
     private bool NeedTooltip() => (_enabledFunctions & Setting.ToolTip) != 0;
     private bool NeedEvents() => (_enabledFunctions & Setting.Events) != 0;
-    private bool GroupSettings() => _buttonFunction != ButtonFunction.ToggleGroup;
+    private bool GroupSettings() => _buttonFunction != ButtonFunction.Toggle;
 }

@@ -5,18 +5,19 @@ using UnityEngine;
 
 
 public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams,
-                          IEZEventDispatcher, ICanvasCalcParms, ISetPositionParms 
-                          
+                          IEZEventDispatcher, ICanvasCalcParms, ISetPositionParms, 
+                          IRemoveActiveBranch, IAddActiveBranch
+
 {
     protected BranchBase(IBranch branch)
     {
-        _myBranch = branch.ThisBranch;
-        _myCanvas = _myBranch.MyCanvas;
-        _myCanvasGroup = _myBranch.MyCanvasGroup;
+        ThisBranch = branch.ThisBranch;
+        _myCanvas = ThisBranch.MyCanvas;
+        _myCanvasGroup = ThisBranch.MyCanvasGroup;
     }
     
     //Variables
-    protected readonly IBranch _myBranch;
+    //protected readonly IBranch MyBranch;
     protected IScreenData _screenData;
     protected IHistoryTrack _historyTrack;
    // protected bool _isTabBranch;
@@ -26,6 +27,9 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
     protected IDataHub _myDataHub;
 
     //Events
+    protected  Action<IAddActiveBranch> AddActiveBranch { get; set; }        
+    protected  Action<IRemoveActiveBranch> RemoveActiveBranch { get; set; }        
+
     // private Action<IOnHomeScreen> SetIsOnHomeScreen { get; set; }
     // private Action<IClearScreen> DoClearScreen { get; set; }
 
@@ -34,9 +38,11 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
     protected bool CanStart => _myDataHub.SceneStarted;
     protected bool GameIsPaused => _myDataHub.GamePaused;
     protected bool NoResolvePopUps => _myDataHub.NoResolvePopUp;
-    public bool OnHomeScreen => _myDataHub.OnHomeScreen;
+
+    protected bool OnHomeScreen => _myDataHub.OnHomeScreen;
    // public IBranch IgnoreThisBranch => _myBranch;
-    public IBranch MyBranch => _myBranch;
+    public IBranch ThisBranch { get; }
+
    // private ScreenType MyScreenType => _myBranch.ParentTrunk.ScreenType;
     protected bool CanAllowKeys => _myDataHub.AllowKeys;
 
@@ -104,6 +110,9 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
 
     public virtual void FetchEvents()
     {
+        AddActiveBranch = HistoryEvents.Do.Fetch<IAddActiveBranch>();
+        RemoveActiveBranch = HistoryEvents.Do.Fetch<IRemoveActiveBranch>();
+
         // SetIsOnHomeScreen = HistoryEvents.Do.Fetch<IOnHomeScreen>();
         // DoClearScreen = BranchEvent.Do.Fetch<IClearScreen>();
     }
@@ -112,7 +121,6 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
     {
         BranchEvent.Do.Subscribe<ISetUpStartBranches>(SetUpBranchesOnStart);
         HistoryEvents.Do.Subscribe<IOnHomeScreen>(SaveIfOnHomeScreen);
-        BranchEvent.Do.Subscribe<IClearScreen>(ClearBranchForFullscreen);
         InputEvents.Do.Subscribe<IAllowKeys>(AllowKeys);
     }
 
@@ -120,7 +128,6 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
     {
         BranchEvent.Do.Unsubscribe<ISetUpStartBranches>(SetUpBranchesOnStart);
         HistoryEvents.Do.Unsubscribe<IOnHomeScreen>(SaveIfOnHomeScreen);
-        BranchEvent.Do.Unsubscribe<IClearScreen>(ClearBranchForFullscreen);
         InputEvents.Do.Unsubscribe<IAllowKeys>(AllowKeys);
         _screenData.OnDisable();
     }
@@ -150,10 +157,14 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
         SetCanvas(ActiveCanvas.No);
     }
 
-    public virtual bool CanStartBranch() => true;
+    public virtual bool CanStartBranch()
+    {
+        AddActiveBranch?.Invoke(this);
+         return true;
+    }
     
     public virtual bool CanExitBranch(OutTweenType outTweenType) 
-        => _myBranch.StayVisibleMovingToChild() != IsActive.Yes || outTweenType != OutTweenType.MoveToChild;
+        => ThisBranch.StayVisibleMovingToChild() == IsActive.No || outTweenType != OutTweenType.MoveToChild;
 
     public virtual void SetUpBranch(IBranch newParentController = null)
     {
@@ -186,6 +197,8 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
 
     public virtual void EndOfBranchExit()
     {
+        RemoveActiveBranch?.Invoke(this);
+
         //InvokeOnHomeScreen();
         SetCanvas(ActiveCanvas.No);
         _canvasOrderCalculator.ResetCanvasOrder();
@@ -194,8 +207,6 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
     
     public virtual void SetCanvas(ActiveCanvas active)
     {
-        if(active == ActiveCanvas.No && !_myCanvas.enabled || active == ActiveCanvas.Yes && _myCanvas.enabled) return;
-        
         _myCanvas.enabled = active == ActiveCanvas.Yes;
     }
 
@@ -211,13 +222,13 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
         }
     }
 
-    protected virtual void ClearBranchForFullscreen(IClearScreen args)
-    {
-        //if (args.IgnoreThisBranch == _myBranch || !_myBranch.CanvasIsEnabled) return;
-        
-        SetCanvas(ActiveCanvas.No);
-        SetBlockRaycast(BlockRaycast.No);
-    }
+    // protected virtual void ClearBranchForFullscreen(IClearScreen args)
+    // {
+    //     //if (args.IgnoreThisBranch == _myBranch || !_myBranch.CanvasIsEnabled) return;
+    //     
+    //    // SetCanvas(ActiveCanvas.No);
+    //    // SetBlockRaycast(BlockRaycast.No);
+    // }
     
     // protected void CanGoToFullscreen()
     // {
@@ -239,4 +250,5 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
         // if (_screenData.WasOnHomeScreen)
         //     InvokeOnHomeScreen();
     }
+
 }

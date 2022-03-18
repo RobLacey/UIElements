@@ -1,5 +1,4 @@
 ﻿
-using System.Linq;
 using UIElements.Hub_Sub_Classes.HistoryTracker;
 using UnityEngine;
 
@@ -11,10 +10,8 @@ public static class NewSelectionProcess
         {
             ContainsNewNode(data);
             return;
-           // return data.History.Count == 0 ? null : data.History.Last();
         }
         DoesntContainNewNode(data);
-      //  return data.NewNode;
     }
 
     private static void ContainsNewNode(SelectData data)
@@ -25,85 +22,29 @@ public static class NewSelectionProcess
 
     private static void DoesntContainNewNode(SelectData data)
     {
-        
-        if(data.History.Count > 0)
-        {
-            NodeInDifferentBranchButSameTrunk(data);
-            //data.NewNode.HasChildBranch.MoveToThisBranch(data.MyDataHub.ActiveBranch);
-        }
-        
-        data.HistoryTracker.UpdateHistoryData(data.NewNode);
-        data.History.Add(data.NewNode);
+        NodeInDifferentBranchAndNotAChildObject(data);
         NavigateToChildBranch(data);
-        TrunkTracker.MovingToNewTrunk(data);
-
-        // TrunkTracker.MovingToNewTrunk(data);
-        
-        // void MoveToChildProcess()
-        // {
-        //
-        //     // Debug.Log(data.LastSelected());
-        //     // Debug.Log(data.CurrentTrunk.ActiveBranch.LastSelected);
-        //     // data.AddStopPoint(data.CurrentTrunk.ActiveBranch.LastSelected);
-        //     // NodeInDifferentBranchButSameTrunk(data);
-        //
-        //     NavigateToChildBranch(data);
-        //     // var newBranch = data.NewNode.MyBranch;
-        //     // data.NewNode.HasChildBranch.MoveToThisBranch(newBranch);
-        //     //NavigateToChildBranch(data);
-        //     data.HistoryTracker.UpdateHistoryData(data.NewNode);
-        //     data.History.Add(data.NewNode);
-        // }    
+        HistoryListManagement.AddHistoryData(data, data.NewNode);
     }
 
     private static void NavigateToChildBranch(SelectData data)
     {
-        IBranch thisBranch;
+        if(data.NewNode.HasChildBranch.IsNull()) return;
         
-        if(data.LastSelected().IsNotNull())
-        {
-            thisBranch = data.LastSelected().MyBranch;
-            thisBranch.StartBranchExitProcess(OutTweenType.MoveToChild, ToChildBranchProcess);
-            return;
-        }
-
-        thisBranch = data.NewNode.MyBranch;
-        ToChildBranchProcess();
+        if(TrunkTracker.MovingToNewTrunk(data)) return;
         
-        void ToChildBranchProcess()
-        {
-            data.NewNode.HasChildBranch.MoveToThisBranch(thisBranch);
-        }
+        data.NewNode.HasChildBranch.MoveToThisBranch(data.NewNodesBranch);
     }
 
-    private static void NodeInDifferentBranchButSameTrunk(SelectData data)
+    private static void NodeInDifferentBranchAndNotAChildObject(SelectData data)
     {
-        bool NodeIsInSameBranch() => data.LastSelected().HasChildBranch == data.NewNode.MyBranch;
-        bool NodeSameTrunkDifferentBranch() => data.CurrentTrunk == data.NewNodesTrunk;
-        bool NodeDifferentTrunk() => data.CurrentTrunk != data.NewNode.MyBranch.ParentTrunk;
-
-        if (NodeIsInSameBranch() /*|| NodeSameTrunk()*/) return;
+        bool NodeIsInSameHierarchy() => data.LastSelected().HasChildBranch.IsNotNull() && 
+                                        data.LastSelected().HasChildBranch.MyParentBranch == data.NewNode.MyBranch.MyParentBranch;
         
-        if (NodeDifferentTrunk())
-        {
-            data.AddStopPoint(data.NewNode);
-        }
-        else
-        {
-            if(NodeSameTrunkDifferentBranch())
-            {
-                data.SameTrunkButNothingSelected = true;
-               // return;
-            }
-            
-            data.AddStopPoint(data.CurrentTrunk.ActiveBranch.LastSelected);
-        }
-        //  Debug.Log(NodeIsInSameBranch() + " : "    + NodeDifferentTrunk());
-        // Debug.Log(data.CurrentTrunk + " : " + data.CurrentTrunk.ActiveBranch + " : " + data.CurrentTrunk.ActiveBranch.LastSelected );
-        // Debug.Log(data.LastSelected() + " : " + data.LastSelected().MyBranch + " : " + data.LastSelected().MyBranch.ParentTrunk);
-       //data.AddStopPoint(!NodeDifferentTrunk() ? data.CurrentTrunk.ActiveBranch.LastSelected : data.NewNode);
+        if (data.NoHistory || NodeIsInSameHierarchy()) return;
         
+        data.AddStopPoint(data.NewNode);
+        data.TweenType = OutTweenType.MoveToChild;
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.StopAt);
-        data.SameTrunkButNothingSelected = false;
     }
 }

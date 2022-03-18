@@ -39,12 +39,13 @@ public class PopUpTester : IMonoEnable, IServiceUser
         MakePopUp(_timedPrefab, _timedPopUps, "Timed");
     }
 
+    //TODO Simplify methods to pool objects or make pooling system for UI interface
     private void MakePopUp(GameObject popUpPrefab, List<IBranch> popUpList, string nameOfPopUp)
     {
         IBranch newPopUp;
         foreach (var popUp in popUpList)
         {
-            if (popUp.CanvasIsEnabled) continue;
+            if (popUp.CanvasIsEnabled || popUp.RestoreBranch) continue;
             newPopUp = popUp;
             newPopUp.StartPopUp_RunTimeCall(true);
             return;

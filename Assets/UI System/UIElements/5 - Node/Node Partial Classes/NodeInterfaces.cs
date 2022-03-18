@@ -3,7 +3,7 @@ using UIElements.Input_System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public interface INode : IToggles, IParameters, IDisableData
+public interface INode : IToggleData, IParameters, IDisableData
 {
     EscapeKey EscapeKeyType { get; }
     void SetAsHotKeyParent(bool setAsActive);
@@ -18,7 +18,7 @@ public interface INode : IToggles, IParameters, IDisableData
     void ThisNodeNotHighLighted();
     IUiEvents UINodeEvents { get; }
     MultiSelectSettings MultiSelectSettings { get; }
-    void ClearNode();
+    //void ClearNode();
     float AutoOpenDelay { get; }
     bool CanAutoOpen { get; }
     IRunTimeSetter MyRunTimeSetter { get; }
@@ -27,10 +27,10 @@ public interface INode : IToggles, IParameters, IDisableData
     void SetGOUIModule(IGOUIModule module);
 }
 
-public interface IToggles
+public interface IToggleData
 {
     ToggleData ToggleData { get; }
-    bool IsToggleGroup { get; }
+    bool IsToggle { get; }
 }
 
 public interface IDisableData

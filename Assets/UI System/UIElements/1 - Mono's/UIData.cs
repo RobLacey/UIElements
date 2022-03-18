@@ -13,7 +13,8 @@ public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser, IServiceUser
     [SerializeField] private UINode _lastSelected = default;
     [SerializeField] private GameObject _lastSelectedGO = default;
     [SerializeField] private UIBranch _activeBranch = default;
-    [SerializeField] private Trunk _activeTrunk = default;
+    [SerializeField] private Trunk _currentTrunk = default;
+    [SerializeField] private List<Trunk> _activeTrunks = default;
     [SerializeField] [ReadOnly] private bool _onHomeScreen = true;
     [SerializeField] [ReadOnly] private bool _controllingWithKeys = default;
     [SerializeField] [ReadOnly] private bool _inMenu;
@@ -21,6 +22,8 @@ public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser, IServiceUser
     [SerializeField] private List<GameObject> _selectedGOs = default;
     [SerializeField] private List<UIBranch> _activeResolvePopUps;
     [SerializeField] private List<UIBranch> _activeOptionalPopUps;
+    [SerializeField] private List<UIBranch> _allActiveBranches;
+
 
     private IDataHub _myDataHub;
 
@@ -44,8 +47,12 @@ public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser, IServiceUser
         HistoryEvents.Do.Subscribe<IHighlightedNode>(SaveLastHighlighted);
         HistoryEvents.Do.Subscribe<ISelectedNode>(SaveLastSelected);
         HistoryEvents.Do.Subscribe<IActiveBranch>(SaveActiveBranch);
+        HistoryEvents.Do.Subscribe<IAddActiveBranch>(AddActiveBranch);
+        HistoryEvents.Do.Subscribe<IRemoveActiveBranch>(RemoveActiveBranch);
+
         HistoryEvents.Do.Subscribe<IOnHomeScreen>(SaveOnHomeScreen);
         HistoryEvents.Do.Subscribe<IAddTrunk>(AddTrunk);
+        HistoryEvents.Do.Subscribe<IRemoveTrunk>(RemoveTrunk);
         InputEvents.Do.Subscribe<IAllowKeys>(SaveAllowKeys);
         HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenu);
         BranchEvent.Do.Subscribe<ICloseBranch>(CloseAndReset);
@@ -62,8 +69,12 @@ public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser, IServiceUser
         HistoryEvents.Do.Unsubscribe<IHighlightedNode>(SaveLastHighlighted);
         HistoryEvents.Do.Unsubscribe<ISelectedNode>(SaveLastSelected);
         HistoryEvents.Do.Unsubscribe<IActiveBranch>(SaveActiveBranch);
+        HistoryEvents.Do.Unsubscribe<IAddActiveBranch>(AddActiveBranch);
+        HistoryEvents.Do.Unsubscribe<IRemoveActiveBranch>(RemoveActiveBranch);
+
         HistoryEvents.Do.Unsubscribe<IOnHomeScreen>(SaveOnHomeScreen);
         HistoryEvents.Do.Unsubscribe<IAddTrunk>(AddTrunk);
+        HistoryEvents.Do.Unsubscribe<IRemoveTrunk>(RemoveTrunk);
         InputEvents.Do.Unsubscribe<IAllowKeys>(SaveAllowKeys);
         HistoryEvents.Do.Unsubscribe<IInMenu>(SaveInMenu);
         BranchEvent.Do.Unsubscribe<ICloseBranch>(CloseAndReset);
@@ -96,7 +107,18 @@ public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser, IServiceUser
         if (_lastSelected.InGameObject.IsNotNull())
             _lastSelectedGO = _lastSelected.InGameObject;
     }
-    private void SaveActiveBranch(IActiveBranch args) => _activeBranch = (UIBranch) args.ActiveBranch;
+    private void SaveActiveBranch(IActiveBranch args) => _activeBranch = (UIBranch) args.ThisBranch;
+    private void AddActiveBranch(IAddActiveBranch args)
+    {
+        if(_allActiveBranches.Contains((UIBranch)args.ThisBranch)) return;
+        _allActiveBranches.Add((UIBranch)args.ThisBranch);
+    }
+    private void RemoveActiveBranch(IRemoveActiveBranch args)
+    {
+        if(!_allActiveBranches.Contains((UIBranch)args.ThisBranch)) return;
+        _allActiveBranches.Remove((UIBranch)args.ThisBranch);
+    }
+
     private void SaveOnHomeScreen(IOnHomeScreen args) => _onHomeScreen = _myDataHub.OnHomeScreen;
     private void SaveAllowKeys(IAllowKeys args) => _controllingWithKeys = args.CanAllowKeys;
     private void SaveInMenu(IInMenu args) => _inMenu = args.InTheMenu;
@@ -107,7 +129,15 @@ public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser, IServiceUser
 
     private void AddTrunk(IAddTrunk trunkData)
     {
-        _activeTrunk = trunkData.ThisTrunk;
+        _currentTrunk = trunkData.ThisTrunk;
+        if(_activeTrunks.Contains(trunkData.ThisTrunk)) return;
+        _activeTrunks.Add(trunkData.ThisTrunk);
+    }
+    
+    private void RemoveTrunk(IRemoveTrunk trunkData)
+    {
+        if (!_activeTrunks.Contains(trunkData.ThisTrunk)) return;
+        _activeTrunks.Remove(trunkData.ThisTrunk);
     }
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Need To Make this a singleton or check thee is only one of these
@@ -16,7 +17,7 @@ public class PauseMenu : BranchBase, IGameIsPaused, IPauseBranch
     //Properties
     private bool WasInGame() => !_screenData.WasOnHomeScreen;
     public bool IsPaused { get; private set; }
-    private IBranch[] AllBranches => _myDataHub.AllBranches;
+    private List<IBranch> AllBranches => _myDataHub.AllActiveBranches;
 
     //Events
     private Action<IGameIsPaused> OnGamePaused { get; set; }
@@ -57,8 +58,8 @@ public class PauseMenu : BranchBase, IGameIsPaused, IPauseBranch
 
     private void EnterPause()
     {
-        _screenData.StoreClearScreenData(AllBranches, _myBranch, BlockRaycast.Yes);
-        _myBranch.MoveToThisBranch();
+        _screenData.StoreClearScreenData(AllBranches, ThisBranch, BlockRaycast.Yes);
+        ThisBranch.MoveToThisBranch();
     }
 
     private void UnPauseGame()
@@ -68,7 +69,7 @@ public class PauseMenu : BranchBase, IGameIsPaused, IPauseBranch
         ExitPause();
     }
 
-    private void ExitPause() => _myBranch.StartBranchExitProcess(OutTweenType.Cancel);
+    private void ExitPause() => ThisBranch.StartBranchExitProcess(OutTweenType.Cancel);
 
     public override void SetUpBranch(IBranch newParentController = null)
     {

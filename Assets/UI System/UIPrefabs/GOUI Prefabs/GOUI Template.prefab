@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buttonFunction: 4
+  _buttonFunction: 3
   _autoOpen: 1
   _isDynamic: 1
   _autoOpenDelay: 0
@@ -215,7 +215,7 @@ MonoBehaviour:
   _toggleData:
     _toggleGroupId: 0
     _startAsSelected: 1
-    _tabBranch: {fileID: 0}
+    _linkBranch: {fileID: 0}
   _multiSelectSettings:
     _allowMultiSelect: 0
     _openChildBranch: 1
@@ -458,14 +458,12 @@ MonoBehaviour:
   _moveType: 1
   _canvasOrderSetting: 3
   _orderInCanvas: 0
-  _screenType: 0
   _stayVisible: 1
-  _tweenOnHome: 0
+  _tweenOnReturn: 0
   _saveExitSelection: 0
   _autoClose: 1
   _autoCloseDelay: 0.25
   _escapeKeyFunction: 2
-  _groupsList: []
   _branchEvents:
     _onBranchEnter:
       m_PersistentCalls:

@@ -26,10 +26,10 @@ public class TweenScheme: ScriptableObject
     [SerializeField]
     private IsActive _useGlobalTime = IsActive.No;
     [SerializeField] 
-    [ShowIf("GlobalTime")]
+    [ShowIf(UseGlobalTime)]
     private float _globalInTime = 1;
     [SerializeField] 
-    [ShowIf("GlobalTime")]
+    [ShowIf(UseGlobalTime)]
     private float _globalOutTime = 1;
     
     [SerializeField] 
@@ -51,6 +51,8 @@ public class TweenScheme: ScriptableObject
     [EnableIf("Punch")] 
     private PunchData _punchData;
 
+
+    private const string UseGlobalTime = nameof(GlobalTime);
     //Events
     private Action _onChange;
 
@@ -113,7 +115,7 @@ public class TweenScheme: ScriptableObject
             _fadeData.UsingGlobalTime = true;
             return true;
         }
-
+    
         _positionData.UsingGlobalTime = false;
         _rotationData.UsingGlobalTime = false;
         _scaleData.UsingGlobalTime = false;
@@ -131,34 +133,34 @@ public class TweenScheme: ScriptableObject
 
     public bool Shake() => _shakeTween != TweenStyle.NoTween;
 
-    public bool InAndOutTween()
-    {
-        if (_positionTween == TweenStyle.InAndOut)
-        {
-            return true;
-        }
-        if (_rotationTween == TweenStyle.InAndOut)
-        {
-            return true;
-        }
-        if (_scaleTween == TweenStyle.InAndOut)
-        {
-            return true;
-        }
-        if (_fadeTween == TweenStyle.InAndOut)
-        {
-            return true;
-        }
-        if (_punchTween == TweenStyle.InAndOut)
-        {
-            return true;
-        }
-        if (_shakeTween == TweenStyle.InAndOut)
-        {
-            return true;
-        }
-
-        return false;
-    }
+    // public bool InAndOutTween()
+    // {
+    //     if (_positionTween == TweenStyle.InAndOut)
+    //     {
+    //         return true;
+    //     }
+    //     if (_rotationTween == TweenStyle.InAndOut)
+    //     {
+    //         return true;
+    //     }
+    //     if (_scaleTween == TweenStyle.InAndOut)
+    //     {
+    //         return true;
+    //     }
+    //     if (_fadeTween == TweenStyle.InAndOut)
+    //     {
+    //         return true;
+    //     }
+    //     if (_punchTween == TweenStyle.InAndOut)
+    //     {
+    //         return true;
+    //     }
+    //     if (_shakeTween == TweenStyle.InAndOut)
+    //     {
+    //         return true;
+    //     }
+    //
+    //     return false;
+    // }
 }
 

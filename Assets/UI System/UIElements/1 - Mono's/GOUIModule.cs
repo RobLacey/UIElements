@@ -189,7 +189,7 @@ namespace UIElements
             if (AlwaysOnIsActive)
             {
                 PointerOver = true;
-                _myGOUIBranch.DontSetBranchAsActive();
+                _myGOUIBranch.DontSetAsActiveBranch();
                 _myGOUIBranch.MoveToThisBranch();
                 PointerOver = false;
             }
@@ -225,7 +225,7 @@ namespace UIElements
         {
             if (_checkIfUnderUI.UnderUI()) return;
             if(!AllowKeys)
-                _myGOUIBranch.DontSetBranchAsActive();
+                _myGOUIBranch.DontSetAsActiveBranch();
             EnterGOUI();
         }
 
@@ -248,7 +248,7 @@ namespace UIElements
         public void VirtualCursorEnter()
         {
             if(!AllowKeys)
-                _myGOUIBranch.DontSetBranchAsActive();
+                _myGOUIBranch.DontSetAsActiveBranch();
             EnterGOUI();
         }
 

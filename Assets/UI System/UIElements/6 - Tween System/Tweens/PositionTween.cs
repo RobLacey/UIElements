@@ -12,17 +12,17 @@ public class PositionTween : TweenBase, IPositionTween
 {
     [SerializeField] [AllowNesting] bool _pixelSnapping;
 
-    public override void SetUpTweens(List<BuildTweenData> buildObjectsList,
-                                     TweenScheme tweenScheme,
-                                     Action<BuildTweenData> effectCall)
-    {
-        base.SetUpTweens(buildObjectsList, tweenScheme, effectCall);
-        
-        foreach (var uIObject in _buildList)
-        {
-            uIObject.Element.anchoredPosition3D = uIObject.PositionSettings.StartPos;
-        }
-    }
+    // public override void SetUpTweens(List<BuildTweenData> buildObjectsList,
+    //                                  TweenScheme tweenScheme,
+    //                                  Action<BuildTweenData> effectCall)
+    // {
+    //     base.SetUpTweens(buildObjectsList, tweenScheme, effectCall);
+    //     
+    //     foreach (var uIObject in _buildList)
+    //     {
+    //         uIObject.Element.anchoredPosition3D = uIObject.PositionSettings.StartPos;
+    //     }
+    // }
 
     public override void StartTween(TweenType tweenType, TweenCallback tweenCallback)
     {
@@ -33,8 +33,10 @@ public class PositionTween : TweenBase, IPositionTween
     
     protected override Tween DoTweenProcess(BuildTweenData item, TweenCallback callback)
     {
+        var id = $"{_tweenName}{item.Element.GetInstanceID()}";
+        Debug.Log(_tweenTime * _elipsedTime);
         return item.Element.DOAnchorPos3D(item._moveTo, _tweenTime, _pixelSnapping)
-                   .SetId($"{_tweenName}{item.Element.GetInstanceID()}")
+                   .SetId(id)
                    .SetEase(_tweenEase)
                    .SetAutoKill(true)
                    .Play()
@@ -45,6 +47,7 @@ public class PositionTween : TweenBase, IPositionTween
     {
         foreach (var item in _buildList)
         {
+            if(item.Element.anchoredPosition3D == item.PositionSettings.StartPos) return;
             item.Element.anchoredPosition3D = item.PositionSettings.StartPos;
         }
     }

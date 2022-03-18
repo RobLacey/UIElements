@@ -5,23 +5,46 @@ using UnityEngine;
 [Serializable]
 public class ToggleData
 {
-    [SerializeField] 
-    private ToggleGroup _toggleGroupId = ToggleGroup.TG1;
-    [SerializeField] 
-    private IsActive _startAsSelected = IsActive.No;
-    // [SerializeField] [AllowNesting] [ValidateInput("CheckTabBranch", "Must be a Standard Type branch")]
-    // private UIBranch _tabBranch;
+    // [SerializeField] 
+    // private ToggleGroup _toggleGroupId = ToggleGroup.TG1;
 
-    public ToggleGroup ReturnToggleId => _toggleGroupId;
-   // public UIBranch ReturnTabBranch => _tabBranch;
+    [SerializeField] private ToggleGroupObject _toggleGroup;
+    
+    [SerializeField] 
+    [AllowNesting] [HideIf(NotInGroup)]
+    private IsActive _startAsSelected = IsActive.No;
+    [SerializeField] 
+    [AllowNesting] [Label("Tab Branch")] [HideIf(NotInGroup)]  private UIBranch _linkBranch = default;
+
+
+    //public ToggleGroup ReturnToggleId => _toggleGroupId;
+   // public bool CanUseToggleSwitcher => _toggleGroup.CanUseToggleSwitcher;
+    public ToggleGroupObject ToggleGroupData => _toggleGroup;
+    public bool HasToggleGroup => _toggleGroup.IsNotNull();
+    
+    public IBranch LinkBranch
+    {
+        get => _linkBranch;
+        set => _linkBranch = (UIBranch) value;
+    }
+
+    private const string NotInGroup = nameof(IsNotInGroup);
+    private bool IsNotInGroup()
+    {
+        if (_toggleGroup.IsNull())
+        {
+            _linkBranch = null;
+            _startAsSelected = IsActive.No;
+        }        
+        return _toggleGroup.IsNull();
+        // if (_toggleGroupId == ToggleGroup.None)
+        // {
+        //     _linkBranch = null;
+        //     _startAsSelected = IsActive.No;
+        // }        
+        // return _toggleGroupId == ToggleGroup.None;
+    }
 
     public IsActive StartAsSelected => _startAsSelected;
     public void SetStartAsSelected() => _startAsSelected = IsActive.Yes;
-
-    // private bool CheckTabBranch()
-    // {
-    //     if (_tabBranch is null) return true;
-    //     return _tabBranch.ReturnBranchType == BranchType.Standard;
-    // }
-
 }

@@ -6,8 +6,8 @@ using EZ.Service;
 using UIElements.Input_System;
 using UnityEngine;
 
-public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IStoreNodeHistoryData, 
-                              IEZEventDispatcher, IReturnHomeGroupIndex, IServiceUser, INoPopUps
+public class HistoryTracker : IHistoryTrack, IEZEventUser, IStoreNodeHistoryData, 
+                              IEZEventDispatcher, /*IReturnHomeGroupIndex,*/ IServiceUser, INoPopUps
 {
     //Variables
     //private INode _lastSelected;
@@ -20,16 +20,13 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IS
     private bool IsPaused => MyDataHub.GamePaused;
     private bool CanStart => MyDataHub.SceneStarted;
     private bool OnHomeScreen => MyDataHub.OnHomeScreen;
-    private IBranch ActiveBranch => MyDataHub.ActiveBranch;
     private SelectData SelectData { get; set; }
     public bool NodeNeededForMultiSelect(INode node)
     {
         return SelectData.MultiSelectIsActive & History.Contains(node) & !_inputScheme.MultiSelectPressed();
     }
 
-    //Events
-    // private Action<IReturnToHome> HasReturnedToHomeScreen { get; set; }
-     private Action<IReturnHomeGroupIndex> ReturnHomeGroupBranch { get; set; }
+     // private Action<IReturnHomeGroupIndex> ReturnHomeGroupBranch { get; set; }
      private Action<INoPopUps> NoPopUps { get; set; }
 
     
@@ -65,8 +62,7 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IS
    
     public void FetchEvents()
     {
-        //HasReturnedToHomeScreen = HistoryEvents.Do.Fetch<IReturnToHome>();
-        ReturnHomeGroupBranch = HistoryEvents.Do.Fetch<IReturnHomeGroupIndex>();
+        //ReturnHomeGroupBranch = HistoryEvents.Do.Fetch<IReturnHomeGroupIndex>();
         DoAddANode = HistoryEvents.Do.Fetch<IStoreNodeHistoryData>();
         NoPopUps = PopUpEvents.Do.Fetch<INoPopUps>();
     }
@@ -76,7 +72,6 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IS
         HistoryEvents.Do.Subscribe<ISelectedNode>(SetSelected);
         HistoryEvents.Do.Subscribe<IDisabledNode>(CloseNodesAfterDisabledNode);
         HistoryEvents.Do.Subscribe<IInMenu>(SwitchToGame);
-        //InputEvents.Do.Subscribe<IHotKeyPressed>(SetFromHotkey);
     }
 
     public void UnObserveEvents() { }
@@ -110,13 +105,12 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IS
     {
         SelectData.AddMultiSelectData(newNode.SelectedNode);
         MultiSelectSystem.MultiSelectPressed(SelectData);
-        //_lastSelected = newNode.SelectedNode;
     }
 
     private void AddNewNodeToHistory(ISelectedNode newNode)
     {
         SelectData.AddData(newNode.SelectedNode);
-        /*_lastSelected = */NewSelectionProcess.AddNewSelection(SelectData);
+        NewSelectionProcess.AddNewSelection(SelectData);
     }
 
     private void CloseNodesAfterDisabledNode(IDisabledNode args)
@@ -129,42 +123,34 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IS
 
     private void BackOneLevel()
     {
-        //TODO Review if allow multiselect not on Root Trunk
-        
         if (SelectData.MultiSelectIsActive)
         {
-            //_lastSelected = History.First();
             ClearAllHistory();
         }
         else
         {
-            if(History.Count == 0)
-            {
-                Debug.Log("Return as no history");
-                return;
-            }
-            //SelectData.AddData(_lastSelected);
-            /*_lastSelected = */MoveBackInHistory.BackOneLevelProcess(SelectData);
+            MoveBackInHistory.BackOneLevelProcess(SelectData);
         }
     }
 
     private void SwitchToGame(IInMenu args)
     {
         if (!args.InTheMenu && CanStart)
-            BackToHome();
-    }
-
-    private void BackToHome()
-    {
-        if(History.Count == 0) return;
-        /*_lastSelected = */MoveBackInHistory.BackToHomeProcess(SelectData);
+            ClearAllHistory();
     }
 
     public void SwitchGroupPressed()
     {
-        if (!OnHomeScreen && ActiveBranch.IsInternalBranch())
+        if (!OnHomeScreen)
         {
-            BackOneLevel();
+            // if (History.Last().MyBranch.ParentTrunk != MyDataHub.CurrentTrunk)
+            // {
+            //     Debug.Log("Can Cancel : ");
+            //     BackOneLevel();
+            // }
+            // Debug.Log(MyDataHub.CurrentTrunk.ActiveBranch.MyParentBranch.LastSelected);
+            // SelectData.AddStopPoint(MyDataHub.CurrentTrunk.ActiveBranch.MyParentBranch.LastSelected);
+            // HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.StopAt);
         }
         
         if(OnHomeScreen)
@@ -221,7 +207,7 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IS
                     BackOneLevel();
                     break;
                 case EscapeKey.BackToHome:
-                    BackToHome();
+                    MoveBackInHistory.BackToHomeProcess(SelectData);
                     break;
             }
         }
@@ -247,24 +233,15 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser,/* IReturnToHome,*/ IS
         }
         else
         {
-            if(History.Last().HasChildBranch.IsNotNull())
-            {
-                History.Last().HasChildBranch.DoNotTween();
-                History.Last().HasChildBranch.MoveToThisBranch();
-            }
-            else
-            {
-                History.Last().MyBranch.DoNotTween();
-                History.Last().MyBranch.MoveToThisBranch();
-            }
+            MyDataHub.ActiveBranch.MoveToThisBranch();
         }
     }
     
-    //TODO need to look into this use from Dynamic Branch / improve functionality
-    public void ReturnToNextHomeGroup()
-    {
-        ReturnHomeGroupBranch?.Invoke(this);
-    }
+    // //TODO need to look into this use from Dynamic Branch / improve functionality
+    // public void ReturnToNextHomeGroup()
+    // {
+    //     ReturnHomeGroupBranch?.Invoke(this);
+    // }
 
     public void CheckListsAndRemove(IBranch branchToClose)
     {

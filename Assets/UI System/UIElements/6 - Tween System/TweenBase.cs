@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using EZ.Events;
 using UnityEngine;
@@ -28,10 +29,12 @@ public abstract class TweenBase : IEZEventUser
     protected string _tweenName;
     protected TweenStyle _tweenStyle;
     protected TweenScheme _scheme;
+    protected float _elipsedTime = 1;
 
     protected List<BuildTweenData> _listToUse;
     private List<BuildTweenData> _reversedBuild = new List<BuildTweenData>();
     protected List<BuildTweenData> _buildList = new List<BuildTweenData>();
+    private List<Tween> RunningTweens { get; set; } = new List<Tween>();
 
     //Delegates
     private Action<BuildTweenData> _endEffectTrigger;
@@ -143,33 +146,44 @@ public abstract class TweenBase : IEZEventUser
 
     private void StopRunningTweens()
     {
+        if(RunningTweens.Count == 0) return;
+        
         foreach (var item in _buildList)
         {
-            DOTween.Kill($"{_tweenName}{item.Element.GetInstanceID()}");
+            var tweenID = $"{_tweenName}{item.Element.GetInstanceID()}";
+
+            foreach (var tween in RunningTweens.Where(tween => tween.stringId == tweenID))
+            {
+                _elipsedTime = tween.Elapsed();
+                DOTween.Kill(tweenID);
+            }
         }
     }
 
     private IEnumerator TweenSequence()
     {
         bool finished = false;
-        int index = 0;
+        var lastItem = _listToUse.Last();
+        
         while (!finished)
         {
-            foreach (var item in _listToUse)
+            foreach (var buildObject in _listToUse)
             {
-                if (index == _listToUse.Count - 1)
+                if (buildObject == lastItem)
                 {
-                    var tween = DoTweenProcess(item, _callback);
-                    if(!(tween is null))
-                        yield return tween.WaitForCompletion();
-                    _endEffectTrigger?.Invoke(item);
+                    var tween = DoTweenProcess(buildObject, _callback);
+                    RunningTweens.Add(tween);
+                    yield return tween.WaitForCompletion();
+                    EndAction(buildObject, tween);
+
                 }
                 else
                 {
-                    DoTweenProcess(item, EndAction(item));
-                    if(item._buildNextAfterDelay != 0)
-                        yield return new WaitForSeconds(item._buildNextAfterDelay);
-                    index++;
+                    var tween = DoTweenProcess(buildObject, null);
+                    RunningTweens.Add(tween);
+                    yield return tween.WaitForCompletion();
+                    EndAction(buildObject, tween);
+                    yield return new WaitForSeconds(buildObject.ToNextDelay);
                 }
             }
             finished = true;
@@ -177,7 +191,12 @@ public abstract class TweenBase : IEZEventUser
 
         yield return null;
 
-        TweenCallback EndAction(BuildTweenData tweenSettings) => () => _endEffectTrigger?.Invoke(tweenSettings);
+        void EndAction(BuildTweenData tweenSettings, Tween thisTween)
+        {
+            RunningTweens.Remove(thisTween);
+            _elipsedTime = 1;
+            _endEffectTrigger?.Invoke(tweenSettings);
+        }
     }
 
     protected abstract Tween DoTweenProcess(BuildTweenData item, TweenCallback callback);

@@ -19,12 +19,12 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
 {
     public CanvasOrderCalculator(ICanvasCalcParms data)
     {
-        _myCanvas = data.MyBranch.MyCanvas;
-        GetOrderInCanvas = data.MyBranch.CanvasOrder;
-        GetBranchType = data.MyBranch.ReturnBranchType;
+        _myCanvas = data.ThisBranch.MyCanvas;
+        GetOrderInCanvas = data.ThisBranch.CanvasOrder;
+        GetBranchType = data.ThisBranch.ReturnBranchType;
         if (GetOrderInCanvas == OrderInCanvas.Manual)
         {
-            GetManualCanvasOrder = data.MyBranch.ReturnManualCanvasOrder;
+            GetManualCanvasOrder = data.ThisBranch.ReturnManualCanvasOrder;
         }
     }
     

@@ -167,14 +167,12 @@ MonoBehaviour:
   _moveType: 1
   _canvasOrderSetting: 0
   _orderInCanvas: 2
-  _screenType: 0
   _stayVisible: 1
-  _tweenOnHome: 0
+  _tweenOnReturn: 0
   _saveExitSelection: 0
   _autoClose: 1
   _autoCloseDelay: 0.25
   _escapeKeyFunction: 1
-  _groupsList: []
   _branchEvents:
     _onBranchEnter:
       m_PersistentCalls:
@@ -291,7 +289,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _buttonFunction
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _isCancelOrBack
@@ -593,7 +591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _buttonFunction
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _isCancelOrBack

@@ -12,11 +12,11 @@ public enum TweenStyle
     NoTween, In, Out, InAndOut 
 }
 
-public enum ToggleGroup { TG1, TG2, TG3, TG4, TG5 }
+public enum ToggleGroup { None, TG1, TG2, TG3, TG4, TG5 }
 
 public enum EscapeKey { None, BackOneLevel, BackToHome, GlobalSetting }
 
-public enum ButtonFunction { Standard, ToggleGroup, ToggleNotLinked, CancelOrBack, InGameUi }
+public enum ButtonFunction { Standard, Toggle, CancelOrBack, InGameUi}
 
 [Flags]
 public enum Setting

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public interface ITweenInspector
@@ -10,65 +11,64 @@ public interface ITweenInspector
 
 public class TweenInspector : ITweenInspector
 {
-    private bool _hasScheme;
-    private bool _schemeSet;
-    private bool _listSet;
     private TweenScheme _lastTweenScheme;
     private List<BuildTweenData> _buildList = new List<BuildTweenData>();
     private TweenScheme _scheme;
 
+    private bool HasBuildList { get; set; }
+    private bool HasScheme => _scheme.IsNotNull();
+
     public ITweenInspector CurrentScheme(TweenScheme scheme)
     {
-        _schemeSet = true;
         _scheme = scheme;
         return this;
     }
     
     public ITweenInspector CurrentBuildList(List<BuildTweenData> newBuildList)
     {
-        _listSet = true;
+        HasBuildList = false;
+
+        foreach (var buildTweenData in newBuildList)
+        {
+            if (buildTweenData.Element.IsNotNull())
+                HasBuildList = true;
+        }
+
         _buildList = newBuildList;
         return this;
     }
     
     public void UpdateInspector()
     {
-        if (CheckForCorrectUsage()) return;
+        if(!HasBuildList) return;
         
         PassInSchemeToBuildObjects();
         
-        if(_scheme is null && _hasScheme)
+        if(!HasScheme)
         {
             SchemeHasBeenDeleted();
             return;
         }
 
-        if (_scheme && !_hasScheme)
+        if (HasScheme)
         {
             SchemeHasBeenAdded();
+            ConfigureSettings();
         }
-        ConfigureSettings();
-    }
-
-    private bool CheckForCorrectUsage()
-    {
-        if (_listSet && _schemeSet) return false;
-        Debug.Log("Missing Scheme or list");
-        return true;
     }
 
     private void PassInSchemeToBuildObjects()
     {
-        foreach (var element in _buildList)
+        foreach (var buildObject in _buildList)
         {
-            element.SetElement();
+            if(buildObject.Element.IsNull()) continue;
+            buildObject.SetElement();
         }
     }
 
     private void SchemeHasBeenDeleted()
     {
-        _hasScheme = false;
-        if (_lastTweenScheme != null)
+        if (_lastTweenScheme.IsNotNull())
             _lastTweenScheme.Unsubscribe(ConfigureSettings);
         _lastTweenScheme = null;
         ClearTweenSettings();
@@ -76,25 +76,26 @@ public class TweenInspector : ITweenInspector
 
     private void SchemeHasBeenAdded()
     {
-        _hasScheme = true;
         _lastTweenScheme = _scheme;
         _scheme.Subscribe(ConfigureSettings);
     }
 
     private void ConfigureSettings()
     {
-        if(_scheme is null) return;
-        foreach (var item in _buildList)
+        if(_scheme.IsNull()) return;
+        foreach (var buildElement in _buildList)
         {
-            item.ActivateTweenSettings(_scheme);
+            if(buildElement.Element.IsNull()) continue;
+            buildElement.ActivateTweenSettings(_scheme);
         }
     }
     
     private void ClearTweenSettings()
     {
-        foreach (var item in _buildList)
+        if(!HasBuildList) return;
+        foreach (var buildObject in _buildList)
         {
-            item.ClearSettings(TweenStyle.NoTween);
+            buildObject.ClearSettings(TweenStyle.NoTween);
         }
     }
 

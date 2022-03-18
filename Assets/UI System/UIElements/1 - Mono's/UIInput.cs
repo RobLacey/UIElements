@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using EZ.Events;
 using EZ.Inject;
 using EZ.Service;
@@ -98,7 +99,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         ChangeControl = EZInject.Class.WithParams<IChangeControl>(this);
         MenuToGameSwitching = EZInject.Class.NoParams<IMenuAndGameSwitching>();
         SwitchGroups = EZInject.Class.NoParams<ISwitchGroup>();
-        ReturnControlFromEditor = EZInject.Class.NoParams<IReturnFromEditor>();
+//        ReturnControlFromEditor = EZInject.Class.NoParams<IReturnFromEditor>();
         if(_inputScheme.CanUseVirtualCursor)
             VirtualCursor = EZInject.Class.WithParams<IVirtualCursor>(this);
         AddService();
@@ -175,8 +176,8 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         
         if (!CanStart) return;
 
-        //TODO Do I need this anymore
-        if(ReturnControlFromEditor.CanReturn(_inMenu, ActiveBranch)) return;
+        // //TODO Do I need this anymore
+        // if(ReturnControlFromEditor.CanReturn(_inMenu, ActiveBranch)) return;
         
         if (CanPauseGame())
         {
@@ -228,6 +229,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         {
             if (_inputScheme.PressSelect())
             {
+                //Todo make a class in Inode
                 var temp = (UINode)_myDataHub.Highlighted;
                 temp.OnPointerDown(null);
                 return;

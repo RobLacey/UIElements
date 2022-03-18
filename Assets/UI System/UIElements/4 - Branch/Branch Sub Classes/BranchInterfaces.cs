@@ -24,8 +24,9 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     EscapeKey EscapeKeyType { get; set; }
     WhenToMove WhenToMove { set; }
     bool CanvasIsEnabled { get; }
-    bool CanStoreAndRestoreOptionalPoUp { get; }
-    DoTween TweenOnSceneStart { get; set; }
+    bool CanStoreAndRestoreOptionalPopUp { get; }
+    bool CanBufferPopUp { get; }
+   // DoTween TweenOnSceneStart { get; set; }
     IBranch MyParentBranch { get; set; }
     float Timer { get; }
     INode[] ThisBranchesNodes { get; }
@@ -37,7 +38,9 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     INode LastSelected { get; }
     INode LastHighlighted { get; }
     GameObject ThisBranchesGameObject { get; }
-    IsActive ReturnOnlyAllowOnHomeScreen { get; }
+    bool CanOnlyAllowOnHomeScreen { get; }
+    bool RestoreBranch { get; set; }
+    bool IsAlreadyActive { get; }
 
 
     IsActive StayVisibleMovingToChild();
@@ -45,7 +48,7 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     void StartPopUp_RunTimeCall(bool fromPool);
     void MoveToThisBranch(IBranch newParentBranch = null);
     void SetBranchAsActive();
-    void DontSetBranchAsActive();
+    void DontSetAsActiveBranch();
     void DoNotTween();
     void StartBranchExitProcess(OutTweenType outTweenType, Action endOfTweenCallback = null);
     void SetCanvas(ActiveCanvas activeCanvas);

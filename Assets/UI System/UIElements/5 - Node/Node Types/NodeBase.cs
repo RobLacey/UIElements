@@ -17,7 +17,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, I
     //Variables
     protected readonly INode _uiNode;
     private bool _hasFinishedSetUp;
-    private IDataHub _myDataHub;
+    protected IDataHub _myDataHub;
     private readonly IUiEvents _uiFunctionEvents;
     private bool _fromHotKey;
     private IHistoryTrack _historyTracker;
@@ -67,9 +67,9 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, I
 
     
     //Main
-    public void OnAwake() { }
+    public virtual void OnAwake() { }
 
-    public void OnEnable()
+    public virtual void OnEnable()
     {
         UseEZServiceLocator();
         FetchEvents();
@@ -99,7 +99,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, I
         DoSelected = HistoryEvents.Do.Fetch<ISelectedNode>();
     }
     
-    public void OnDisable()
+    public virtual void OnDisable()
     {
         DoHighlighted = null;
         DoSelected = null;
@@ -107,6 +107,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, I
     }
 
     public void OnDestroy() => _myDataHub = null;
+    
 
     public virtual void OnStart() { }
 
@@ -119,6 +120,8 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, I
 
     public virtual void SetNodeAsActive()
     {
+        if(_uiNode.IsNodeDisabled() && _uiNode.PassOver()) return;
+        
         if (AllowKeys && InMenu)
         {
             OnEnteringNode();
@@ -170,7 +173,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, I
         PointerOverNode = true;
         _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
     }
-
+   
     public virtual void OnExitingNode()
     {
         PointerOverNode = false;
@@ -200,8 +203,8 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, ISelectedNode, I
 
     protected void Activate(Action endAction = null)
     {
-        ThisNodeIsSelected();
         SetSelectedStatus(true, endAction);
+        ThisNodeIsSelected();
     }
 
     private void Deactivate()

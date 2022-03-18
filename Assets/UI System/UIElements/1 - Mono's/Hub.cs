@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using DG.Tweening;
 using EZ.Events;
 using EZ.Inject;
 using EZ.Service;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UIElements
@@ -80,9 +80,11 @@ namespace UIElements
         private void Awake()
         {
             
-            Debug.Log("UpTo : Back from other trunk doesn't work yet.");
-            Debug.Log("UpTo : Trunk needs Tween Module. Make Navigate to take branch or trunk");
-            Debug.Log("UpTo : Try just storing the active branch maybe? Branch can handle what was last selected by being set from it's node");
+            Debug.Log("UpTo : Hot Keys");
+            Debug.Log("UpTo : Need to rework PopUps so not reliant OnHomeScreen. Won't cancel properly");
+            Debug.Log("UpTo :  make a linked / Shadow / Mimic / bypass system that passes on controls to / copies the state of the linked branch / node." +
+                      "What happens to me isn't tracked but happens to you. That way it doesn't matter what the node is doing. " );
+            
             
             var uIInput = GetComponent<IInput>();
             AddService();
@@ -94,7 +96,6 @@ namespace UIElements
             _audioService = EZInject.Class.WithParams<IAudioService>(this);
             _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
             _cancelHandler = EZInject.Class.NoParams<ICancel>();
-
         }
 
         private void OnEnable()
@@ -106,13 +107,13 @@ namespace UIElements
             _canvasSortingOrderSettings.OnEnable();
             _historyTrack.OnEnable();
             _cancelHandler.OnEnable();
-
         }
 
         private void OnDisable()
         {
             UnObserveEvents();
             _audioService.OnDisable();
+            DOTween.KillAll();
         }
 
         public void UseEZServiceLocator()
@@ -154,6 +155,8 @@ namespace UIElements
         
         private IEnumerator StartUIDelay()
         {
+            //TODO Sort out this Part so it doesn't glitch on 0 second start. Need to call setup on RootBranches directly. Get rid of StartingBranch Event
+            
             yield return new WaitForEndOfFrame();
             if(_delayUIStart != 0)
                 yield return new WaitForSeconds(_delayUIStart);
@@ -182,7 +185,6 @@ namespace UIElements
                 yield return new WaitForSeconds(_controlActivateDelay);
             
             _myDataHub.SetStarted();
-            _rootTrunk.StartRootTrunk();
             OnStart?.Invoke(this);
         }
 

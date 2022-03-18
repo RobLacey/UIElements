@@ -18,16 +18,16 @@ public interface IBranchBase : IParameters, IMono
 
 public interface IBranchParams
 {
-    IBranch MyBranch { get; }
+    IBranch ThisBranch { get; }
 }
 
 public interface ICanvasCalcParms : IParameters
 {
-    IBranch MyBranch { get; }
+    IBranch ThisBranch { get; }
 }
 
 public interface ISetPositionParms : IParameters
 {
-    IBranch MyBranch { get; }
+    IBranch ThisBranch { get; }
 }
 

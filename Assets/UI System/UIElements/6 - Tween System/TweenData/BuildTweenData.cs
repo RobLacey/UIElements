@@ -9,10 +9,10 @@ public class BuildTweenData
     [SerializeField] 
     [AllowNesting] [ValidateInput(SetClassName)] 
     private RectTransform _element;
-    [SerializeField] public PositionSettings _positionSettings;
-    [SerializeField] public ScaleSettings _scaleSettings;
-    [SerializeField] public RotationSettings _rotationSettings;
-    [SerializeField] public float _buildNextAfterDelay;
+    [SerializeField] private PositionSettings _positionSettings;
+    [SerializeField] private ScaleSettings _scaleSettings;
+    [SerializeField] private RotationSettings _rotationSettings;
+    [SerializeField] private float _buildNextAfterDelay;
     [HideInInspector] public Vector3 _moveTo;
     [HideInInspector] public Vector3 _scaleTo;
     [HideInInspector] public Vector3 _targetRotation;
@@ -22,6 +22,7 @@ public class BuildTweenData
     //Editor
     private const string SetClassName = nameof(SetName);
     private const string defaultName = "Set Me";
+    
     private bool SetName()
     {
         if (_element != null)
@@ -31,6 +32,7 @@ public class BuildTweenData
         else
         {
             _name = defaultName;
+            ClearSettings(TweenStyle.NoTween);
         }
 
         return true;
@@ -41,24 +43,16 @@ public class BuildTweenData
     public RotationSettings RotationSettings => _rotationSettings;
     public RectTransform Element => _element;
     public CanvasGroup MyCanvasGroup { get; private set; }
+    public float ToNextDelay => _buildNextAfterDelay;
 
     public void SetElement()
     {
-        if (_element == null)
-        {
-            MyCanvasGroup = null;
-            _positionSettings.SetRectTransform(null);
-            _scaleSettings.SetRectTransform(null);
-            _rotationSettings.SetRectTransform(null);
-        }
-        else
-        {
-            MyCanvasGroup = SetCanvasGroup(_element);
-            _positionSettings.SetRectTransform(_element);
-            _scaleSettings.SetRectTransform(_element);
-            _rotationSettings.SetRectTransform(_element);
-            SetName();
-        }
+        if(_element == null) return;
+        MyCanvasGroup = SetCanvasGroup(_element);
+        _positionSettings.SetRectTransform(_element);
+        _scaleSettings.SetRectTransform(_element);
+        _rotationSettings.SetRectTransform(_element);
+        SetName();
     }
 
     public void ActivateTweenSettings(TweenScheme scheme)

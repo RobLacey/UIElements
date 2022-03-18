@@ -8,19 +8,24 @@ public interface IScreenData : IMonoEnable,IMonoDisable
 {
     bool WasOnHomeScreen { get; }
     void RestoreScreen();
-    void StoreClearScreenData(IBranch[] allBranches, IBranch thisBranch, BlockRaycast blockRaycast);
+    void StoreClearScreenData(List<IBranch> allBranches, IBranch thisBranch, BlockRaycast blockRaycast);
 }
 
 public class ScreenData : IScreenData, IServiceUser, IEZEventUser
 {
     public ScreenData(IBranchParams branch)
     {
-        _myBranch = branch.MyBranch;
+        _myBranch = branch.ThisBranch;
     }
 
     //Variables
     private readonly List<IBranch> _clearedBranches = new List<IBranch>();
-    private bool IsFullscreen => _myBranch.ParentTrunk.ScreenType == ScreenType.FullScreen;
+
+    private bool IsFullscreen()
+    {
+        if (_myBranch.ParentTrunk.IsNull()) return false;
+        return _myBranch. ParentTrunk. ScreenType == ScreenType. FullScreen;
+    }
     private IDataHub _myDataHub;
     private IBranch _myBranch;
 
@@ -51,13 +56,13 @@ public class ScreenData : IScreenData, IServiceUser, IEZEventUser
     }
 
     //Main
-    public void StoreClearScreenData(IBranch[] allBranches, IBranch thisBranch, BlockRaycast blockRaycast)
+    public void StoreClearScreenData(List<IBranch> allBranches, IBranch thisBranch, BlockRaycast blockRaycast)
     {
         WasOnHomeScreen = _myDataHub.OnHomeScreen;
         StoreActiveBranches(allBranches, thisBranch, blockRaycast == BlockRaycast.Yes);
     }
 
-    private void StoreActiveBranches(IBranch[] allBranches, IBranch thisBranch, bool blockRaycast)
+    private void StoreActiveBranches(List<IBranch> allBranches, IBranch thisBranch, bool blockRaycast)
     {
         foreach (var branchToClear in allBranches)
         {
@@ -77,7 +82,7 @@ public class ScreenData : IScreenData, IServiceUser, IEZEventUser
         
         foreach (var branch in _clearedBranches)
         {
-            if(IsFullscreen)
+            if(IsFullscreen())
                 branch.SetCanvas(ActiveCanvas.Yes);
             branch.SetBlockRaycast(BlockRaycast.Yes);
         }

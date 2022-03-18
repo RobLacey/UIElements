@@ -7,12 +7,13 @@ public partial class UIBranch
     private const string StandardBranch = nameof(IsStandardBranch);
     private const string ControlBarBranch = nameof(IsControlBar);
     private const string OptionalBranch = nameof(IsOptional);
+    private const string OnlyAllowOnHomeScreen = nameof(OnlyOnHomeScreen);
     private const string InGamUIBranch = nameof(InGameUI);
     private const string TimedBranch = nameof(IsTimedPopUp);
     private const string ResolveBranch = nameof(IsResolve);
     private const string AnyPopUpBranch = nameof(IsAPopUpEditor);
-    private const string NotControlBar = nameof(IsNotControlBar);
-    private const string Stored = nameof(IsStored);
+    //private const string NotControlBar = nameof(IsNotControlBar);
+    //private const string Stored = nameof(IsStored);
     //private const string Fullscreen = nameof(IsFullScreen);
     private const string ShowManualOrder = nameof(IsManualOrder);
    // private const string ValidInAndOutTweens = nameof(AllowableInAndOutTweens);
@@ -41,11 +42,12 @@ public partial class UIBranch
                                   && (IsStandardBranch() || IsInternalBranch() || IsHomeScreenBranch());
     private bool IsResolve => _branchType == BranchType.ResolvePopUp;
     private bool IsOptional() => _branchType == BranchType.OptionalPopUp;
+    private bool OnlyOnHomeScreen() => _onlyAllowOnHomeScreen == IsActive.Yes;
 
-    private bool IsStored() =>
-        _branchType == BranchType.OptionalPopUp && _storeOrResetOptional == StoreAndRestorePopUps.StoreAndRestore;
-
-    private bool IsNotControlBar() => _controlBar == IsActive.No;
+    // private bool IsStored() =>
+    //     _branchType == BranchType.OptionalPopUp && _storeOrResetOptional == StoreAndRestorePopUps.StoreAndRestore;
+    //
+    // private bool IsNotControlBar() => _controlBar == IsActive.No;
 
     /*
     private bool IsFullScreen()

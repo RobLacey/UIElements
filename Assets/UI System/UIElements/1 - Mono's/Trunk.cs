@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using EZ.Events;
-using EZ.Inject;
 using EZ.Service;
 using UnityEngine;
 using NaughtyAttributes;
 
 namespace UIElements
 {
-    public interface ITrunkData : IParameters
-    {
-        List<IBranch> GroupsBranches { get; }
-    }
-
     /// <summary>
     /// Trunk is the base module of each new screen that has a connected behaviour 
     /// </summary>
 
-    public class Trunk : MonoBehaviour, ITrunkData, ISetUpStartBranches, IEZEventDispatcher, IServiceUser, IOnHomeScreen
-                         , IClearScreen, IAddTrunk
+    [RequireComponent(typeof(Canvas))]
+    [RequireComponent(typeof(UITweener))]
+    public class Trunk : MonoBehaviour, ISetUpStartBranches, IEZEventDispatcher, IServiceUser, IOnHomeScreen
+                         , IClearScreen, IAddTrunk, IRemoveTrunk
     {
         [SerializeField] 
         [Label("Overlay Or Fullscreen")]
@@ -32,49 +28,73 @@ namespace UIElements
 
         //Variables
         private IDataHub _myDataHub;
-        private UIData _displayData;
         private ISwitchTrunkGroup _switcher;
         private const string SwitchTitle = "Set The Branches To Use With Switcher";
+        private Canvas _myCanvas;
+        private UITweener _myTweener;
+        private bool _firstTimeStart = true;
 
         //Events
         private Action<ISetUpStartBranches> SetUpBranchesAtStart { get; set; }
         private Action<IOnHomeScreen> SetIsOnHomeScreen { get; set; }
         private Action<IClearScreen> DoClearScreen { get; set; }
         private Action<IAddTrunk> AddTrunk { get; set; }
-
-
+        private Action<IRemoveTrunk> RemoveTrunk { get; set; }
         
         //Properties & Getters/ Setters
         public List<IBranch> GroupsBranches => _branches.ToList<IBranch>();
         public ScreenType ScreenType => _screenType;
         public Trunk ThisTrunk => this;
         public IBranch ActiveBranch => _switcher.CurrentBranch;
+        
+        /// <summary>
+        /// Method can be used to reactive the default trunk switcher if tab groups are present
+        /// </summary>
+        public void ActivateTrunkSwitcher() => _myDataHub.CurrentSwitcher = _switcher;
+
 
         //Main
         private void Awake()
         { 
-            // _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
-            _switcher = EZInject.Class.WithParams<ISwitchTrunkGroup>(this);
-            _displayData = FindObjectOfType<UIData>();
+            _switcher = EZInject.Class.NoParams<ISwitchTrunkGroup>();
+            _myCanvas = GetComponent<Canvas>();
+            _myTweener = GetComponent<UITweener>();
+            SetUpTrunkGroup();
+            _myCanvas.enabled = false;
+        }
 
-            var allChildBranches = GetComponentsInChildren<IBranch>();
-            foreach (var uiBranch in allChildBranches)
+        private void SetUpTrunkGroup()
+        {
+            var temp = new List<UIBranch>();
+            foreach (var uiBranch in _branches)
             {
+                if (CheckForEmptyElements(uiBranch)) continue;
+                temp.Add(uiBranch);
                 uiBranch.ParentTrunk = this;
             }
+
+            _branches.Clear();
+            _branches = temp;
+        }
+
+        private bool CheckForEmptyElements(UIBranch uiBranch)
+        {
+            if (uiBranch.IsNull())
+            {
+                Debug.Log($"You Have empty elements in {this} Trunk");
+                return true;
+            }
+            return false;
         }
 
         private void OnEnable()
         {
             UseEZServiceLocator();
             FetchEvents();
-           // _switcher.OnEnable();
+            _switcher.OnEnable();
         }
         
-        public void UseEZServiceLocator()
-        {
-            _myDataHub = EZService.Locator.Get<IDataHub>(this);
-        }
+        public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
 
         public void FetchEvents()
         {
@@ -82,113 +102,115 @@ namespace UIElements
             SetIsOnHomeScreen = HistoryEvents.Do.Fetch<IOnHomeScreen>();
             DoClearScreen = BranchEvent.Do.Fetch<IClearScreen>();
             AddTrunk = HistoryEvents.Do.Fetch<IAddTrunk>();
+            RemoveTrunk = HistoryEvents.Do.Fetch<IRemoveTrunk>();
         }
 
-        private void OnDisable()
-        {
-            _switcher.OnDisable();
-        }
+        private void OnDisable() => _switcher.OnDisable();
 
         private void Start()
         {
-             _myDataHub.ActiveTrunkGroup = GroupsBranches;
-            // foreach (var uiBranch in _branches)
+            _switcher.ThisGroup = GroupsBranches;
+           // _myDataHub.ActiveTrunkGroup = GroupsBranches;
+        }
+
+        public void SetStartPositionsAndSettings()
+        {
+            _myCanvas.enabled = true;
+            OnStartTrunk();
+            SetUpBranchesAtStart?.Invoke(this);
+        }
+
+        // public void StartRootTrunk()
+        // {
+        //    // if(!_firstTimeStart)
+        //        // OnStartTrunk();
+        //     _switcher.CurrentBranch.MoveToThisBranch();
+        //    // _firstTimeStart = true; //Stops OnStartTrunk being called twice at the scene start
+        // }
+
+        public void OnStartTrunk(IBranch newParent = null)
+        {
+            if(_myDataHub.CurrentTrunk == this) return;
+            
+            IfRootTrunkActiveStatus(true);
+            
+            if(ScreenType == ScreenType.FullScreen)
+            {
+                 DoClearScreen?.Invoke(this);
+            }            
+            OnEnable();
+            AddTrunk?.Invoke(this);
+            _myDataHub.CurrentSwitcher = _switcher;
+            _myTweener.StartInTweens(null);
+            //if(_myCanvas.enabled) return;
+            _myCanvas.enabled = true;
+            _switcher.OpenAllBranches(newParent);
+         //   _myDataHub.ActiveTrunkGroup = GroupsBranches;
+            
+            // void End()
             // {
-            //     uiBranch.ParentTrunk = this;
             // }
         }
 
-        public void StartRootTrunk()
-        {
-            OnStartTrunk();
-            _switcher.CurrentBranch.MoveToThisBranch();
-        }
-
-        // public void MoveBackTo()
-        // {
-        //     OnStartTrunk();
-        //     _switcher.CurrentBranch.MoveToThisBranch();
-        // }
-
-        public void OnStartTrunk()
+        private void IfRootTrunkActiveStatus(bool isActive)
         {
             if (_myDataHub.RootTrunk == this)
             {
-                _myDataHub.SetOnHomeScreen(true);
+                _myDataHub.SetOnHomeScreen(isActive);
                 SetIsOnHomeScreen?.Invoke(this);
             }
-            
-            if(ScreenType == ScreenType.FullScreen)
-                DoClearScreen?.Invoke(this);
-            OnEnable();
-            _switcher.OnEnable();
-            AddTrunk?.Invoke(this);
-            //Debug.Log("Enter : " + name);
-            //_myDataHub.se
-            _myDataHub.CurrentSwitcher = _switcher;
-            _myDataHub.ActiveTrunkGroup = GroupsBranches;
-            _switcher.OpenAllBranches();
         }
 
-        public void CancelPressed(Action endOfMoveAction, IBranch movingFrom)
+        public void OnMoveToNewTrunk(Action endOfMoveAction, ScreenType newTrunksScreenType)
         {
-           // RemoveTrunks?.Invoke(this);
-           // OnExitTrunk(endOfMoveAction);
-        }
-        
-        public void OnExitTrunk(Action endOfMoveAction, ScreenType newTrunksScreenType)
-        {
-            _switcher.OnDisable();
-            OnDisable();
-            //IBranch lastBranch = null;
-            
-            if(newTrunksScreenType == ScreenType.FullScreen)
+            if(newTrunksScreenType == ScreenType.FullScreen || _screenType == ScreenType.FullScreen)
             {
-                 _switcher.CloseAllBranches(EndOfClose);
+                RemoveTrunk?.Invoke(this);
+                _myTweener.StartOutTweens(EndActionNotVisible);
+               // _switcher.CloseAllBranches(EndAction);
+               // _myCanvas.enabled = false;
             }
             else
             {
-                 EndOfClose();
+                _myTweener.StartOutTweens(EndAction);
+            }
+
+            void EndActionNotVisible()
+            {
+                _switcher.CloseAllBranches(EndAction);
+                _myCanvas.enabled = false;
+                //EndAction();
             }
             
-            
-            void EndOfClose()
+            void EndAction()
             {
-                //TODO Check This Functionality
-                if (_myDataHub.RootTrunk == this)
-                {
-                    _myDataHub.SetOnHomeScreen(false);
-                    SetIsOnHomeScreen?.Invoke(this);
-                }
-
+                OnDisable();
+                IfRootTrunkActiveStatus(false);
                 endOfMoveAction?.Invoke();
             }
         }
+        
         public void OnExitTrunk(Action endOfMoveAction)
         {
-            _switcher.OnDisable();
-            OnDisable();
-            //IBranch lastBranch = null;
+            //OnDisable();
+            RemoveTrunk?.Invoke(this);
             
-            _switcher.CloseAllBranches(EndOfClose);
-            
-            
-            void EndOfClose()
+            _myTweener.StartOutTweens(CloseBranches);
+        
+            void CloseBranches()
             {
-                //TODO Check This Functionality
-                if (_myDataHub.RootTrunk == this)
-                {
-                    Debug.Log("Here");
-                    _myDataHub.SetOnHomeScreen(false);
-                    SetIsOnHomeScreen?.Invoke(this);
-                }
+                _switcher.CloseAllBranches(EndAction);
+            }  
+            
+             void EndAction()
+             {
+                 OnDisable();
+                 _myCanvas.enabled = false;
+                 IfRootTrunkActiveStatus(false);
+                 endOfMoveAction?.Invoke();
+             }
+       }
 
-                endOfMoveAction?.Invoke();
-            }
-
-        }
-
-        public void SetStartPositionsAndSettings() => SetUpBranchesAtStart?.Invoke(this);
         
         [Button("Add a New Tree Structure")]
         private void MakeTreeFolders()
@@ -197,8 +219,5 @@ namespace UIElements
                                   .CreateBranch()
                                   .CreateNode();
         }
-
-        
-
     }
 }

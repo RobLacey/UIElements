@@ -32,8 +32,8 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
     //Delegates
     private Action FinishedTweenCallback{ get; set; }
     private Action<IEndTween> EndTweenEffect { get; set; }
-    private TweenTrigger CurrentUserEvent{ get; set; }
-    public bool HasInAndOutTween() => !(_scheme is null) && _scheme.InAndOutTween();
+    private TweenTrigger TweenEvent{ get; set; }
+    //public bool HasInAndOutTween() => !(_scheme is null) && _scheme.InAndOutTween();
     
     //Editor
     private const string BuildListName = "List Of Objects To Tween"; 
@@ -72,9 +72,9 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
         }
     }
 
-    private void OnValidate() => _tweenInspector.CurrentScheme(_scheme)
-                                                .CurrentBuildList(_buildObjectsList)
-                                                .UpdateInspector();
+    private void OnValidate() =>  _tweenInspector.CurrentScheme(_scheme)
+                                                 .CurrentBuildList(_buildObjectsList)
+                                                 .UpdateInspector();
 
     public void StartInTweens(Action callBack)
     {
@@ -83,32 +83,25 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
     }
     public void StartOutTweens(Action callBack)
     {
-        StopAllCoroutines();
         _tweenEvents.OutTweenEventStart?.Invoke();
         StartProcessingTweens(TweenType.Out, callBack, _tweenEvents.OutTweenEventEnd);
     }
-    private void StartProcessingTweens(TweenType tweenType, Action callBack, TweenTrigger userEvent)
+    private void StartProcessingTweens(TweenType tweenType, Action callBack, TweenTrigger tweenTypeEvent)
     {
         FinishedTweenCallback = callBack;
+        TweenEvent = tweenTypeEvent;
 
-        if (IfTweenCounterIsZero_In(userEvent)) return;
+        if (IfTweenCounterIsZero_In()) return;
 
-        ResetCounterAndCoroutines();
-        DoTweens(tweenType, DoAtEndOfTweens(userEvent));
+        _effectCounter = _counter;
+        DoTweens(tweenType, EndOfTween);
     }
 
-    private bool IfTweenCounterIsZero_In(TweenTrigger userEvent)
+    private bool IfTweenCounterIsZero_In()
     {
         if (_counter > 0 && _scheme) return false;
-        DoAtEndOfTweens(userEvent);
-        EndTweenUserEvent();
+        EndOfTween();
         return true;
-    }
-
-    private void ResetCounterAndCoroutines()
-    {
-        StopAllCoroutines();
-        _effectCounter = _counter;
     }
 
     private void DoTweens(TweenType tweenType, TweenCallback endOfTweenActions)
@@ -119,17 +112,11 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
         }
     }
     
-    private TweenCallback DoAtEndOfTweens(TweenTrigger value)
-    {
-        CurrentUserEvent = value;
-        return EndTweenUserEvent;
-    }
-    
-    private void EndTweenUserEvent()
+    private void EndOfTween()
     {
         _effectCounter--;
         if (_effectCounter > 0) return;
-        CurrentUserEvent?.Invoke();
+        TweenEvent?.Invoke();
         FinishedTweenCallback?.Invoke();
     }
     

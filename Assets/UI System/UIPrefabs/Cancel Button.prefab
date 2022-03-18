@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buttonFunction: 0
+  _buttonFunction: 2
   _autoOpen: 1
   _isDynamic: 1
   _autoOpenDelay: 0
@@ -134,13 +134,13 @@ MonoBehaviour:
   _toggleData:
     _toggleGroupId: 0
     _startAsSelected: 1
-    _tabBranch: {fileID: 0}
+    _linkBranch: {fileID: 0}
   _multiSelectSettings:
     _allowMultiSelect: 1
     _openChildBranch: 1
     _multiSelectGroup: 0
   _disableSettings:
-    _disablePassThrough: 1
+    _passOverIfDisabled: 0
   _enabledFunctions: 0
   _navigation:
     _childBranch: {fileID: 0}

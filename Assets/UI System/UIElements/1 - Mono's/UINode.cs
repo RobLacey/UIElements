@@ -19,13 +19,13 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     [Label("Node Function")] 
     private ButtonFunction _buttonFunction;
     [SerializeField] 
-    [Label("Auto Open")]
+    [ShowIf(CanAutoOpenClose)] [Label("Auto Open")]
     private IsActive _autoOpen = IsActive.No;
-    [SerializeField] 
-    private IsActive _isDynamic = IsActive.No;
     [SerializeField]
     [ShowIf(CanAutoOpenClose)] [Label("Auto Open Delay")]
     [Range(0, 1)]private float _autoOpenDelay = 0;
+    [SerializeField] 
+    private IsActive _isDynamic = IsActive.No;
     [SerializeField] 
     [ShowIf(CancelOrBack)] 
     private EscapeKey _escapeKeyFunction = EscapeKey.GlobalSetting;
@@ -82,8 +82,8 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
     private bool SceneIsChanging { get; set; }
     private bool CanStart => _myDataHub.SceneStarted;
     private bool AllowKeys => _myDataHub.AllowKeys;
-    public bool IsToggleGroup => _buttonFunction == ButtonFunction.ToggleGroup;
-    private bool IsToggleNotLinked => _buttonFunction == ButtonFunction.ToggleNotLinked;
+    public bool IsToggle => _buttonFunction == ButtonFunction.Toggle;
+   // private bool IsToggleNotLinked => _buttonFunction == ButtonFunction.ToggleNotLinked;
     private bool IsCancelOrBack => _buttonFunction == ButtonFunction.CancelOrBack;
     //public bool CanNotStoreNodeInHistory =>  IsCancelOrBack;  
     public ToggleData ToggleData => _toggleData;
@@ -93,7 +93,7 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         get => _navigation.ChildBranch;
         set => _navigation.ChildBranch = value;
     }
-    private bool SetIfCanNavigate() => /*IsAToggle() ||*/ IsCancelOrBack;
+    private bool SetIfCanNavigate() => IsToggle || IsCancelOrBack;
     // private bool IsAToggle() => _buttonFunction == ButtonFunction.ToggleGroup
     //                             || _buttonFunction == ButtonFunction.ToggleNotLinked;
     public EscapeKey EscapeKeyType => _escapeKeyFunction;
@@ -247,18 +247,14 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
         _nodeBase.Navigation = _navigation.Instance;
     }
 
-    public void SetNodeAsActive()
-    {
-        if(IsNodeDisabled() && PassOver()) return;
-        _nodeBase.SetNodeAsActive();
-    }
-    
+    public void SetNodeAsActive() => _nodeBase.SetNodeAsActive();
+
     public void SetAsHotKeyParent(bool setAsActive) => _nodeBase.HotKeyPressed(setAsActive);
 
     public void ExitNodeByType() => _nodeBase.ExitNodeByType();
 
-    //TODo review if i need this and ExitNodeByTytpe as well
-    public void ClearNode() => _nodeBase.SetNodeAsNotSelected_NoEffects();
+    // //TODo review if i need this and ExitNodeByTytpe as well
+    // public void ClearNode() => _nodeBase.SetNodeAsNotSelected_NoEffects();
 
     // Use To Disable Node from external scripts
     public void DisableNode()

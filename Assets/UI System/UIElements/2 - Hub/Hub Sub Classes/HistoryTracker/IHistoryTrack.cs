@@ -10,7 +10,7 @@ public interface IHistoryTrack : IParameters, IIsAService
     void OnEnable();
     bool NodeNeededForMultiSelect(INode node);
     void CheckListsAndRemove(IBranch branchToClose);
-    void ReturnToNextHomeGroup();
+    //void ReturnToNextHomeGroup();
     void SwitchGroupPressed();
     void MoveToLastBranchInHistory();
     void CancelHasBeenPressed(EscapeKey endOfCancelAction);

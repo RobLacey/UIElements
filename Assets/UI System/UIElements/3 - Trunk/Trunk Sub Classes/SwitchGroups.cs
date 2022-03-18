@@ -29,7 +29,7 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     //Variables
     private InputScheme _inputScheme;
     private readonly IGOUISwitcher _gouiSwitcher;
-    private ISwitchTrunkGroup SwitchTrunkGroup => _myDataHub.CurrentSwitcher;
+    private ISwitch SwitchTrunkGroup => _myDataHub.CurrentSwitcher;
     private IHistoryTrack _historyTracker;
     private IDataHub _myDataHub;
     private SwitchType _lastSwitchType = SwitchType.Normal;
@@ -71,6 +71,7 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     private bool Switch(ISwitch group, bool switchPressed, SwitchType switchType, bool inputCheck)
     {
         if(!switchPressed) return false;
+        
         if (HasOnlyOnePlayer(group.HasOnlyOneMember, _lastSwitchType == switchType)) return true;
         
         _historyTracker.SwitchGroupPressed();
@@ -103,15 +104,10 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     {
         if (_myDataHub.OnHomeScreen)
         {
-            if(GOUIButtonsPressed)
+            if (GOUIButtonsPressed)
                 _lastSwitchType = SwitchType.GOUI;
-
+            
             if (SwitcherButtonsPressed)
-                _lastSwitchType = SwitchType.Normal;
-        }
-        else
-        {
-            if(SwitcherButtonsPressed)
                 _lastSwitchType = SwitchType.Normal;
         }
     }
