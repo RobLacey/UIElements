@@ -22,6 +22,11 @@ namespace UIElements
         private IHistoryTrack _historyTrack;
         private IDataHub _myDataHub;
         
+        public List<INode> SwitchHistory { get; private set; }
+
+        public void ClearSwitchHistory() => SwitchHistory.Clear();
+
+        
         //Main
         public void OnEnable()
         {
@@ -61,6 +66,7 @@ namespace UIElements
                 _playerObjects.Add(playerObject);
             }
         }
+
 
         public void DoSwitch(SwitchInputType switchInputType)
         {
@@ -114,7 +120,6 @@ namespace UIElements
                 {
                     _playerObjects[_index].SwitchEnter();
                 }
-                //TODO Check This functionality with Trunks and if needed. In fact double check this entire thing
                 _historyTrack.CheckListsAndRemove(branchToClose);
             }
             else

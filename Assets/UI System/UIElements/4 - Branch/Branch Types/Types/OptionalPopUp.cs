@@ -1,51 +1,37 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public interface IOptionalPopUpBranch : IBranchBase { } 
 
-public class OptionalPopUpPopUp : BranchBase, IAddOptionalPopUp, IOptionalPopUpBranch,
-                                  IRemoveOptionalPopUp
+public class OptionalPopUpPopUp : BranchBase, IOptionalPopUpBranch
+                                  
 {
     public OptionalPopUpPopUp(IBranch branch) : base(branch) { }
+    private bool _running;
+    private Coroutine _coroutine;
 
-    //Variables
-    //private static readonly List<Canvas> optionalPopUps = new List<Canvas>();
 
-    //Properties
-    public IBranch ThisPopUp => ThisBranch;
-    private bool PopUpIsActive => ThisBranch.CanvasIsEnabled;
-    private bool OnlyAllowOnHomeScreen => OnHomeScreen && ThisBranch.CanOnlyAllowOnHomeScreen;
-    
-    //Events
-    private Action<IAddOptionalPopUp> AddOptionalPopUp { get; set; }
-    private Action<IRemoveOptionalPopUp> RemoveOptionalPopUp { get; set; }
+    // //Events
+     private static Action OptionalPopUpExited { get; set; }
 
     //Main
-    // public override void OnEnable()
-    // {
-    //     base.OnEnable();
-    // }
-
     public override void OnDisable()
     {
         base.OnDisable();
-         AdjustCanvasOrderRemoved();
-    }
-
-    public override void FetchEvents()
-    {
-        base.FetchEvents();
-        AddOptionalPopUp = PopUpEvents.Do.Fetch<IAddOptionalPopUp>();
-        RemoveOptionalPopUp = PopUpEvents.Do.Fetch<IRemoveOptionalPopUp>();
-
+        StaticCoroutine.StopCoroutines(_coroutine);
+        AdjustCanvasOrderRemoved();
     }
 
     public override void ObserveEvents()
     {
         base.ObserveEvents();
         BranchEvent.Do.Subscribe<IClearScreen>(ClearBranchForFullscreen);
+        OptionalPopUpExited += CheckIfCanRestore;
+        RestoreBranches += CheckIfCanRestore;
+        BlockRaycasts += SetBlockRaycast;
 
     }
 
@@ -53,69 +39,91 @@ public class OptionalPopUpPopUp : BranchBase, IAddOptionalPopUp, IOptionalPopUpB
     {
         base.UnObserveEvents();
         BranchEvent.Do.Unsubscribe<IClearScreen>(ClearBranchForFullscreen);
+        OptionalPopUpExited -= CheckIfCanRestore;
+        RestoreBranches -= CheckIfCanRestore;
+        BlockRaycasts -= SetBlockRaycast;
 
     }
 
-    //Make a active branch tracking list in mydata
-    //
-
-    protected override void SaveIfOnHomeScreen(IOnHomeScreen args)
+    protected override void CheckIfAtRootTrunk(IIsAtRootTrunk args)
     {
-        //base.SaveIfOnHomeScreen(args);
-        if (!ThisBranch.RestoreBranch || !OnHomeScreen) return;
-
-        ThisBranch.DontSetAsActiveBranch();
-        ThisBranch.MoveToThisBranch();
-    }
-
-    // private void ActivateWithTween()
-    // {
-    //     ThisBranch.DontSetBranchAsActive();
-    //     ThisBranch.MoveToThisBranch();
-    // }
-    //
-    // private void ActivateWithoutTween()
-    // {
-    //     ThisBranch.DontSetBranchAsActive();
-    //     ThisBranch.MoveToThisBranch();
-    //     // if (NoResolvePopUps)
-    //     //     SetBlockRaycast(BlockRaycast.Yes);
-    // }
-
-    public override bool CanStartBranch() 
-    {
-        if (ThisBranch.CanBufferPopUp) ThisBranch.RestoreBranch = true;
+        if(GameIsPaused) return;
         
-        if (GameIsPaused || !OnlyAllowOnHomeScreen || !CanStart || !NoResolvePopUps) return false;
-        AddActiveBranch?.Invoke(this);
+        if (IsAtRoot)
+           CheckIfCanRestore();
 
-        IfActiveResolvePopUps();        
-        return true;
+        if (ThisBranch.CanvasIsEnabled && !ThisBranch.WhenAllowed.IsAllowed())
+        {
+            ThisBranch.ExitThisBranch(OutTweenType.Cancel);
+        }
+    }
+
+    private void CheckIfCanRestore()
+    {
+        if (!ThisBranch.WhenAllowed.RestoreBranch ) return;
+        
+        ThisBranch.DontSetAsActiveBranch();
+        ThisBranch.OpenThisBranch();
+    }
+
+    public override bool CanStartBranch()
+    {
+        if (!_myDataHub.SceneStarted) return false;
+        
+        return ThisBranch.WhenAllowed.IsAllowed(_myDataHub.ActiveOptionalPopUps, ThisBranch);
     }
 
     public override void SetUpBranch(IBranch newParentController = null)
     {
         base.SetUpBranch(newParentController);
-        
-        if(!PopUpIsActive)
-        {
-            AddOptionalPopUp?.Invoke(this);
-            if(!ThisBranch.RestoreBranch)
-                AdjustCanvasOrderAdded();
-        }
-        
-        IfActiveResolvePopUps();
-        SetCanvas(ActiveCanvas.Yes);
-        ThisBranch.RestoreBranch = false;
 
+        if(!ThisBranch.CanvasIsEnabled)
+        {
+            _myDataHub.AddOptionalPopUp(ThisBranch);
+            if(!ThisBranch.WhenAllowed.RestoreBranch)
+                AdjustCanvasOrderAdded();
+            
+            if (ThisBranch.Timer > 0)
+            {
+                if(_running)
+                {
+                    StaticCoroutine.StopCoroutines(_coroutine);
+                    ThisBranch.DoNotTween();
+                }                
+                _coroutine = StaticCoroutine.StartCoroutine(TimedPopUpProcess());
+                _running = true;
+            }
+        }
+        IfActiveResolvePopUps();
+
+        SetCanvas(ActiveCanvas.Yes);
+        ThisBranch.WhenAllowed.Restored();
     }
     
+    private IEnumerator TimedPopUpProcess()
+    {
+        yield return new WaitForSeconds(ThisBranch.Timer);
+        _canvasOrderCalculator.ResetCanvasOrder();
+        ThisBranch.ExitThisBranch(OutTweenType.Cancel, ()=> _historyTrack.MoveToLastBranchInHistory());
+    }
+
+
+    public override void StartBranchExit()
+    {
+        base.StartBranchExit();
+        
+        StaticCoroutine.StopCoroutines(_coroutine);
+        _running = false;
+        
+        _myDataHub.RemoveOptionalPopUp(ThisBranch);
+    }
+
     public override void EndOfBranchExit()
     {
-        //base.EndOfBranchExit();
         SetCanvas(ActiveCanvas.No);
-        RemoveActiveBranch?.Invoke(this);
-        RemoveOptionalPopUp?.Invoke(this);
+        OptionalPopUpExited?.Invoke();
+        
+        if(ThisBranch.WhenAllowed.RestoreBranch) return;
         AdjustCanvasOrderRemoved();
     }
 
@@ -128,27 +136,19 @@ public class OptionalPopUpPopUp : BranchBase, IAddOptionalPopUp, IOptionalPopUpB
 
     private void ClearBranchForFullscreen(IClearScreen args)
     {
-        if(!PopUpIsActive) return;
-        if (ThisBranch.CanOnlyAllowOnHomeScreen)
+        if (_myDataHub.GamePaused) return;
+        
+        if(ThisBranch.CanvasIsEnabled && !ThisBranch.WhenAllowed.IsAllowed(ExitAndResetBranch))
         {
-            RemoveOrStorePopUp();
+            ThisBranch.ExitThisBranch(OutTweenType.Cancel);
+        }
+        void ExitAndResetBranch()
+        {
+            _canvasOrderCalculator.ResetCanvasOrder();
+            ThisBranch.ExitThisBranch(OutTweenType.Cancel);
         }
     }
 
-    private void RemoveOrStorePopUp()
-    {
-        if(ThisBranch.CanStoreAndRestoreOptionalPopUp)
-        {
-            ThisBranch.RestoreBranch = true;
-        }            
-        else
-        {
-            _canvasOrderCalculator.ResetCanvasOrder();
-        }
-        ThisBranch.StartBranchExitProcess(OutTweenType.Cancel);
-        
-        //EndOfBranchExit();
-    }
 
     private void AdjustCanvasOrderAdded()
     {
@@ -165,3 +165,4 @@ public class OptionalPopUpPopUp : BranchBase, IAddOptionalPopUp, IOptionalPopUpB
         return _myDataHub.ActiveOptionalPopUps.Select(popUp => popUp.MyCanvas).ToList();
     }
 }
+

@@ -7,13 +7,13 @@ public class PopUpBindings : EZEventBindingsBase
         //PopUps
         AutoRemove().CreateEvent<IAddOptionalPopUp>();
         AutoRemove().CreateEvent<IAddResolvePopUp>();
-        AutoRemove().CreateEvent<INoPopUps>();
+        //AutoRemove().CreateEvent<INoPopUps>();
         AutoRemove().CreateEvent<IRemoveResolvePopUp>();
         AutoRemove().CreateEvent<IRemoveOptionalPopUp>();
     }
 }
 
-public interface INoPopUps { }
+//public interface INoPopUps { }
 
 public interface IAddOptionalPopUp // This one is test
 {

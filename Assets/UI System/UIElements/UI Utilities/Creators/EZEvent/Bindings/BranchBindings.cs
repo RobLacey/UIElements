@@ -10,16 +10,16 @@ public class BranchBindings : EZEventBindingsBase
     {
         //Branch
         AutoRemove().CreateEvent<IClearScreen>();
-        AutoRemove().CreateEvent<ISetUpStartBranches>();
+       // AutoRemove().CreateEvent<ISetUpStartBranches>();
         AutoRemove().CreateEvent<IEndTween>();
         AutoRemove().CreateEvent<ICloseBranch>();
     }
 }
 
-public interface ISetUpStartBranches
-{
-    List<IBranch> GroupsBranches { get; }
-} 
+// public interface ISetUpStartBranches
+// {
+//   //  List<IBranch> GroupsBranches { get; }
+// } 
 
 public interface IClearScreen  { }
 

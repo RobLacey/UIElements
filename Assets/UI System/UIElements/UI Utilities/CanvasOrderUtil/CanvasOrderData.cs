@@ -1,6 +1,8 @@
 ﻿using System;
 using EZ.Service;
+using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UIElements
 {
@@ -17,18 +19,19 @@ namespace UIElements
     [Serializable]
     public class CanvasOrderData : ICanvasOrderData, IMonoEnable, IIsAService
     {
-        [SerializeField] private int _pauseMenu = 20;
-        [SerializeField] private int _toolTip = 25;
-        [SerializeField] private int _resolvePopUp = 20;
-        [SerializeField] private int _timedPopUp = 15;
-        [SerializeField] private int _optionalPopUp = 15;
+        [InfoBox("Adjust settings to needs but try and organise from high to low in this order")]
         [SerializeField] private int _virtualCursor = 30;
-        [SerializeField] private int _inGameObject = -3;
-        [SerializeField] private int _offScreenMarker = 10;
+        [SerializeField] private int _toolTipBase = 25;
+        [SerializeField] private int _pauseMenu = 20;
+        [SerializeField] private int _resolvePopUp = 20;
+        [SerializeField] private int _optionalPopUp = 15;
+        [SerializeField] private int _timedPopUp = 15;
         [SerializeField] private int _controlBar = 12;
+        [SerializeField] private int _offScreenMarker = 10;
+        [SerializeField] private int _inGameObject = -3;
 
         //Properties & Getters / Setters
-        public int ReturnToolTipCanvasOrder() => _toolTip;
+        public int ReturnToolTipCanvasOrder() => _toolTipBase;
         public int ReturnVirtualCursorCanvasOrder() => _virtualCursor;
         public int ReturnOffScreenMarkerCanvasOrder() => _offScreenMarker;
         public int ReturnControlBarCanvasOrder() => _controlBar;
@@ -58,7 +61,7 @@ namespace UIElements
                     return SetStandardCanvasOrder(calculator);
                 case BranchType.InGameObject:
                     return _inGameObject;
-                case BranchType.HomeScreenObsolete:
+                case BranchType.ControlBar:
                     return SetStandardCanvasOrder(calculator);
                 default:
                     return 0;

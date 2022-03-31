@@ -2,7 +2,7 @@
 
 public partial class HotKeys
 {
-    private UIBranch _oldBranchType;
+    private Branch _oldBranchType;
     private const string Title = "Invalid Hot Key Type";
     private const string IsAllowed = nameof(IsAllowedType);
 
@@ -22,11 +22,10 @@ public partial class HotKeys
             message = $"Can't have \"{_myBranch.name}\" as a Hot Key. " +
                       $"{Environment.NewLine}" +
                       $"{Environment.NewLine}" +
-                      "Only Standard or HomeScreen branch Types allowed";
+                      "Only Standard or Pop Up branch Types allowed";
         }
 
-        if (_myBranch.ReturnBranchType == BranchType.Standard
-            || _myBranch.ReturnBranchType == BranchType.HomeScreenObsolete)
+        if (_myBranch.IsStandardBranch() ||_myBranch.IsAPopUpBranch() || !_myBranch.IsControlBar())
         {
             _name = _myBranch.name;
             _oldBranchType = _myBranch;

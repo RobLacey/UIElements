@@ -4,7 +4,7 @@ using UnityEngine;
 public interface ICancelOrBack : INodeBase { }
 
 
-public class CancelOrBackButton : NodeBase, ICancelButtonActivated, ICancelOrBack, ICancelHoverOver
+public class CancelOrBackButton : NodeBase, ICancelActivated, ICancelOrBack
 {
     public CancelOrBackButton(INode node) : base(node)
     {
@@ -16,29 +16,20 @@ public class CancelOrBackButton : NodeBase, ICancelButtonActivated, ICancelOrBac
     public EscapeKey EscapeKeyType { get; }
 
     //Events
-    private Action<ICancelButtonActivated> CancelButtonActive { get; set; }
-    private Action<ICancelHoverOver> CancelHoverOver { get; set; }
+    private Action<ICancelActivated> CancelButtonActive { get; set; }
+    public IBranch BranchToCancel => MyBranch;
 
     //Main
     public override void FetchEvents()
     {
         base.FetchEvents();
-        CancelButtonActive = CancelEvents.Do.Fetch<ICancelButtonActivated>();
-        CancelHoverOver= CancelEvents.Do.Fetch<ICancelHoverOver>();
+        CancelButtonActive = CancelEvents.Do.Fetch<ICancelActivated>();
     }
 
     public override void NodeSelected()
     {
-        if (CloseOnExit())
-        {
-            CancelHoverOver?.Invoke(this);
-        }
-        else
-        {
-            CancelButtonActive?.Invoke(this);
-        }
-        
-        bool CloseOnExit() => MyBranch.AutoClose == IsActive.Yes;
+        base.NodeSelected();
+        CancelButtonActive?.Invoke(this);
     }
 }
 

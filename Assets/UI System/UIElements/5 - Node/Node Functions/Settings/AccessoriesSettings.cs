@@ -49,7 +49,7 @@ public class AccessoriesSettings : IAccessoriesSettings
     
     private bool CanCreate(Setting functions) => (functions & Setting.Accessories) != 0;
     
-    private void CheckForSetUpError(Setting functions, UINode parentNode) 
+    private void CheckForSetUpError(Setting functions, Node parentNode) 
     {
         if(!CanCreate(functions)) return;
         if (_accessoriesList.Length > 0 && _accessoriesList[0] is null)

@@ -11,11 +11,11 @@ using UnityEngine;
 
 public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
 {
-    private readonly Dictionary<UINode, RectTransform> _activeNodes = new Dictionary<UINode, RectTransform>();
-    private readonly Dictionary<UINode, RectTransform> _sortedNodesDict = new Dictionary<UINode, RectTransform>();
+    private readonly Dictionary<Node, RectTransform> _activeNodes = new Dictionary<Node, RectTransform>();
+    private readonly Dictionary<Node, RectTransform> _sortedNodesDict = new Dictionary<Node, RectTransform>();
     private readonly Dictionary<IBranch, RectTransform> _activeBranches = new Dictionary<IBranch, RectTransform>();
     private readonly Dictionary<IBranch, RectTransform> _sortedBranches = new Dictionary<IBranch, RectTransform>();
-    private (UINode node, RectTransform rect) _lastHit;
+    private (Node node, RectTransform rect) _lastHit;
     private bool _canStart = false;
     private bool _onlyHitInGameObjects;
     private IDataHub _myDataHub;
@@ -70,7 +70,7 @@ public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
         return false;
     }
 
-    private bool UnderAnotherUIObject(KeyValuePair<UINode, RectTransform> node, IVirtualCursor virtualCursor)
+    private bool UnderAnotherUIObject(KeyValuePair<Node, RectTransform> node, IVirtualCursor virtualCursor)
     {
         foreach (var activeBranch in _sortedBranches)
         {
@@ -82,7 +82,7 @@ public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
         return false;
     }
     
-    private bool OverBranchButActiveNodeBelow(KeyValuePair<UINode, RectTransform> nodeCursorIsOver, 
+    private bool OverBranchButActiveNodeBelow(KeyValuePair<Node, RectTransform> nodeCursorIsOver, 
                                               IBranch branchCursorIsOver)
     {
          if (nodeCursorIsOver.Key.MyBranch.MyCanvas.sortingOrder < branchCursorIsOver.MyCanvas.sortingOrder)
@@ -94,7 +94,7 @@ public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
          return false;
     }
     
-    private void StartNewNode(IVirtualCursor virtualCursor, KeyValuePair<UINode, RectTransform> node)
+    private void StartNewNode(IVirtualCursor virtualCursor, KeyValuePair<Node, RectTransform> node)
     {
         CloseLastHitNodeAsDifferent();
         node.Key.OnPointerEnter(null);

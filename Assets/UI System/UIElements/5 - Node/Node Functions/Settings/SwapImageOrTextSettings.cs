@@ -50,7 +50,7 @@ public class SwapImageOrTextSettings : ISwapImageOrTextSettings
 
     private bool CanCreate(Setting functions) => (functions & Setting.SwapImageOrText) != 0 && FunctionActive();
 
-    private void CheckForSetUpError(Setting functions, UINode parentNode)
+    private void CheckForSetUpError(Setting functions, Node parentNode)
     {
         if(!CanCreate(functions)) return;
         

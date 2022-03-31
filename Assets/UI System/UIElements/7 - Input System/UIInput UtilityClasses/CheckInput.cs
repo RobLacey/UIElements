@@ -8,21 +8,21 @@ public static class CheckInput
     {
         if (input == string.Empty) return false;
 
-        return Input.GetButtonDown(input);
+        return UnityEngine.Input.GetButtonDown(input);
     }
 
     public static bool Held(string input)
     {
         if (input == string.Empty) return false;
 
-        return Input.GetButton(input);
+        return UnityEngine.Input.GetButton(input);
     }
 
     public static float GetAxis(string input)
     {
         if (input != string.Empty)
         {
-            return  Input.GetAxis(input);
+            return  UnityEngine.Input.GetAxis(input);
         }
         return 0;
     }
@@ -31,14 +31,14 @@ public static class CheckInput
     {
         if (input != string.Empty)
         {
-            return Mathf.RoundToInt(Input.GetAxisRaw(input));
+            return Mathf.RoundToInt(UnityEngine.Input.GetAxisRaw(input));
         }
         return 0;
     }
 
     public static bool MouseButton(int button)
     {
-        return Input.GetMouseButtonDown(button);
+        return UnityEngine.Input.GetMouseButtonDown(button);
     }
     
     public static AxisEventData MenuNavCalc(int upDown, int leftRight)

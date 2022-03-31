@@ -6,7 +6,7 @@ using UnityEngine;
 [Obsolete("IInteractWithUi has been replaced and this is for the old one that compares Rect's", true)]
 public static class ProcessBranchAndNodeLists
 {
-    public static bool AddNewNodesToList(IEnumerable<UINode> list, IDictionary<UINode, RectTransform> activeNodes)
+    public static bool AddNewNodesToList(IEnumerable<Node> list, IDictionary<Node, RectTransform> activeNodes)
     {
         bool needSort = false;
         
@@ -30,7 +30,7 @@ public static class ProcessBranchAndNodeLists
         return false;
     }
 
-    public static bool RemoveNodeFromList(IEnumerable<UINode> list, IDictionary<UINode, RectTransform> activeNodes)
+    public static bool RemoveNodeFromList(IEnumerable<Node> list, IDictionary<Node, RectTransform> activeNodes)
     {
         bool needSort = false;
         
@@ -51,8 +51,8 @@ public static class ProcessBranchAndNodeLists
         }
     }
 
-    public static void SortNodeList(IDictionary<UINode, RectTransform> sortedNodesDict, 
-                                    IDictionary<UINode, RectTransform> activeNodes)
+    public static void SortNodeList(IDictionary<Node, RectTransform> sortedNodesDict, 
+                                    IDictionary<Node, RectTransform> activeNodes)
     {
         sortedNodesDict.Clear();
         var sortedNodeList = activeNodes.Keys.OrderByDescending(node => node.MyBranch.MyCanvas.sortingOrder).ToList();

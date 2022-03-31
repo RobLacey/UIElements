@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-public partial class UIBranch
+public partial class Branch
 {
     private const string CanAutoOpenClose = nameof(CheckAutoOpenCloseStatus);
     //private const string HomeScreenBranch = nameof(IsHomeScreenBranch);
     private const string StandardBranch = nameof(IsStandardBranch);
     private const string ControlBarBranch = nameof(IsControlBar);
     private const string OptionalBranch = nameof(IsOptional);
-    private const string OnlyAllowOnHomeScreen = nameof(OnlyOnHomeScreen);
+   // private const string OnlyAllowOnHomeScreen = nameof(OnlyOnHomeScreen);
     private const string InGamUIBranch = nameof(InGameUI);
     private const string TimedBranch = nameof(IsTimedPopUp);
     private const string ResolveBranch = nameof(IsResolve);
@@ -42,7 +42,7 @@ public partial class UIBranch
                                   && (IsStandardBranch() || IsInternalBranch() || IsHomeScreenBranch());
     private bool IsResolve => _branchType == BranchType.ResolvePopUp;
     private bool IsOptional() => _branchType == BranchType.OptionalPopUp;
-    private bool OnlyOnHomeScreen() => _onlyAllowOnHomeScreen == IsActive.Yes;
+   // private bool OnlyOnHomeScreen() => _onlyAllowOnHomeScreen == IsActive.Yes;
 
     // private bool IsStored() =>
     //     _branchType == BranchType.OptionalPopUp && _storeOrResetOptional == StoreAndRestorePopUps.StoreAndRestore;

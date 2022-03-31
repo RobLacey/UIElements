@@ -128,7 +128,7 @@ public class OldSystem : InputScheme
     }
 
     public override Vector3 GetMouseOrVcPosition() 
-        => CanUseVirtualCursor ? GetVirtualCursorPosition() : Input.mousePosition;
+        => CanUseVirtualCursor ? GetVirtualCursorPosition() : UnityEngine.Input.mousePosition;
     
     public override void SetVirtualCursorPosition(Vector3 pos) => _virtualCursorPosition = pos;
     private protected override Vector3 GetVirtualCursorPosition() => _virtualCursorPosition;
@@ -141,7 +141,7 @@ public class OldSystem : InputScheme
 
     public override bool PressPause() => CheckInput.Pressed(_pauseOptionButton);
     public override bool PressedMenuToGameSwitch() 
-        => InGameMenuSystem == InGameSystem.On &&CheckInput.Pressed(_switchToMenusButton);
+        => InGameMenuSystem == InGameSystem.On && CheckInput.Pressed(_switchToMenusButton);
     public override bool PressedCancel() => CheckInput.Pressed(_cancelButton);
     public override bool PressedPositiveSwitch() => CheckInput.Pressed(_posSwitchButton);
     public override bool PressedNegativeSwitch() => CheckInput.Pressed(_negSwitchButton);
@@ -184,7 +184,7 @@ public class OldSystem : InputScheme
             case HotKey.HotKey0:
                 return  CheckInput.Pressed(_hotKey0);
             default:
-                throw new ArgumentOutOfRangeException(nameof(hotKey), hotKey, null);
+                return false;
         }
     }
 }

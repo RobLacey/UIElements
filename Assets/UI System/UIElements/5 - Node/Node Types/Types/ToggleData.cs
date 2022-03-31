@@ -14,7 +14,7 @@ public class ToggleData
     [AllowNesting] [HideIf(NotInGroup)]
     private IsActive _startAsSelected = IsActive.No;
     [SerializeField] 
-    [AllowNesting] [Label("Tab Branch")] [HideIf(NotInGroup)]  private UIBranch _linkBranch = default;
+    [AllowNesting] [Label("Tab Branch")] [HideIf(NotInGroup)]  private Branch _linkBranch = default;
 
 
     //public ToggleGroup ReturnToggleId => _toggleGroupId;
@@ -25,7 +25,7 @@ public class ToggleData
     public IBranch LinkBranch
     {
         get => _linkBranch;
-        set => _linkBranch = (UIBranch) value;
+        set => _linkBranch = (Branch) value;
     }
 
     private const string NotInGroup = nameof(IsNotInGroup);

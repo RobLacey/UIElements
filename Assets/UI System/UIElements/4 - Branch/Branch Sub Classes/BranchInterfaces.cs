@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using EZ.Inject;
 using UIElements;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 
 public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoDisable, IMonoEnable, IMonoOnDestroy,
-                           IDynamicBranch
+                           IDynamicBranch, IToggleEvents, IPointerEnterHandler, IPointerExitHandler
 {
     bool IsControlBar();
     bool IsPauseMenuBranch();
@@ -24,8 +25,10 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     EscapeKey EscapeKeyType { get; set; }
     WhenToMove WhenToMove { set; }
     bool CanvasIsEnabled { get; }
-    bool CanStoreAndRestoreOptionalPopUp { get; }
-    bool CanBufferPopUp { get; }
+    WhenAllowed WhenAllowed { get; }
+    //StoreAndRestorePopUps StoreCloseOrDoNothing { get; }
+   // bool AllowWithActiveResolvePopUp { get; }
+    //bool CanBufferPopUp { get; }
    // DoTween TweenOnSceneStart { get; set; }
     IBranch MyParentBranch { get; set; }
     float Timer { get; }
@@ -38,19 +41,19 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     INode LastSelected { get; }
     INode LastHighlighted { get; }
     GameObject ThisBranchesGameObject { get; }
-    bool CanOnlyAllowOnHomeScreen { get; }
-    bool RestoreBranch { get; set; }
+    //bool RestoreBranch { get; set; }
     bool IsAlreadyActive { get; }
+    bool BlockRaycastToOpenBranches { get; }
 
 
-    IsActive StayVisibleMovingToChild();
+    bool StayVisibleMovingToChild();
     void SetNotAControlBar();
     void StartPopUp_RunTimeCall(bool fromPool);
-    void MoveToThisBranch(IBranch newParentBranch = null);
+    void OpenThisBranch(IBranch newParentBranch = null);
     void SetBranchAsActive();
     void DontSetAsActiveBranch();
     void DoNotTween();
-    void StartBranchExitProcess(OutTweenType outTweenType, Action endOfTweenCallback = null);
+    void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null);
     void SetCanvas(ActiveCanvas activeCanvas);
     void SetBlockRaycast(BlockRaycast blockRaycast);
    // void SetUpAsTabBranch();
@@ -93,6 +96,12 @@ public interface IDynamicBranch : IThisBranch
     INode[] ThisBranchesNodes { get;}
     void SetThisGroupsNode(INode[] groupsNodes);
     bool IsInGameBranch();
+}
+
+public interface IToggleEvents
+{
+    event Action EnterBranchEvent;
+    event Action ExitBranchEvent;
 }
 
 

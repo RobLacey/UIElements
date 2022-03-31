@@ -66,7 +66,7 @@ public class ClassBindings : EZInjectBindingBase
         // _injectMaster.Bind<NodeSearch>().To<INodeSearch>();
         
         //ScreenData
-        _injectMaster.Bind<ScreenData>().To<IScreenData>().WithParameters();
+       // _injectMaster.Bind<ScreenData>().To<IScreenData>().WithParameters();
         
         //Input Classes
         _injectMaster.Bind<MenuAndGameSwitching>().To<IMenuAndGameSwitching>();

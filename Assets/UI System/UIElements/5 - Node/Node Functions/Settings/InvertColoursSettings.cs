@@ -58,7 +58,7 @@ public class InvertColoursSettings : IInvertSettings
 
     private bool CanCreate(Setting functions) => (functions & Setting.InvertColourCorrection) != 0 && IsActive();
 
-    private void CheckForSetUpError(Setting functions, UINode parentNode) 
+    private void CheckForSetUpError(Setting functions, Node parentNode) 
     {
         if(!CanCreate(functions)) return;
         

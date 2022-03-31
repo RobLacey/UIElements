@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class NewSelectionProcess 
 {
-    public static void AddNewSelection(SelectData data)
+    public static void AddNewSelection(HistoryData data)
     {
         if (data.History.Contains(data.NewNode))
         {
@@ -14,29 +14,31 @@ public static class NewSelectionProcess
         DoesntContainNewNode(data);
     }
 
-    private static void ContainsNewNode(SelectData data)
+    private static void ContainsNewNode(HistoryData data)
     {
         data.AddStopPoint(data.NewNode);
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.StopAt);
     }
 
-    private static void DoesntContainNewNode(SelectData data)
+    private static void DoesntContainNewNode(HistoryData data)
     {
         NodeInDifferentBranchAndNotAChildObject(data);
+        data.AddToHistory(data.NewNode);
         NavigateToChildBranch(data);
-        HistoryListManagement.AddHistoryData(data, data.NewNode);
     }
 
-    private static void NavigateToChildBranch(SelectData data)
+    private static void NavigateToChildBranch(HistoryData data)
     {
         if(data.NewNode.HasChildBranch.IsNull()) return;
         
         if(TrunkTracker.MovingToNewTrunk(data)) return;
         
-        data.NewNode.HasChildBranch.MoveToThisBranch(data.NewNodesBranch);
+        data.NewNode.MyBranch.ExitThisBranch(OutTweenType.MoveToChild, StartChild);
+        
+        void StartChild() => data.NewNode.HasChildBranch.OpenThisBranch(data.NewNodesBranch);
     }
 
-    private static void NodeInDifferentBranchAndNotAChildObject(SelectData data)
+    private static void NodeInDifferentBranchAndNotAChildObject(HistoryData data)
     {
         bool NodeIsInSameHierarchy() => data.LastSelected().HasChildBranch.IsNotNull() && 
                                         data.LastSelected().HasChildBranch.MyParentBranch == data.NewNode.MyBranch.MyParentBranch;

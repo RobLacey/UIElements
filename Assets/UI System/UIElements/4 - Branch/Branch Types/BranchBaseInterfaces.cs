@@ -13,7 +13,9 @@ public interface IBranchBase : IParameters, IMono
     void SetCanvas(ActiveCanvas active);
     void SetBlockRaycast(BlockRaycast active);
     bool CanStartBranch();
-    bool CanExitBranch(OutTweenType outTweenType);
+    bool DontExitBranch(OutTweenType outTweenType);
+    void SetFocus(int focusSortingOrder);
+    void ResetFocus();
 }
 
 public interface IBranchParams

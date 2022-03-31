@@ -32,7 +32,7 @@ MonoBehaviour:
   _startGameWhere: 0
   _pauseOptionsOnEscape: 1
   _globalEscapeFunction: 1
-  _pauseOptionButton: 
+  _pauseOptionButton: Pause
   _cancelButton: Cancel
   _selectButton: Submit
   _multiSelectButton: Multi Select
@@ -48,9 +48,9 @@ MonoBehaviour:
   _vCursorVertical: Vertical
   _hotKey1: HotKey1
   _hotKey2: HotKey2
-  _hotKey3: 
-  _hotKey4: 
-  _hotKey5: 
+  _hotKey3: HotKey 3
+  _hotKey4: HotKey 4
+  _hotKey5: HotKey 5
   _hotKey6: 
   _hotKey7: 
   _hotKey8: 

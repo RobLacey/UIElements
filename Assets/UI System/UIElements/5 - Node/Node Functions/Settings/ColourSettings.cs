@@ -38,7 +38,7 @@ public class ColourSettings: IColourSettings
 
     private bool CanCreate(Setting functions) => (functions & Setting.Colours) != 0;
 
-    private void CheckForSetUpError(Setting functions, UINode parentNode) 
+    private void CheckForSetUpError(Setting functions, Node parentNode) 
     {
         if(!CanCreate(functions)) return;
         

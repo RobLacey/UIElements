@@ -37,7 +37,7 @@ namespace UIElements
         private StartGOUI _startHow = StartGOUI.OnPointerEnter;
         
         [SerializeField] 
-        private UIBranch _myGOUIPrefab;
+        private Branch _myGOUIPrefab;
 
         [SerializeField]
         [Tooltip(InfoBox)]
@@ -83,7 +83,7 @@ namespace UIElements
         private void SceneIsChanging(ISceneIsChanging args) => SceneChanging = true;
 
         private bool GameIsPaused => _myDataHub.GamePaused;
-        private bool OnHomeScreen => _myDataHub.OnHomeScreen;
+        private bool OnHomeScreen => _myDataHub.IsAtRoot;
         private bool SceneChanging { get; set; }
         private bool AllowKeys => _myDataHub.AllowKeys;
         private string BranchesName => $"{name} : InGameObj";
@@ -190,7 +190,7 @@ namespace UIElements
             {
                 PointerOver = true;
                 _myGOUIBranch.DontSetAsActiveBranch();
-                _myGOUIBranch.MoveToThisBranch();
+                _myGOUIBranch.OpenThisBranch();
                 PointerOver = false;
             }
         }
@@ -276,7 +276,7 @@ namespace UIElements
 
             _active = true;
             StartBranch?.Invoke(this);
-            _myGOUIBranch.MoveToThisBranch();
+            _myGOUIBranch.OpenThisBranch();
             _activateGOUI?.Invoke(_active);
         }
 
@@ -284,7 +284,7 @@ namespace UIElements
         {
             if (CanNotDoAction || !_active) return;
             
-            _myGOUIBranch.StartBranchExitProcess(OutTweenType.Cancel);
+            _myGOUIBranch.ExitThisBranch(OutTweenType.Cancel);
             _active = false;
             _checkVisibility.StopOffScreenMarker();
             _activateGOUI?.Invoke((_active));

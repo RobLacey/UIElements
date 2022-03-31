@@ -16,7 +16,7 @@ namespace UIElements
     {
         //Variables
         private VirtualCursorSettings _settings;
-        private UINode _lastHit;
+        private Node _lastHit;
         private IDataHub _myDataHub;
         readonly PointerEventData _pointerEventData = new PointerEventData(EventSystem.current) { };
         private bool _overNothingUI;
@@ -47,7 +47,7 @@ namespace UIElements
             {
                 foreach (var result in raycastResults)
                 {
-                    var foundNode = (UINode)result.gameObject.GetComponentInParent<INode>();
+                    var foundNode = (Node)result.gameObject.GetComponentInParent<INode>();
                     
                     if (CheckIfOverNothing(foundNode)) return;
 
@@ -62,7 +62,7 @@ namespace UIElements
             RemoveHit();
         }
 
-        private bool CheckIfOverNothing(UINode overNode)
+        private bool CheckIfOverNothing(Node overNode)
         {
             if (overNode.IsNull())
             {

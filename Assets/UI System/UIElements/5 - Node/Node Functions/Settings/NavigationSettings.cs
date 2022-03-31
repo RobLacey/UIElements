@@ -7,27 +7,27 @@ public interface INavigationSettings : IComponentSettings
 {
      IBranch ChildBranch { get; }
     NavigationType NavType { get; }
-    UINode Up { get; }
-    UINode Down { get; }
-    UINode Left { get; }
-    UINode Right { get; }
+    Node Up { get; }
+    Node Down { get; }
+    Node Left { get; }
+    Node Right { get; }
 }
 
 [Serializable]
 public class NavigationSettings :INavigationSettings
 {
     [SerializeField] 
-    [AllowNesting] [Label("Move To When Clicked")] [HideIf("CantNavigate")] private UIBranch _childBranch = default;
+    [AllowNesting] [Label("Move To When Clicked")] [HideIf("CantNavigate")] private Branch _childBranch = default;
     [SerializeField] 
     private NavigationType _setKeyNavigation = NavigationType.None;
     [SerializeField] 
-    [AllowNesting] [ShowIf("UpDownNav")] private UINode _up = default;
+    [AllowNesting] [ShowIf("UpDownNav")] private Node _up = default;
     [SerializeField] 
-    [AllowNesting] [ShowIf("UpDownNav")] private UINode _down = default;
+    [AllowNesting] [ShowIf("UpDownNav")] private Node _down = default;
     [SerializeField] 
-    [AllowNesting] [ShowIf("RightLeftNav")] private UINode _left = default;
+    [AllowNesting] [ShowIf("RightLeftNav")] private Node _left = default;
     [SerializeField] 
-    [AllowNesting] [ShowIf("RightLeftNav")] private UINode _right = default;
+    [AllowNesting] [ShowIf("RightLeftNav")] private Node _right = default;
 
     //Editor Scripts
     public bool CantNavigate { get; set; }
@@ -42,15 +42,15 @@ public class NavigationSettings :INavigationSettings
     public IBranch ChildBranch
     {
         get => _childBranch;
-        set => _childBranch = (UIBranch) value;
+        set => _childBranch = (Branch) value;
     }
     
     private void SetNewChild(IBranch newChild) => ChildBranch = newChild;
     public NavigationType NavType => _setKeyNavigation;
-    public UINode Up => _up;
-    public UINode Down => _down;
-    public UINode Left => _left;
-    public UINode Right => _right;
+    public Node Up => _up;
+    public Node Down => _down;
+    public Node Left => _left;
+    public Node Right => _right;
     public UINavigation Instance { get; set; }
 
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)

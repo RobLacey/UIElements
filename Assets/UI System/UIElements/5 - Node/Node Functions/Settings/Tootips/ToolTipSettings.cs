@@ -10,6 +10,7 @@ public interface ITooltipSettings : IComponentSettings
     ToolTipScheme Scheme { get; }
     LayoutGroup[] ToolTips { get; }
     RectTransform FixedPosition { get; }
+    IBranch MyBranch { get; }
 }
 
 [Serializable]
@@ -31,7 +32,7 @@ public class ToolTipSettings : ITooltipSettings
     private RectTransform _fixedPosition;
     
     //Variable
-    private UINode _myNode;
+    private Node _myNode;
     private const string FixedPosMessage = "Make Sure a RectTransform For the Fixed Position is added. " +
                                            "If none added the OBJECT CENTRE will be used as DEFAULT";
 
@@ -49,11 +50,13 @@ public class ToolTipSettings : ITooltipSettings
     public LayoutGroup[] ToolTips { get; private set; }
     public IUiEvents UiNodeEvents { get; private set; }
     public RectTransform FixedPosition => _fixedPosition;
+    public IBranch MyBranch { get; private set; }
 
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)
     {
         UiNodeEvents = uiNodeEvents;
         _myNode = uiNodeEvents.ReturnMasterNode;
+        MyBranch = _myNode.MyBranch;
         CheckForSetUpError(functions, _myNode);
         
         if (CanCreate(functions))
@@ -70,7 +73,7 @@ public class ToolTipSettings : ITooltipSettings
     
     private bool CanCreate(Setting functions) => (functions & Setting.ToolTip) != 0;
 
-    private void CheckForSetUpError(Setting functions, UINode parentNode) 
+    private void CheckForSetUpError(Setting functions, Node parentNode) 
     {
         if(!CanCreate(functions)) return;
         

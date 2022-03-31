@@ -9,31 +9,31 @@ public class HistoryBindings : EZEventBindingsBase
     {
         //History
        // AutoRemove().CreateEvent<IReturnToHome>();
-        AutoRemove().CreateEvent<IOnHomeScreen>();
+        AutoRemove().CreateEvent<IIsAtRootTrunk>();
         AutoRemove().CreateEvent<IOnStart>();
         AutoRemove().CreateEvent<IGameIsPaused>();
         AutoRemove().CreateEvent<IInMenu>();
         //AutoRemove().CreateEvent<IReturnHomeGroupIndex>();
-        AutoRemove().CreateEvent<IAddTrunk>();
-        AutoRemove().CreateEvent<IRemoveTrunk>();
+        // AutoRemove().CreateEvent<IAddTrunk>();
+        // AutoRemove().CreateEvent<IRemoveTrunk>();
         
         //Node
         AutoRemove().CreateEvent<IHighlightedNode>();
         AutoRemove().CreateEvent<ISelectedNode>();
         AutoRemove().CreateEvent<IDisabledNode>();
-        AutoRemove().CreateEvent<IStoreNodeHistoryData>();
+       // AutoRemove().CreateEvent<IStoreNodeHistoryData>();
         AutoRemove().CreateEvent<ISceneIsChanging>();
         
         //Branch
-        AutoRemove().CreateEvent<IActiveBranch>();
-        AutoRemove().CreateEvent<IAddActiveBranch>();
-        AutoRemove().CreateEvent<IRemoveActiveBranch>();
+        //AutoRemove().CreateEvent<IActiveBranch>();
+        // AutoRemove().CreateEvent<IAddActiveBranch>();
+        // AutoRemove().CreateEvent<IRemoveActiveBranch>();
     }
 }
 
 //public interface IReturnToHome { }
 
-public interface IOnHomeScreen { }
+public interface IIsAtRootTrunk { }
 
 public interface IOnStart { }
 
@@ -57,41 +57,38 @@ public interface ISelectedNode
     INode SelectedNode { get; }
 }
 
-public interface IActiveBranch
-{
-    IBranch ThisBranch { get; }
-}
-public interface IAddActiveBranch
-{
-    IBranch ThisBranch { get; }
-}
-public interface IRemoveActiveBranch
-{
-    IBranch ThisBranch { get; }
-}
+// public interface IActiveBranch
+// {
+//   //  IBranch ActiveBranch { get; }
+// }
+// public interface IAddActiveBranch
+// {
+//     IBranch ThisBranch { get; }
+// }
+// public interface IRemoveActiveBranch
+// {
+//     IBranch ThisBranch { get; }
+// }
 
 public interface IDisabledNode
 {
     INode ThisNode { get; }
 }
 
-public interface IStoreNodeHistoryData
-{
-    INode NodeToUpdate { get; }
-}
+// public interface IStoreNodeHistoryData
+// {
+//     Node NodeToUpdate { get; }
+// }
 
 //public interface IReturnHomeGroupIndex { }
 
 public interface ISceneIsChanging { }
 
-public interface IAddTrunk
-{
-    Trunk ThisTrunk { get; }
-}
-public interface IRemoveTrunk
-{
-    Trunk ThisTrunk { get; }
-}
+// public interface IAddTrunk: IRemoveTrunk { }
+// public interface IRemoveTrunk
+// {
+//     Trunk ThisTrunk { get; }
+// }
 
 
 

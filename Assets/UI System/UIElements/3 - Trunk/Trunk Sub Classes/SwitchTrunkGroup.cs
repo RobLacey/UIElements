@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EZ.Events;
 using EZ.Service;
 using UIElements;
+using UnityEngine;
 
 public interface ISwitchTrunkGroup : IMonoEnable, IMonoDisable, ISwitch
 {
@@ -14,6 +15,8 @@ public interface ISwitchTrunkGroup : IMonoEnable, IMonoDisable, ISwitch
 
 public interface ISwitch
 {
+    List<INode> SwitchHistory { get; }
+    void ClearSwitchHistory();
     void DoSwitch(SwitchInputType switchInputType);
     bool HasOnlyOneMember { get; }
 
@@ -34,6 +37,9 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
     public List<IBranch> ThisGroup { private get; set; }
     public bool HasOnlyOneMember => ThisGroup.Count == 1;
     public IBranch CurrentBranch => ThisGroup[_index];
+    public List<INode> SwitchHistory { get; private set; }
+
+    public void ClearSwitchHistory() => SwitchHistory.Clear();
 
     //Main
     public void OnEnable()
@@ -79,7 +85,7 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
         }
         
         _lastActiveHomeBranch = ThisGroup[_index];
-        ThisGroup[_index].MoveToThisBranch();
+        ThisGroup[_index].OpenThisBranch();
     }
 
     public void OpenAllBranches(IBranch newParent)
@@ -88,23 +94,25 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
         {
             if(branch == CurrentBranch) continue;
             branch.DontSetAsActiveBranch();
-            branch.MoveToThisBranch(newParent);
+            branch.OpenThisBranch(newParent);
         }
-        CurrentBranch.MoveToThisBranch(newParent);
+        CurrentBranch.OpenThisBranch(newParent);
     }
     
     public void CloseAllBranches(Action endOfClose)
     {
+        var counter = ThisGroup.Count;
+
         foreach (var branch in ThisGroup)
         {
-            if(branch == ThisGroup[_index]) continue;
-            branch.StartBranchExitProcess(OutTweenType.Cancel);
+            branch.ExitThisBranch(OutTweenType.Cancel, Complete);
         }
-        ThisGroup[_index].StartBranchExitProcess(OutTweenType.Cancel, EndOfClose);
 
-        void EndOfClose()
+        void Complete()
         {
-            endOfClose?.Invoke();
+            counter--;
+            if(counter == 0)
+                endOfClose?.Invoke();
         }
     }
 

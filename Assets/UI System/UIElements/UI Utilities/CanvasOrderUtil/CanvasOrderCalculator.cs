@@ -11,6 +11,8 @@ public interface ICanvasOrderCalculator : IMonoStart, IMonoEnable
     int GetManualCanvasOrder { get; }
     OrderInCanvas GetOrderInCanvas { get; }
     void SetCanvasOrder();
+    void SetFocusCanvasOrder(int canvasOrder);
+    void ResetFocus();
     void ResetCanvasOrder();
     void ProcessActiveCanvasses(List<Canvas> activeCanvasList);
 }
@@ -31,8 +33,11 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
     //Variables
     private readonly Canvas _myCanvas;
     private int _startingOrder;
+    private int _activeOrder;
     private ICanvasOrderData _canvasOrderData;
     private IDataHub _myDataHub;
+    private bool _overrideSorting;
+    private bool _focusActive;
 
     //Properties
     private IBranch ActiveBranch => _myDataHub.ActiveBranch;
@@ -55,30 +60,30 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
 
     private void SetUpCanvasOrderAtStart()
     {
-        var tempSavedCanvasStatus = _myCanvas.enabled;
-        _myCanvas.enabled = true;
-        
-        if (CheckIfSetToDefaultOrder(tempSavedCanvasStatus)) return;
-        
-        SetStartingSortingOrder(tempSavedCanvasStatus);
+        if (CheckIfSetToDefaultOrder()) return;
+        SetStartingSortingOrder();
     }
 
-    private void SetStartingSortingOrder(bool tempSavedCanvasStatus)
-    {
-        _startingOrder = _canvasOrderData.ReturnPresetCanvasOrder(this);
-        _myCanvas.overrideSorting = true;
-        _myCanvas.sortingOrder = _startingOrder;
-        _myCanvas.enabled = tempSavedCanvasStatus;
-    }
-
-    private bool CheckIfSetToDefaultOrder(bool storeCanvasSetting)
+    private bool CheckIfSetToDefaultOrder()
     {
         if (GetOrderInCanvas != OrderInCanvas.Default) return false;
-        
+
+        _myCanvas.enabled = true;
         _startingOrder = _myCanvas.sortingOrder;
+        _activeOrder = _startingOrder;
         _myCanvas.overrideSorting = false;
-        _myCanvas.enabled = storeCanvasSetting;
+        _myCanvas.enabled = false;
         return true;
+    }
+
+    private void SetStartingSortingOrder()
+    {
+        _myCanvas.enabled = true;
+        _startingOrder = _canvasOrderData.ReturnPresetCanvasOrder(this);
+        _activeOrder = _startingOrder;
+        _myCanvas.overrideSorting = true;
+        _myCanvas.sortingOrder = _startingOrder;
+        _myCanvas.enabled = false;
     }
 
     public void SetCanvasOrder()
@@ -102,14 +107,37 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
         }
     }
 
-    public void ResetCanvasOrder() => _myCanvas.sortingOrder = _startingOrder;
+    public void SetFocusCanvasOrder(int canvasOrder)
+    {
+        if(_focusActive) return;
+        
+        _focusActive = true;
+        _myCanvas.overrideSorting = true;
+        _myCanvas.sortingOrder += canvasOrder;
+    }
+
+    public void ResetFocus()
+    {
+        if(!_focusActive) return;
+        
+        _myCanvas.sortingOrder = _activeOrder;
+        _focusActive = false;
+    }
+
+    public void ResetCanvasOrder()
+    {
+        _myCanvas.sortingOrder = _startingOrder;
+        _activeOrder = _startingOrder;
+        _focusActive = false;
+    }
 
     public void ProcessActiveCanvasses(List<Canvas> activeCanvasList)
     {
         for (var index = 0; index < activeCanvasList.Count; index++)
         {
             var canvasses = activeCanvasList[index];
-            canvasses.sortingOrder = _startingOrder + index;
+            _activeOrder = _startingOrder + index;
+            canvasses.sortingOrder = _activeOrder;
         }
     }
 }

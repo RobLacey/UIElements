@@ -7,15 +7,14 @@ using NaughtyAttributes;
 
 public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
 {
-    
     [SerializeField] 
-    [ReorderableList] [Label(BuildListName)]
-    private List<BuildTweenData> _buildObjectsList = new List<BuildTweenData>();
-    
-    [SerializeField] 
-    [BoxGroup("Tween Settings")] [HorizontalLine(1, EColor.Blue , order = 2)]
+    [BoxGroup("Tween Settings")] [HorizontalLine(1, EColor.Blue , order = 1)]
     private TweenScheme _scheme;
-    
+
+    [SerializeField] 
+    [Label(BuildListName)] [BoxGroup("Build Sequence")] [HorizontalLine(1, EColor.Blue , order = 2)]
+    private List<BuildTweenData> _buildObjectsList = new List<BuildTweenData>();
+
     [SerializeField]
     [BoxGroup("Events")] [HorizontalLine(1, EColor.Blue , order = 3)]
     private TweenEvents _tweenEvents;
@@ -36,7 +35,7 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
     //public bool HasInAndOutTween() => !(_scheme is null) && _scheme.InAndOutTween();
     
     //Editor
-    private const string BuildListName = "List Of Objects To Tween"; 
+    private const string BuildListName = "Order To Tween (Reorderable)"; 
 
     //Main
     public void Awake()

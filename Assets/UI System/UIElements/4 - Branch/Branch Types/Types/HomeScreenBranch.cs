@@ -16,7 +16,7 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     
     //Properties
     private bool CannotTweenOnHome => /*_myBranch.TweenOnSceneStart == DoTween.DoNothing 
-                                      && (*/!_justReturnedHome && ThisBranch.StayVisibleMovingToChild() == IsActive.Yes;
+                                      && (*/!_justReturnedHome && ThisBranch.StayVisibleMovingToChild();
      private bool IsControlBar => ThisBranch.IsControlBar() && CanStart;
 
     // protected override void SaveIfOnHomeScreen(IOnHomeScreen args)

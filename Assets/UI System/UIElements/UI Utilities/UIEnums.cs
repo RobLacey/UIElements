@@ -67,11 +67,10 @@ public enum EventType
 public enum ScreenType { Overlay, FullScreen }
 
 public enum InMenuOrGame { InMenu, InGameControl }
-public enum BranchType { HomeScreenObsolete, Standard, ResolvePopUp, OptionalPopUp, 
+public enum BranchType { ControlBar, Standard, ResolvePopUp, OptionalPopUp, 
                          TimedPopUp, PauseMenu, InternalObsolete, InGameObject }
 
 public enum WhenToMove { Immediately, AfterEndOfTween }
-public enum PauseOptionsOnEscape { EnterPauseOrEscapeMenu, DoNothing }
 public  enum ControlMethod { MouseOnly, KeysOrControllerOnly, AllowBothStartWithMouse, AllowBothStartWithKeys }
 public enum SwitchInputType { Positive, Negative, Activate }
 public enum TweenType { In, Out }
@@ -79,7 +78,7 @@ public enum OutTweenType { Cancel, MoveToChild }
 public enum UseSide { ToTheRightOf, ToTheLeftOf, ToTheTopOf, ToTheBottomOf, CentreOf  }
 public enum InGameSystem { On, Off }
 
-public enum HotKey {  HotKey1, HotKey2, HotKey3, HotKey4, HotKey5, HotKey6, HotKey7, HotKey8, HotKey9, HotKey0 }
+public enum HotKey {  HotKey1, HotKey2, HotKey3, HotKey4, HotKey5, HotKey6, HotKey7, HotKey8, HotKey9, HotKey0, None }
 
 [Flags]
 public enum ActivateWhen
@@ -98,7 +97,7 @@ public enum DoTween { Tween, DoNothing }
 
 public enum AutoOpenClose { No, Open, Close, Both }
 
-public enum StoreAndRestorePopUps { StoreAndRestore, Close }
+//public enum StoreAndRestorePopUps { StoreAndRestore, DoNothing }
 
 public enum OrderInCanvas { InFront, Behind, Manual, Default }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using DG.Tweening;
 using EZ.Events;
 using EZ.Inject;
@@ -16,13 +15,11 @@ namespace UIElements
 {
     AudioSource UI_AudioSource { get; }
 }
-
+    
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(CanvasScaler))]
-
-    [RequireComponent(typeof(UIInput))]
+    [RequireComponent(typeof(Input))]
     [RequireComponent(typeof(AudioSource))]
-
 
     public partial class Hub : MonoBehaviour, IHub, IServiceUser, IEZEventUser, ISceneIsChanging, IOnStart, IIsAService
     {
@@ -40,6 +37,7 @@ namespace UIElements
         
         [Required("Must have a start point")]
         [SerializeField] private Trunk _rootTrunk;
+
         [SerializeField] private int _nextLevel;
         [SerializeField] private AudioSource _uiAudioSource;
         
@@ -59,9 +57,11 @@ namespace UIElements
         [SerializeField] 
         private CanvasOrderData _canvasSortingOrderSettings;
 
+        [SerializeField] private DataHub _myDataHub;
+
         //Variables
         private bool _startingInGame, _inMenu;
-        private IDataHub _myDataHub;
+        //private IDataHub _myDataHub;
         private IAudioService _audioService;
         private IHistoryTrack _historyTrack;
         private ICancel _cancelHandler;
@@ -79,20 +79,15 @@ namespace UIElements
 
         private void Awake()
         {
-            
-            Debug.Log("UpTo : Hot Keys");
-            Debug.Log("UpTo : Need to rework PopUps so not reliant OnHomeScreen. Won't cancel properly");
-            Debug.Log("UpTo :  make a linked / Shadow / Mimic / bypass system that passes on controls to / copies the state of the linked branch / node." +
-                      "What happens to me isn't tracked but happens to you. That way it doesn't matter what the node is doing. " );
-            
-            
             var uIInput = GetComponent<IInput>();
             AddService();
 
             _startingInGame = uIInput.StartInGame();
-            _myDataHub = new DataHub(GetComponent<RectTransform>());
+            //_myDataHub = new DataHub(GetComponent<RectTransform>());
+            //_myDataHub.OnAwake();
             _myDataHub.OnAwake();
-            _myDataHub.RootTrunk = _rootTrunk;
+            _myDataHub.SetUpDataHub(_rootTrunk, GetComponent<RectTransform>());
+            //_myDataHub.RootTrunk = _rootTrunk;
             _audioService = EZInject.Class.WithParams<IAudioService>(this);
             _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
             _cancelHandler = EZInject.Class.NoParams<ICancel>();
@@ -102,6 +97,7 @@ namespace UIElements
         {
             UseEZServiceLocator();
             ObserveEvents();
+            //_myDataHub.OnEnable();
             _myDataHub.OnEnable();
             _audioService.OnEnable();
             _canvasSortingOrderSettings.OnEnable();
@@ -146,17 +142,15 @@ namespace UIElements
 
         private void Start()
         {
-            _myDataHub.Highlighted = _rootTrunk.GroupsBranches.First().DefaultStartOnThisNode;
-            _myDataHub.ActiveBranch = _rootTrunk.GroupsBranches.First();
-
+            // _myDataHub.SetHighLighted(_rootTrunk.GroupsBranches.First().DefaultStartOnThisNode);
+            // _myDataHub.SetActiveBranch(_rootTrunk.GroupsBranches.First());
+            _myDataHub.OnStart();
             StartCoroutine(StartUIDelay());
         }
 
         
         private IEnumerator StartUIDelay()
         {
-            //TODO Sort out this Part so it doesn't glitch on 0 second start. Need to call setup on RootBranches directly. Get rid of StartingBranch Event
-            
             yield return new WaitForEndOfFrame();
             if(_delayUIStart != 0)
                 yield return new WaitForSeconds(_delayUIStart);
@@ -175,8 +169,8 @@ namespace UIElements
             {
                 _inMenu = true;
             }
-
-            _myDataHub.InMenu = _inMenu;
+        
+            _myDataHub.SetInMenu(_inMenu);
         }
 
         private IEnumerator EnableStartControls()

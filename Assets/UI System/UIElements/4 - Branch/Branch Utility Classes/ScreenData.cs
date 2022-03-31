@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EZ.Events;
 using EZ.Service;
 using UIElements;
 using UnityEngine;
+
+[Obsolete("Not Needed", true)]
 
 public interface IScreenData : IMonoEnable,IMonoDisable
 {
@@ -11,6 +14,7 @@ public interface IScreenData : IMonoEnable,IMonoDisable
     void StoreClearScreenData(List<IBranch> allBranches, IBranch thisBranch, BlockRaycast blockRaycast);
 }
 
+[Obsolete("Not Needed", true)]
 public class ScreenData : IScreenData, IServiceUser, IEZEventUser
 {
     public ScreenData(IBranchParams branch)
@@ -58,7 +62,7 @@ public class ScreenData : IScreenData, IServiceUser, IEZEventUser
     //Main
     public void StoreClearScreenData(List<IBranch> allBranches, IBranch thisBranch, BlockRaycast blockRaycast)
     {
-        WasOnHomeScreen = _myDataHub.OnHomeScreen;
+        WasOnHomeScreen = _myDataHub.IsAtRoot;
         StoreActiveBranches(allBranches, thisBranch, blockRaycast == BlockRaycast.Yes);
     }
 

@@ -52,7 +52,6 @@ public class BranchGroups /*: ISwitch, IServiceUser, IMonoEnable*/
         }
     }
     
-    //TODO Remove this class
 
     public void AddControlBarToBranchGroup()
     {

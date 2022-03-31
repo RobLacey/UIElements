@@ -5,7 +5,7 @@ using EZ.Events;
 using UnityEngine;
 
 
-public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICancelHoverOver, IEZEventUser
+public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICancelActivated
 {
     public AutoOpenCloseController(IAutoOpenCloseData data)
     {
@@ -14,40 +14,33 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
     
     //Variables
     private readonly IBranch _myBranch;
-    private bool _hotKeyPressed;
 
     private static Coroutine runningCoroutine;
 
     //Properties
     public bool PointerOverBranch { get; private set; }
     public EscapeKey EscapeKeyType => _myBranch.EscapeKeyType;
+    public IBranch BranchToCancel => _myBranch;
     public IBranch ChildNodeHasOpenChild { private get; set; }
 
-    //Set / Getters
-    private void HotKeyPressed(IHotKeyPressed args) => _hotKeyPressed = true;
-
     //Events
-    private  Action<ICancelHoverOver> CancelHooverOver { get; set; }
+    private  Action<ICancelActivated> CancelHooverOver { get; set; }
 
     //Main
     public void OnEnable()
     {
         FetchEvents();
-        ObserveEvents();
+       // ObserveEvents();
     }
 
     public void OnDisable()
     {
-        UnObserveEvents();
+      //  UnObserveEvents();
         CancelHooverOver = null;
         StaticCoroutine.StopCoroutines(runningCoroutine);
     }
     
-    public void FetchEvents() => CancelHooverOver = CancelEvents.Do.Fetch<ICancelHoverOver>();
-
-    public void ObserveEvents() => InputEvents.Do.Subscribe<IHotKeyPressed>(HotKeyPressed);
-    
-    public void UnObserveEvents() => InputEvents.Do.Unsubscribe<IHotKeyPressed>(HotKeyPressed);
+    public void FetchEvents() => CancelHooverOver = CancelEvents.Do.Fetch<ICancelActivated>();
 
     public void OnPointerEnter()
     {
@@ -64,8 +57,6 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
         
         if(_myBranch.AutoClose == IsActive.No) return;
         
-        if (HasHotKeyBeenPressed()) return;
-        
         if (ChildNodeHasOpenChild != null)
         {
             runningCoroutine = StaticCoroutine.StartCoroutine(WaitForPointer());
@@ -73,16 +64,6 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
         }
 
         runningCoroutine = StaticCoroutine.StartCoroutine(WaitForPointerNoChild());
-    }
-
-    private bool HasHotKeyBeenPressed()
-    {
-        if (_hotKeyPressed)
-        {
-            _hotKeyPressed = false;
-            return true;
-        }
-        return false;
     }
 
     private IEnumerator WaitForPointer()

@@ -5,33 +5,37 @@ using UnityEngine;
 /// <summary>
 /// This partial class holds all the classes properties as UIBranch is an important link between higher and lower parts of the system
 /// </summary>
-public partial class UIBranch 
+public partial class Branch 
 {
     //Set / Getters
     public bool IsAPopUpBranch()
     {
         return _branchType == BranchType.OptionalPopUp
-               || _branchType == BranchType.ResolvePopUp;
+               || _branchType == BranchType.ResolvePopUp
+               || _branchType == BranchType.TimedPopUp;
     }
 
     public bool IsControlBar() => _controlBar == IsActive.Yes;
     public bool IsPauseMenuBranch() => _branchType == BranchType.PauseMenu;
     public bool IsInternalBranch() => _branchType == BranchType.InternalObsolete;
-    public bool IsHomeScreenBranch() => _branchType == BranchType.HomeScreenObsolete;
+    public bool IsHomeScreenBranch() => _branchType == BranchType.ControlBar;
     public bool IsStandardBranch() => _branchType == BranchType.Standard;
     public bool IsInGameBranch() => _branchType == BranchType.InGameObject;
     public void DoNotTween() => _tweenOnChange = false;
     public void DontSetAsActiveBranch() => _canSetAsActivateBranch = false;
     public bool IsTimedPopUp() => _branchType == BranchType.TimedPopUp;
-    public IsActive StayVisibleMovingToChild() => _stayVisible;
+    public bool StayVisibleMovingToChild() => _stayVisible == IsActive.Yes;
     public void SetNotAControlBar() => _controlBar = IsActive.No;
     public IsActive SetStayOn { set => _stayVisible = value; }
     
    //Properties
     public BranchType ReturnBranchType => _branchType;
     public bool CanvasIsEnabled => MyCanvas.enabled;
-    public bool CanStoreAndRestoreOptionalPopUp => _storeOrResetOptional == StoreAndRestorePopUps.StoreAndRestore;
-    public bool CanBufferPopUp => _canAddToHomeScreenBuffer == IsActive.Yes;
+    public WhenAllowed WhenAllowed => _whenAllowed;
+
+    //public StoreAndRestorePopUps StoreCloseOrDoNothing => _storeOrResetOptional;
+    //public bool AllowWithActiveResolvePopUp => _allowWithActiveResolve   == IsActive.Yes;
+   // public bool CanBufferPopUp => _canAddToHomeScreenBuffer              == IsActive.Yes;
     public INode DefaultStartOnThisNode { get; set; }
     public INode LastSelected { get; set; }
     public INode LastHighlighted { get; set; }
@@ -49,6 +53,7 @@ public partial class UIBranch
     public float Timer => _timer;
     public Trunk ParentTrunk { get; set; }
     public bool IsAlreadyActive => !_tweening && CanvasIsEnabled;
+    public bool BlockRaycastToOpenBranches => _blockRaycastToOpenBranches == IsActive.Yes;
 
 
     public IsActive SetSaveLastSelectionOnExit
@@ -89,10 +94,8 @@ public partial class UIBranch
     }
     
     public int ReturnManualCanvasOrder => _orderInCanvas;
-    public bool CanOnlyAllowOnHomeScreen => _onlyAllowOnHomeScreen == IsActive.Yes;
     public IBranch TargetBranch => this;
     public GOUIModule ReturnGOUIModule => _branchTypeBaseClass.ReturnGOUIModule() as GOUIModule;
     
-    public bool RestoreBranch { get; set; }
 
 }

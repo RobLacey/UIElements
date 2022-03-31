@@ -30,12 +30,12 @@ public class PopUpTester : IMonoEnable, IServiceUser
     public void MakeResolvePopUp() => MakePopUp(_resolvePrefab, _resolvePopUps, "Resolve");
     public void MakeOptionalPopUp()
     {
-        if(!_myDataHub.NoResolvePopUp) return;
+       // if(!_myDataHub.NoResolvePopUp) return;
         MakePopUp(_optionalPrefab, _optionalPopUps, "Optional");
     }
     public void MakeTimedPopUp()
     {
-        if(!_myDataHub.NoResolvePopUp) return;
+        //if(!_myDataHub.NoResolvePopUp) return;
         MakePopUp(_timedPrefab, _timedPopUps, "Timed");
     }
 
@@ -43,15 +43,17 @@ public class PopUpTester : IMonoEnable, IServiceUser
     private void MakePopUp(GameObject popUpPrefab, List<IBranch> popUpList, string nameOfPopUp)
     {
         IBranch newPopUp;
+        if(_myDataHub.GamePaused || !_myDataHub.SceneStarted) return;
+        
         foreach (var popUp in popUpList)
         {
-            if (popUp.CanvasIsEnabled || popUp.RestoreBranch) continue;
+            if (popUp.CanvasIsEnabled || popUp.WhenAllowed.RestoreBranch) continue;
             newPopUp = popUp;
             newPopUp.StartPopUp_RunTimeCall(true);
             return;
         }
 
-        newPopUp = new RuntimeCreateBranch().CreatePopUp(popUpPrefab.GetComponent<UIBranch>())
+        newPopUp = new RuntimeCreateBranch().CreatePopUp(popUpPrefab.GetComponent<Branch>())
                                             .NewName($"New {nameOfPopUp} PopUp : {_popUpCounter}");
         Vector2 randomPos = new Vector2(Random.Range(200, -200), Random.Range(200, -200));
         newPopUp.ThisBranchesGameObject.GetComponent<RectTransform>().anchoredPosition = randomPos;

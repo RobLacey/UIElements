@@ -1,6 +1,6 @@
 ﻿// ReSharper disable UnusedMember.Local
 
-public partial class UINode
+public partial class Node
 {
     private const string CanAutoOpenClose = nameof(CheckAutoOpenCloseStatus);
     private const string CancelOrBack = nameof(IsCancelOrBack);

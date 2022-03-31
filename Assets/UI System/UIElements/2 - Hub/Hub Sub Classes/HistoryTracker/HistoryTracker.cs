@@ -1,71 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using EZ.Events;
 using EZ.Service;
 using UIElements.Input_System;
 using UnityEngine;
 
-public class HistoryTracker : IHistoryTrack, IEZEventUser, IStoreNodeHistoryData, 
-                              IEZEventDispatcher, /*IReturnHomeGroupIndex,*/ IServiceUser, INoPopUps
+public class HistoryTracker : IHistoryTrack, IEZEventUser, /*IEZEventDispatcher,*/ IServiceUser/*, INoPopUps*/
 {
     //Variables
-    //private INode _lastSelected;
     private InputScheme _inputScheme;
 
     //Properties
-    public IDataHub MyDataHub { get; private set; }
-    public List<INode> History { get; } = new List<INode>();
-    public INode NodeToUpdate { get; private set; }
-    private bool IsPaused => MyDataHub.GamePaused;
-    private bool CanStart => MyDataHub.SceneStarted;
-    private bool OnHomeScreen => MyDataHub.OnHomeScreen;
-    private SelectData SelectData { get; set; }
-    public bool NodeNeededForMultiSelect(INode node)
-    {
-        return SelectData.MultiSelectIsActive & History.Contains(node) & !_inputScheme.MultiSelectPressed();
-    }
-
-     // private Action<IReturnHomeGroupIndex> ReturnHomeGroupBranch { get; set; }
-     private Action<INoPopUps> NoPopUps { get; set; }
-
-    
-    //TODO Remove Test Rig
-    private Action<IStoreNodeHistoryData> DoAddANode { get; set; }
-    
-    public void UpdateHistoryData(INode node)
-    {
-        //TODO Add Enum to Add or Remove from History and so move that functioality here
-        NodeToUpdate = node;
-        DoAddANode?.Invoke(this);
-    }
-    
+    private HistoryData HistoryData { get; } = new HistoryData();
+    public bool NodeNeededForMultiSelect(INode node) => HistoryData.MultiSelectIsActive & 
+                                                        HistoryData.History.Contains(node) & 
+                                                        !_inputScheme.MultiSelectPressed();
+    //Events
+    // private Action<INoPopUps> OnNoPopUps { get; set; }
+     
     //Main
     public void OnEnable()
     {
         UseEZServiceLocator();
         AddService();
-        FetchEvents();
+      //  FetchEvents();
         ObserveEvents();
-        SelectData = new SelectData(this);
     }
     
-    public void UseEZServiceLocator()
-    {
-        MyDataHub = EZService.Locator.Get<IDataHub>(this);
-        _inputScheme = EZService.Locator.Get<InputScheme>(this);
-    }
+    public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
 
     public void AddService() => EZService.Locator.AddNew<IHistoryTrack>(this);
 
     public void OnRemoveService() { }
    
-    public void FetchEvents()
-    {
-        //ReturnHomeGroupBranch = HistoryEvents.Do.Fetch<IReturnHomeGroupIndex>();
-        DoAddANode = HistoryEvents.Do.Fetch<IStoreNodeHistoryData>();
-        NoPopUps = PopUpEvents.Do.Fetch<INoPopUps>();
-    }
+   // public void FetchEvents() => OnNoPopUps = PopUpEvents.Do.Fetch<INoPopUps>();
 
     public void ObserveEvents()
     {
@@ -74,12 +42,17 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IStoreNodeHistoryData
         HistoryEvents.Do.Subscribe<IInMenu>(SwitchToGame);
     }
 
-    public void UnObserveEvents() { }
+    public void UnObserveEvents()
+    {
+        HistoryEvents.Do.Unsubscribe<ISelectedNode>(SetSelected);
+        HistoryEvents.Do.Unsubscribe<IDisabledNode>(CloseNodesAfterDisabledNode);
+        HistoryEvents.Do.Unsubscribe<IInMenu>(SwitchToGame);
+    }
 
     //Main
     private void SetSelected(ISelectedNode newNode)
     {
-        if(!CanStart) return;
+        if(!HistoryData.CanStart) return;
         
         if (CheckForMultiSelect(newNode))
         {
@@ -87,11 +60,13 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IStoreNodeHistoryData
             return;
         }
        
-        if(SelectData.MultiSelectIsActive)
+        if(HistoryData.MultiSelectIsActive)
         {
-            SelectData.AddData(newNode.SelectedNode);
-            HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.SkipOne);
+            HistoryData.AddData(newNode.SelectedNode);
+            HistoryListManagement.ResetAndClearHistoryList(HistoryData, ClearAction.SkipOne);
         }
+        
+        if(newNode.SelectedNode.HasChildBranch.IsNull()) return;
         AddNewNodeToHistory(newNode);
     }
 
@@ -103,154 +78,140 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IStoreNodeHistoryData
 
     private void DoMultiSelect(ISelectedNode newNode)
     {
-        SelectData.AddMultiSelectData(newNode.SelectedNode);
-        MultiSelectSystem.MultiSelectPressed(SelectData);
+        HistoryData.AddMultiSelectData(newNode.SelectedNode);
+        MultiSelectSystem.MultiSelectPressed(HistoryData);
     }
 
     private void AddNewNodeToHistory(ISelectedNode newNode)
     {
-        SelectData.AddData(newNode.SelectedNode);
-        NewSelectionProcess.AddNewSelection(SelectData);
+        HistoryData.AddData(newNode.SelectedNode);
+        NewSelectionProcess.AddNewSelection(HistoryData);
     }
 
     private void CloseNodesAfterDisabledNode(IDisabledNode args)
     {
-        if(!History.Contains(args.ThisNode)) return;
+        if(!HistoryData.History.Contains(args.ThisNode)) return;
         
-        SelectData.AddStopPoint(args.ThisNode);
-        HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.StopAt);
+        HistoryData.AddStopPoint(args.ThisNode);
+        HistoryListManagement.ResetAndClearHistoryList(HistoryData, ClearAction.StopAt);
     }
 
     private void BackOneLevel()
     {
-        if (SelectData.MultiSelectIsActive)
+        if (HistoryData.MultiSelectIsActive)
         {
+            HistoryData.SetToThisTrunkWhenFinished(HistoryData.CurrentTrunk);
             ClearAllHistory();
         }
         else
         {
-            MoveBackInHistory.BackOneLevelProcess(SelectData);
+            MoveBackInHistory.BackOneLevelProcess(HistoryData);
         }
     }
 
     private void SwitchToGame(IInMenu args)
     {
-        if (!args.InTheMenu && CanStart)
+        if (!args.InTheMenu && HistoryData.CanStart)
+        {
+            HistoryData.SetToThisTrunkWhenFinished(HistoryData.RootTrunk);
             ClearAllHistory();
+        }    
     }
 
     public void SwitchGroupPressed()
     {
-        if (!OnHomeScreen)
-        {
-            // if (History.Last().MyBranch.ParentTrunk != MyDataHub.CurrentTrunk)
-            // {
-            //     Debug.Log("Can Cancel : ");
-            //     BackOneLevel();
-            // }
-            // Debug.Log(MyDataHub.CurrentTrunk.ActiveBranch.MyParentBranch.LastSelected);
-            // SelectData.AddStopPoint(MyDataHub.CurrentTrunk.ActiveBranch.MyParentBranch.LastSelected);
-            // HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.StopAt);
-        }
-        
-        if(OnHomeScreen)
-        {
-            ClearAllHistory();
-        }
+        HistoryData.SwitchPressed(true);
+        HistoryData.SetToThisTrunkWhenFinished(HistoryData.CurrentTrunk);
+        ClearAllHistory();
+        HistoryData.SwitchPressed(false);
+    }
+
+    public void ExitPause()
+    {
+        HistoryData.SetToThisTrunkWhenFinished(HistoryData.CurrentTrunk);
+        ClearAllHistory();
     }
 
     private void ClearAllHistory()
     {
-        MultiSelectSystem.ClearMultiSelect(SelectData);
-        HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.All);
+        MultiSelectSystem.ClearMultiSelect(HistoryData);
+        HistoryListManagement.ResetAndClearHistoryList(HistoryData, ClearAction.All);
     }
     
-    // private void SetFromHotkey(IHotKeyPressed args)
-    // {
-    //     
-    //     //ClearAllHistory();
-    //     HotKeyReturnsToHomeScreen(args.MyBranch.ParentTrunk == MyDataHub.RootTrunk);
-    //     _lastSelected = args.ParentNode;
-    // }
-    
-    // private void HotKeyReturnsToHomeScreen(bool isRootTrunk)
-    // {
-    //     if (isRootTrunk)
-    //     {
-    //         HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.All);
-    //         MyDataHub.RootTrunk.OnStartTrunk();
-    //        // BackToHomeScreen();
-    //     }
-    //     
-    // }
-    // private void HotKeyReturnsToHomeScreen(ScreenType hotKeyScreenType)
-    // {
-    //     if (hotKeyScreenType != ScreenType.FullScreen && !OnHomeScreen)
-    //         BackToHomeScreen();
-    // }
-
-    // public void BackToHomeScreen()
-    // {
-    //     //TODO Add Funcioality backi in here
-    //     
-    //     //HasReturnedToHomeScreen?.Invoke(this);
-    // }
-    // // public void BackToHomeScreen() => HasReturnedToHomeScreen?.Invoke(this);
-
-    public void CancelHasBeenPressed(EscapeKey endOfCancelAction)
+    public void CancelHasBeenPressed(EscapeKey cancelType, IBranch branchToCancel)
     {
-        if (MyDataHub.NoPopups || MyDataHub.GamePaused)
+        if(cancelType == EscapeKey.None) return;
+
+        // if (HistoryData.GameIsPaused)
+        // {
+        //     if (HistoryData.NoHistory)
+        //     {
+        //         Debug.Log("No History");
+        //         MoveToLastBranchInHistory();
+        //     }
+        // }
+        //Handle Cancelling out of a child in pause
+        //Handle coming out of pause. Need a setting to allow this or not
+        
+        if (HistoryData.GameIsPaused || HistoryData.NoPopUps)
         {
-            switch (endOfCancelAction)
+            switch (cancelType)
             {
                 case EscapeKey.BackOneLevel:
                     BackOneLevel();
                     break;
                 case EscapeKey.BackToHome:
-                    MoveBackInHistory.BackToHomeProcess(SelectData);
+                    MoveBackInHistory.BackToHomeProcess(HistoryData);
                     break;
             }
         }
         else
         {
-            PopUpController.RemoveNextPopUp(MyDataHub, MoveToLastBranchInHistory);
-            if (MyDataHub.NoPopups)
-                NoPopUps?.Invoke(this);
+            
+            if(branchToCancel.IsNotNull())
+            {
+                PopUpController.CloseExactPopUp(branchToCancel, MoveToLastBranchInHistory);
+            }
+            else
+            {
+                PopUpController.RemoveNextPopUp(HistoryData, MoveToLastBranchInHistory);
+            }
         }
     }
 
+    //TODO Check that GameIsPaused is relivant here once redone
     public void MoveToLastBranchInHistory()
     {
-        if (!MyDataHub.NoPopups && !IsPaused)
+        if (HistoryData.GameIsPaused)
         {
-            PopUpController.NextPopUp(MyDataHub).MoveToThisBranch();
+            HistoryData.ActiveBranch.OpenThisBranch();
             return;
         }
         
-        if (History.Count == 0 || IsPaused)
+        if (!HistoryData.NoPopUps)
         {
-            MoveBackInHistory.BackToHomeProcess(SelectData);
+            PopUpController.NextPopUp(HistoryData).OpenThisBranch();
+            return;
+        }
+        
+        if (HistoryData.NoHistory)
+        {
+            MoveBackInHistory.BackToHomeProcess(HistoryData);
         }
         else
         {
-            MyDataHub.ActiveBranch.MoveToThisBranch();
+            HistoryData.LastSelected().HasChildBranch.OpenThisBranch();
         }
     }
     
-    // //TODO need to look into this use from Dynamic Branch / improve functionality
-    // public void ReturnToNextHomeGroup()
-    // {
-    //     ReturnHomeGroupBranch?.Invoke(this);
-    // }
-
     public void CheckListsAndRemove(IBranch branchToClose)
     {
-        if (SelectData.MultiSelectIsActive)
+        if (HistoryData.MultiSelectIsActive)
         {
-            MultiSelectSystem.RemoveFromMultiSelectHistory(SelectData);
+            MultiSelectSystem.RemoveFromMultiSelectHistory(HistoryData);
         }
-        SelectData.AddStopPoint(branchToClose.LastSelected);
-        HistoryListManagement.ResetAndClearHistoryList(SelectData, ClearAction.StopAt);
+        HistoryData.AddStopPoint(branchToClose.LastSelected);
+        HistoryListManagement.ResetAndClearHistoryList(HistoryData, ClearAction.StopAt);
         branchToClose.LastSelected.ExitNodeByType();
     }
 }

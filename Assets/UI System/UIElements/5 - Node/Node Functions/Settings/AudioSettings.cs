@@ -28,7 +28,7 @@ public class AudioSettings : IAudioSettings
     
     private bool CanCreate(Setting functions) => (functions & Setting.Audio) != 0;
 
-    private void CheckForSetUpError(Setting functions, UINode parentNode) 
+    private void CheckForSetUpError(Setting functions, Node parentNode) 
     {
         if(!CanCreate(functions)) return;
         

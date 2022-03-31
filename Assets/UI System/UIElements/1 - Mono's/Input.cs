@@ -1,34 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using EZ.Events;
-using EZ.Inject;
 using EZ.Service;
 using NaughtyAttributes;
+using UIElements;
 using UnityEngine;
 
-public interface IInput : IParameters
-{
-    bool StartInGame();
-}
-
-public interface IVirtualCursorSettings : IInput
-{
-    Transform GetParentTransform { get; }
-}
-
-public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPressed, IChangeControlsPressed, 
-                       IMenuGameSwitchingPressed, IServiceUser, IEZEventDispatcher, IVirtualCursorSettings,
-                       IIsAService
+public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICancelPressed, IChangeControlsPressed, 
+                             IMenuGameSwitchingPressed, IServiceUser, IEZEventDispatcher, IVirtualCursorSettings,
+                             IIsAService
 {
     [SerializeField] [Space(10f)]
     [ValidateInput(CheckForScheme, InfoBox)]
     private InputScheme _inputScheme  = default;
 
-    [SerializeField] private Transform _VirtualCursorParent;
+    [SerializeField] private Transform _virtualCursorParent;
+    [SerializeField]
+    [Space(10f)]
+    private PauseAndEscapeHandler _pauseAndEscapeSettings;
     
-    [SerializeField] [Foldout("Hot Keys")]    
-    [ReorderableList] private List<HotKeys> _hotKeySettings = new List<HotKeys>();
+    [SerializeField] 
+    [OnValueChanged(CheckForNewHotKey)] [Space(10f)]
+    private List<HotKeys> _hotKeySettings = new List<HotKeys>();
     
     [Header(Settings, order = 2)][HorizontalLine(1f, EColor.Blue, order = 3)] 
     
@@ -38,16 +31,9 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     //Variables
     private bool _inMenu;
     private IDataHub _myDataHub;
-    
-    //Editor
-    private const string Settings = "Other Settings ";
-    private bool HasScheme(InputScheme scheme) => scheme != null;
-    private const string InfoBox = "Must Assign an Input Scheme";
-    private const string CheckForScheme = nameof(HasScheme);
 
     //Events
-    private IReturnFromEditor ReturnControlFromEditor { get; set; }
-    private Action<IPausePressed> OnPausedPressed { get; set; }
+    //private Action<IPausePressed> OnPausedPressed { get; set; }
     private Action<IMenuGameSwitchingPressed> OnMenuAndGameSwitch { get; set; }
     private Action<ICancelPressed> OnCancelPressed { get; set; }
     private Action<IChangeControlsPressed> OnChangeControlPressed { get; set; }
@@ -56,7 +42,8 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     private bool GameIsPaused => _myDataHub.GamePaused;
     private bool AllowKeys => _myDataHub.AllowKeys;
     private bool NoActivePopUps => _myDataHub.NoPopups;
-    private bool OnHomeScreen => _myDataHub.OnHomeScreen;
+    private bool ActivePopUps => !_myDataHub.NoPopups;
+    private bool IsAtRootTrunk => _myDataHub.IsAtRoot;
     private IBranch ActiveBranch => _myDataHub.ActiveBranch;
     private bool CanStart => _myDataHub.SceneStarted;
 
@@ -82,10 +69,10 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         }
     }
 
-    public Transform GetParentTransform => _VirtualCursorParent;
-    private void SaveGameIsPaused(IGameIsPaused args) => _uiInputEvents.GamePausedStatus(GameIsPaused);
+    public Transform GetParentTransform => _virtualCursorParent;
+    //private void SaveGameIsPaused(IGameIsPaused args) => _uiInputEvents.GamePausedStatus(GameIsPaused);
     public EscapeKey EscapeKeySettings => ActiveBranch.EscapeKeyType;
-    private bool NothingSelectedAction => _inputScheme.PauseOptions == PauseOptionsOnEscape.EnterPauseOrEscapeMenu;
+    //private bool NothingSelectedAction => _inputScheme.PauseOptions == PauseOptionsOnEscape.EnterPauseOrEscapeMenu;
     private IMenuAndGameSwitching MenuToGameSwitching { get; set; }
     private IChangeControl ChangeControl { get; set; }
     private ISwitchGroup SwitchGroups { get; set; }
@@ -99,7 +86,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         ChangeControl = EZInject.Class.WithParams<IChangeControl>(this);
         MenuToGameSwitching = EZInject.Class.NoParams<IMenuAndGameSwitching>();
         SwitchGroups = EZInject.Class.NoParams<ISwitchGroup>();
-//        ReturnControlFromEditor = EZInject.Class.NoParams<IReturnFromEditor>();
+        
         if(_inputScheme.CanUseVirtualCursor)
             VirtualCursor = EZInject.Class.WithParams<IVirtualCursor>(this);
         AddService();
@@ -117,6 +104,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         ChangeControl.OnEnable();
         MenuToGameSwitching.OnEnable();
         SwitchGroups.OnEnable();
+        _pauseAndEscapeSettings.OnEnable();
         if(_inputScheme.CanUseVirtualCursor)
             VirtualCursor.OnEnable();
         ObserveEvents();
@@ -142,7 +130,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     
     public void FetchEvents()
     {
-        OnPausedPressed = InputEvents.Do.Fetch<IPausePressed>();
+        //OnPausedPressed = InputEvents.Do.Fetch<IPausePressed>();
         OnMenuAndGameSwitch = InputEvents.Do.Fetch<IMenuGameSwitchingPressed>();
         OnCancelPressed = InputEvents.Do.Fetch<ICancelPressed>();
         OnChangeControlPressed = InputEvents.Do.Fetch<IChangeControlsPressed>();
@@ -150,13 +138,13 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
     public void ObserveEvents()
     {
-        HistoryEvents.Do.Subscribe<IGameIsPaused>(SaveGameIsPaused);
+       // HistoryEvents.Do.Subscribe<IGameIsPaused>(SaveGameIsPaused);
         HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenu);
     }
 
     public void UnObserveEvents()
     {
-        HistoryEvents.Do.Unsubscribe<IGameIsPaused>(SaveGameIsPaused);
+        ///HistoryEvents.Do.Unsubscribe<IGameIsPaused>(SaveGameIsPaused);
         HistoryEvents.Do.Unsubscribe<IInMenu>(SaveInMenu);
     }
 
@@ -167,6 +155,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         if(_inputScheme.CanUseVirtualCursor)
             VirtualCursor.OnStart();
         MenuToGameSwitching.OnStart();
+        _pauseAndEscapeSettings.OnStart();
     }
 
     private void Update()
@@ -176,16 +165,14 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
         
         if (!CanStart) return;
 
-        // //TODO Do I need this anymore
-        // if(ReturnControlFromEditor.CanReturn(_inMenu, ActiveBranch)) return;
         
         if (CanPauseGame())
         {
-            PausedPressedActions();
+            _pauseAndEscapeSettings.PausePressed();
             return;
         }
         
-        if (CanSwitchBetweenInGameAndMenu() && OnHomeScreen) return;
+        if (CanSwitchBetweenInGameAndMenu() && IsAtRootTrunk) return;
         
         if (CheckIfHotKeyAllowed()) return;
         
@@ -206,7 +193,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
             
             if (_inputScheme.PressSelect())
             {
-                var temp = (UINode)_myDataHub.Highlighted;
+                var temp = (Node)_myDataHub.Highlighted;
                 temp.OnPointerDown(null);
                 return;
             }
@@ -230,7 +217,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
             if (_inputScheme.PressSelect())
             {
                 //Todo make a class in Inode
-                var temp = (UINode)_myDataHub.Highlighted;
+                var temp = (Node)_myDataHub.Highlighted;
                 temp.OnPointerDown(null);
                 return;
             }
@@ -263,9 +250,9 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
     private bool MultiSelectPressed => _inputScheme.MultiSelectPressed() && !AllowKeys;
 
-    private bool CanPauseGame() => _inputScheme.PressPause() && !MultiSelectPressed;
+    private bool CanPauseGame() => _inputScheme.PressPause() && _pauseAndEscapeSettings.CanPause(); /*&& !MultiSelectPressed;*/
 
-    private void PausedPressedActions() => OnPausedPressed?.Invoke(this);
+   // private void PausedPressedActions() => OnPausedPressed?.Invoke(this);
 
     private bool CanSwitchBetweenInGameAndMenu()
     {
@@ -276,7 +263,7 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
     private bool CheckIfHotKeyAllowed()
     {
-        if (GameIsPaused || !NoActivePopUps || MultiSelectPressed) return false;
+        if (GameIsPaused || ActivePopUps || MultiSelectPressed) return false;
         if (!HasMatchingHotKey()) return false;
         if(!_inMenu)
             OnMenuAndGameSwitch?.Invoke(this);
@@ -287,7 +274,11 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
     {
         foreach (var hotKeySetting in _hotKeySettings)
         {
-            if (hotKeySetting.CheckHotKeys()) return true;
+            if (_inputScheme.HotKeyChecker(hotKeySetting.HotKeyInput))
+            {
+                hotKeySetting.HotKeyActivation();
+                return true;
+            }
         }
         return false;
     }
@@ -296,9 +287,10 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
 
     private void WhenCancelPressed()
     {
-         if (CanEnterPauseWithNothingSelected() || CanUnpauseGame())
+         if (_pauseAndEscapeSettings.HandlePauseOrEscapeMenu())
          {
-            PausedPressedActions();
+             _pauseAndEscapeSettings.PausePressed();
+            //PausedPressedActions();
          }
          else
          {
@@ -306,12 +298,12 @@ public class UIInput : MonoBehaviour, IEZEventUser, IPausePressed, ICancelPresse
          }
     }
 
-    private bool CanUnpauseGame() => GameIsPaused && ActiveBranch.IsPauseMenuBranch();
+    //private bool CanUnpauseGame() => GameIsPaused && ActiveBranch.IsPauseMenuBranch();
     
     private void CancelPressed() => OnCancelPressed?.Invoke(this);
 
-    private bool CanEnterPauseWithNothingSelected() =>
-        (NoActivePopUps && !GameIsPaused && _myDataHub.NoHistory)
-        && NothingSelectedAction;
+    // private bool CanEnterPauseWithNothingSelected() =>
+    //     (NoActivePopUps && !GameIsPaused && _myDataHub.NoHistory)
+    //     && NothingSelectedAction;
 
 }

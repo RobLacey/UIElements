@@ -35,13 +35,13 @@ namespace UIElements
         private void Update()
         {
             //Draws a point when the left mouse button is pressed
-            if (Input.GetMouseButtonDown(0))
+            if (UnityEngine.Input.GetMouseButtonDown(0))
             {
                 DrawLine();
             }
 
             // Resets line when the right button is pressed
-            if (Input.GetMouseButtonUp(1))
+            if (UnityEngine.Input.GetMouseButtonUp(1))
             {
                 PointCounter = 0;
             }
@@ -53,7 +53,7 @@ namespace UIElements
             
             //This is the crucial line. mousePos always has a z position of 0. For the conversion to world space you need a
             //positive value as the near clip plane of the camera will stop it rendering 
-            Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
+            Vector3 mousePos = new Vector3(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y, 10f);
             
             //Add the new point to the array (hence the -1) and convert to a world point.
             _lineRenderer.SetPosition(PointCounter - 1, _camera.ScreenToWorldPoint(mousePos));

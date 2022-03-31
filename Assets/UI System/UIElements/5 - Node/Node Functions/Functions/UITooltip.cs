@@ -39,6 +39,7 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     private IGetScreenPosition _getScreenPosition;
     private readonly ITooltipSettings _settings;
     private ICanvasOrderData _canvasOrderData;
+    private Canvas _parentCanvas;
 
     //Properties
     private bool AllowKeys => _myDataHub.AllowKeys;
@@ -86,6 +87,7 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     private void SetTooltipsVariables()
     {
         ParentRectTransform = _uiEvents.ReturnMasterNode.GetComponent<RectTransform>();
+        _parentCanvas = _settings.MyBranch.MyCanvas;
         ParentRectTransform.GetLocalCorners(MyCorners);
         SetFixedPositionToDefault();
     }
@@ -133,14 +135,12 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     {
         base.ObserveEvents();
         BranchEvent.Do.Subscribe<IClearScreen>(CloseTooltipImmediately);
-        InputEvents.Do.Subscribe<IHotKeyPressed>(CloseTooltipImmediately);
     }
 
     public override void UnObserveEvents()
     {
         base.UnObserveEvents();
         BranchEvent.Do.Unsubscribe<IClearScreen>(CloseTooltipImmediately);
-        InputEvents.Do.Unsubscribe<IHotKeyPressed>(CloseTooltipImmediately);
     }
 
     public override void OnDisable()
@@ -170,18 +170,10 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     {
         base.OnStart();
         _getScreenPosition.OnStart();
-        SetToolTipCanvasOrder();
         NameToolTips.NameTooltips(ListOfTooltips, _uiEvents);
     }
 
     //Main
-    private void SetToolTipCanvasOrder()
-    {
-        foreach (var canvas in _cachedToolTipCanvasList)
-        {
-            SetCanvasOrderUtil.Set(_canvasOrderData.ReturnToolTipCanvasOrder, canvas);
-        }
-    }
 
     protected override void SavePointerStatus(bool pointerOver)
     {
@@ -201,7 +193,6 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     }
 
     private void CloseTooltipImmediately(IClearScreen args) => ImmediateClose();
-    private void CloseTooltipImmediately(IHotKeyPressed args) => ImmediateClose();
 
     private void ImmediateClose()
     {
@@ -258,6 +249,8 @@ public class UITooltip : NodeFunctionBase, IToolTipData
 
     private IEnumerator ActivateTooltip(bool isKeyboard)
     {
+        SetToolTipCanvasOrder();
+
         while (_pointerOver)
         {
             _getScreenPosition.SetExactPosition(isKeyboard);
@@ -265,5 +258,19 @@ public class UITooltip : NodeFunctionBase, IToolTipData
         }
         yield return null;
     }
+    
+    private void SetToolTipCanvasOrder()
+    {
+        //Stops the Tooltip appearing over the top of the Virtual Cursor
+        int tooltipSortingOrder = _canvasOrderData.ReturnToolTipCanvasOrder() + _parentCanvas.sortingOrder;
+        int virtualCursorSortingOrder = _canvasOrderData.ReturnVirtualCursorCanvasOrder() - 1;
+        int CurrentCanvasOrder() => Mathf.Clamp(tooltipSortingOrder, 0, virtualCursorSortingOrder);
+
+        foreach (var canvas in _cachedToolTipCanvasList)
+        {
+            SetCanvasOrderUtil.Set(CurrentCanvasOrder, canvas);
+        }
+    }
+
 }
 

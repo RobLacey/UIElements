@@ -8,28 +8,24 @@ using UnityEngine;
 ///
 public static class PopUpController
 {
-    public static IBranch NextPopUp(IDataHub data)
-    {
-        bool hasResolvePopUp = data.ActiveResolvePopUps.Count > 0;
-
-        return GetNextPopUp(hasResolvePopUp ? data.ActiveResolvePopUps : data.ActiveOptionalPopUps);
-    }
-
+    public static IBranch NextPopUp(HistoryData data) => GetNextPopUp(data.HasActiveResolvePopUps 
+                                                                          ? data.ActiveResolvePopUps : 
+                                                                          data.ActiveOptionalPopUps);
     private static IBranch GetNextPopUp(List<IBranch> popUpList)
     {
         int index = popUpList.Count - 1;
         return popUpList[index];
     }
     
-    public static void RemoveNextPopUp(IDataHub data, Action moveToLastBranchInHistory)
+    public static void RemoveNextPopUp(HistoryData data, Action moveToLastBranchInHistory)
     {
-        bool hasResolvePopUp = data.ActiveResolvePopUps.Count > 0;
-
         var popUpToRemove = NextPopUp(data);
 
-        if (hasResolvePopUp)
-            popUpToRemove.StartBranchExitProcess(OutTweenType.Cancel, moveToLastBranchInHistory);
-        
-        popUpToRemove.StartBranchExitProcess(OutTweenType.Cancel, moveToLastBranchInHistory);
+        popUpToRemove.ExitThisBranch(OutTweenType.Cancel, moveToLastBranchInHistory);
+    }
+
+    public static void CloseExactPopUp(IBranch popUp, Action moveToLastBranchInHistory)
+    {
+        popUp.ExitThisBranch(OutTweenType.Cancel, moveToLastBranchInHistory);
     }
 }

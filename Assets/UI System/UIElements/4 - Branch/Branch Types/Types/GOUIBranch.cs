@@ -59,13 +59,13 @@ public class GOUIBranch : BranchBase, IGOUIBranch
         _setScreenPosition.OnDisable();
     }
 
-    protected override void SaveIfOnHomeScreen(IOnHomeScreen args)
+    protected override void CheckIfAtRootTrunk(IIsAtRootTrunk args)
     {
        // base.SaveIfOnHomeScreen(args);
         
         if(_myGOUIModule.IsNull()) return;
         
-        if(OnHomeScreen)
+        if(IsAtRoot)
         {
             if(AlwaysOn)
             {
@@ -91,7 +91,7 @@ public class GOUIBranch : BranchBase, IGOUIBranch
     {
         if(_myCanvasGroup == null) return;
         
-        if (OnHomeScreen)
+        if (IsAtRoot)
         {
             _myCanvasGroup.blocksRaycasts = active == BlockRaycast.Yes;
         }
@@ -100,7 +100,7 @@ public class GOUIBranch : BranchBase, IGOUIBranch
     //TODO Check if I need this
     public override void SetCanvas(ActiveCanvas active)
     {
-        if(!OnHomeScreen || _myCanvas == null) return;
+        if(!IsAtRoot || _myCanvas == null) return;
         base.SetCanvas(active);
     }
 
@@ -122,7 +122,7 @@ public class GOUIBranch : BranchBase, IGOUIBranch
     //Main
     public override bool CanStartBranch()
     {
-        AddActiveBranch?.Invoke(this);
+        //AddActiveBranch?.Invoke(this);
         return _canStartGOUI || AlwaysOn || CanAllowKeys;
     }
 
@@ -158,14 +158,15 @@ public class GOUIBranch : BranchBase, IGOUIBranch
         _canStartGOUI = false;
     }
 
-    public override bool CanExitBranch(OutTweenType outTweenType)
+    public override bool DontExitBranch(OutTweenType outTweenType)
     {
-        base.CanExitBranch(outTweenType);
+        //TODO Check this as return condition it is looking has swapped
+        base.DontExitBranch(outTweenType);
         if (outTweenType == OutTweenType.Cancel)
         {
             _canStartGOUI = true;
         }
-        return !AlwaysOn && !_myGOUIModule.PointerOver;
+        return AlwaysOn || _myGOUIModule.PointerOver;
     }
 
     public override void StartBranchExit()

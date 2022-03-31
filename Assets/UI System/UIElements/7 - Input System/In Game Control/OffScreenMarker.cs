@@ -27,8 +27,6 @@ namespace UIElements
         //Editor
         private const string OffScreenMarkerFolderName = "Off Screen Marker";
         
-        //TODO Add Max Distance from Camera cull process and setting
-
         //Properties & Getters / Setters
         private GameObject ScreenMarker => _offscreenMarkerData.ScreenMarker;
         private StartOffscreen WhenToStartOffScreenMarker => _offscreenMarkerData.WhenToStartOffScreenMarker;

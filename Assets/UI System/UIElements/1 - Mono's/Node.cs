@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(RunTimeSetter))]
 
-public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPointerDownHandler,
+public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointerDownHandler,
                               IPointerUpHandler, ISubmitHandler, IPointerExitHandler, 
                               IServiceUser, IEZEventUser
 {
@@ -253,8 +253,6 @@ public partial class UINode : MonoBehaviour, INode, IPointerEnterHandler, IPoint
 
     public void ExitNodeByType() => _nodeBase.ExitNodeByType();
 
-    // //TODo review if i need this and ExitNodeByTytpe as well
-    // public void ClearNode() => _nodeBase.SetNodeAsNotSelected_NoEffects();
 
     // Use To Disable Node from external scripts
     public void DisableNode()

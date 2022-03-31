@@ -90,7 +90,7 @@ public class CreateNewObjects
         _newBranch = new GameObject();
         _newBranch.transform.parent = parent ? parent : _newTree.transform;
         _newBranch.name = $"New Branch";
-        _newBranch.AddComponent<UIBranch>();
+        _newBranch.AddComponent<Branch>();
         return Create;
     }
     
@@ -102,6 +102,6 @@ public class CreateNewObjects
         _newNode = new GameObject();
         _newNode.transform.parent = parent ? parent : _newBranch.transform;
         _newNode.name = $"New Node ";
-        _newNode.AddComponent<UINode>();
+        _newNode.AddComponent<Node>();
     }
 }

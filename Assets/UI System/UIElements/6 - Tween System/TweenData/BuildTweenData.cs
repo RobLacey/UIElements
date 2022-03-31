@@ -9,10 +9,12 @@ public class BuildTweenData
     [SerializeField] 
     [AllowNesting] [ValidateInput(SetClassName)] 
     private RectTransform _element;
+    [SerializeField] private float _buildNextAfterDelay;
     [SerializeField] private PositionSettings _positionSettings;
     [SerializeField] private ScaleSettings _scaleSettings;
     [SerializeField] private RotationSettings _rotationSettings;
-    [SerializeField] private float _buildNextAfterDelay;
+    
+    
     [HideInInspector] public Vector3 _moveTo;
     [HideInInspector] public Vector3 _scaleTo;
     [HideInInspector] public Vector3 _targetRotation;
@@ -37,7 +39,7 @@ public class BuildTweenData
 
         return true;
     }
-    
+
     public PositionSettings PositionSettings => _positionSettings;
     public ScaleSettings ScaleSettings => _scaleSettings;
     public RotationSettings RotationSettings => _rotationSettings;

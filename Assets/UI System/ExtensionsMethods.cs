@@ -182,6 +182,17 @@ public static class ExtensionsMethods
     {
         return obj is null;
     }
+
+    public static bool IsEmpty<T>(this List<T> list)
+    {
+        return list.Count == 0;
+    }
+    
+    public static bool IsNotEmpty<T>(this List<T> list)
+    {
+        return list.Count > 0;
+    }
+    
     public static bool NotEqualTo(this object obj, object compareTo)
     {
         return !Equals(obj, compareTo);

@@ -6,7 +6,7 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
 {
     public static class TrunkTracker
     {
-        public static bool MovingToNewTrunk(SelectData data)
+        public static bool MovingToNewTrunk(HistoryData data)
         {
             if (data.DestinationTrunk.IsNull()) return false;
             
@@ -14,7 +14,7 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
             return true;
         }
 
-        private static void MoveToNewTrunkProcess(SelectData data)
+        private static void MoveToNewTrunkProcess(HistoryData data)
         {        
             if(data.ScreenTypeOfDestinationTrunk == ScreenType.FullScreen)
             {
@@ -26,9 +26,9 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
             void EndOfAction() => CloseOtherOpenTrunksAndMoveToNewTrunk(data);
         }
 
-        private static void CloseOtherOpenTrunksAndMoveToNewTrunk(SelectData data)
+        private static void CloseOtherOpenTrunksAndMoveToNewTrunk(HistoryData data)
         {
-            var otherTrunks = data.MyDataHub.ActiveTrunks;
+            var otherTrunks = data.ActiveTrunks;
 
             if(IfNoOtherOpenTrunks(otherTrunks, MoveToNextTrunk)) return;
             
@@ -45,7 +45,7 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
             return true;
         }
 
-        private static void CloseOtherOpenTrunks(SelectData data, List<Trunk> otherTrunks, Action moveToNextTrunk)
+        private static void CloseOtherOpenTrunks(HistoryData data, List<Trunk> otherTrunks, Action moveToNextTrunk)
         {
             for (var i = otherTrunks.Count - 1; i >= 1; i--)
             {
@@ -54,7 +54,7 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
             otherTrunks[0].OnMoveToNewTrunk(moveToNextTrunk, data.ScreenTypeOfDestinationTrunk);
         }
 
-        public static bool MoveBackATrunk(SelectData data, INode currentNode)
+        public static bool MoveBackATrunk(HistoryData data, INode currentNode)
         {
             if (NoTrunkToGoBackTo(data, currentNode)) return false;
 
@@ -64,14 +64,14 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
             return true;
         }
 
-        private static bool NoTrunkToGoBackTo(SelectData data, INode currentNode)
+        private static bool NoTrunkToGoBackTo(HistoryData data, INode currentNode)
         {
             return currentNode.MyBranch.ParentTrunk == data.CurrentTrunk
                    || currentNode.MyBranch.ParentTrunk.IsNull();
         }
 
         //Lets MoveToNewTrunkManage the exit of the trunks as it was getting double called
-        private static bool CheckIfGoingBackAnThenOnToANewTrunk(SelectData data)
+        private static bool CheckIfGoingBackAnThenOnToANewTrunk(HistoryData data)
         {
             var hasFullscreenDestination = data.DestinationTrunk.IsNotNull() &&
                                           data.ScreenTypeOfDestinationTrunk == ScreenType.FullScreen;
@@ -79,7 +79,7 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
             return data.TweenType == OutTweenType.MoveToChild & hasFullscreenDestination;
         }
 
-        private static void BackCloseProcess(SelectData data, INode currentNode)
+        private static void BackCloseProcess(HistoryData data, INode currentNode)
         {
             data.CurrentTrunk.OnExitTrunk(EndOfAction);
 

@@ -1,182 +1,305 @@
-﻿
-
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using EZ.Events;
 using EZ.Service;
+using NaughtyAttributes;
 using UIElements;
 using UnityEngine;
 
-public interface IDataHub : IMonoAwake, IMonoEnable, ISwitchData
-{
-    bool SceneStarted { get; }
-    void SetStarted();
-    bool InMenu { get; set; }
-    bool GamePaused { get; }
-    bool OnHomeScreen { get; }
-    void SetOnHomeScreen(bool IsOnHomeScreen);
-    bool AllowKeys { get;}
-    void SetAllowKeys(bool newAllowKeysSetting);
-    bool NoResolvePopUp { get; }
-    bool NoPopups { get; }
-    bool NoHistory { get; }
-    IBranch ActiveBranch { get; set; }
-    RectTransform MainCanvasRect { get; }
-    List<IBranch> AllActiveBranches { get; }
-    List<GameObject> SelectedGOs { get; }
-    List<INode> History { get; }
-    List<IBranch> ActiveResolvePopUps { get; }
-    List<IBranch> ActiveOptionalPopUps { get; }
-    INode Highlighted { get; set; }
-}
 
-public interface ISwitchData
+[Serializable]
+public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatcher/*, IStoreNodeHistoryData*/
 {
- //   List<IBranch> ActiveTrunkGroup { get; set; }
-    ISwitch CurrentSwitcher { get; set; }
-    List<Trunk> ActiveTrunks { get; set; }
-    public Trunk CurrentTrunk { get; }
-    Trunk RootTrunk { get; set; }
-}
+    [SerializeField] private Node _lastHighlighted = default;
+    [SerializeField] private GameObject _lastHighlightedGo = default;
+    [SerializeField] private Node _lastSelected = default;
+    [SerializeField] private GameObject _lastSelectedGo = default;
+    [SerializeField] private Branch _activeBranch = default;
+    [SerializeField] private Trunk _currentTrunk = default;
+    [SerializeField] private Trunk _pausedTrunk = default;
+    [SerializeField] [ReadOnly] private Trunk _rootTrunk;
+    [SerializeField] [ReadOnly] private bool _sceneStarted;
+    [SerializeField] [ReadOnly] private bool _onRootTrunk = true;
+    [SerializeField] [ReadOnly] private bool _controllingWithKeys = default;
+    [SerializeField] [ReadOnly] private bool _inMenu;
+    [SerializeField] [ReadOnly] private bool _gameIsPaused;
+    [SerializeField] [ReadOnly] private EscapeKey _globalEscapeKey;
+    [SerializeField] private List<Trunk> _activeTrunks = default;
+    [SerializeField] private List<Node> _history = default;
+    [SerializeField] private List<Node> _currentSwitchHistory;
+    [SerializeField] private List<GameObject> _selectedGOs = default;
+    [SerializeField] private List<Branch> _activeResolvePopUps;
+    [SerializeField] private List<Branch> _activeOptionalPopUps;
 
-public class DataHub: IEZEventUser, IIsAService, IDataHub
-{
-    public DataHub(RectTransform mainCanvasRect)
+    //Variables
+    private bool _switchPressed;
+    private bool _wasAtRoot;
+    private Node _lastSelectedBeforePause;
+    private Branch _lastActiveBranchBeforePause;
+    private Trunk _lastTrunkBeforePause;
+    private ISwitch _lastSwitcher;
+    private List<Node> _lastCurrentSwitchHistory = new List<Node>();
+
+    //private readonly List<INode> _history = new List<INode>();
+
+    //Events
+    //private Action<IStoreNodeHistoryData> DoAddANode { get; set; }
+    private Action<IAddOptionalPopUp> DoAddOptionalPopUp { get; set; }
+    private Action<IRemoveOptionalPopUp> DoRemoveOptionalPopUp { get; set; }
+    private Action<IAddResolvePopUp> DoAddResolvePopUp { get; set; }
+    private Action<IRemoveResolvePopUp> DoRemoveResolvePopUps { get; set; }
+    // private Action<IAddTrunk> DoAddTrunk { get; set; }
+    // private Action<IRemoveTrunk> DoRemoveTrunk { get; set; }
+
+    private Action<IHighlightedNode> DoHighlighted { get; set; } 
+
+    private Action<ISelectedNode> DoSelected { get; set; }
+    //private  Action<IActiveBranch> DoSetAsActiveBranch { get; set; } 
+    private Action<IIsAtRootTrunk> DoSetIsAtRoot { get; set; }
+
+
+    
+    public RectTransform MainCanvasRect { get; private set; }
+
+    public bool SceneStarted => _sceneStarted;
+    public void SetStarted() => _sceneStarted = true;
+
+    public bool InMenu => _inMenu;
+    public void SetInMenu(bool inMenu) => _inMenu = inMenu;
+
+    public Trunk PausedTrunk => _pausedTrunk;
+    public void SetPausedTrunk(Trunk pausedTrunk) => _pausedTrunk = pausedTrunk;
+    public bool GamePaused => _gameIsPaused;
+    public void SetIfGamePaused(bool paused) => _gameIsPaused = paused;
+
+    public void SetGlobalEscapeSetting(EscapeKey setting) => _globalEscapeKey = setting;
+    public EscapeKey GlobalEscapeSetting => _globalEscapeKey;
+
+    public bool IsAtRoot => _onRootTrunk;
+
+    public bool AllowKeys => _controllingWithKeys;
+    public void SetAllowKeys(bool newAllowKeysSetting) => _controllingWithKeys = newAllowKeysSetting;
+
+    public bool NoPopups  => _activeOptionalPopUps.Count == 0 & _activeResolvePopUps.Count == 0;
+    public bool NoHistory => History.Count == 0;
+    
+    public IBranch ActiveBranch => _activeBranch;
+    public void SetActiveBranch(Branch activeBranch) => _activeBranch = activeBranch;
+
+
+    public ISwitch CurrentSwitcher { get; private set; }
+    public void SetSwitcher(ISwitch newSwitcher)
     {
-        MainCanvasRect = mainCanvasRect;
+        if(newSwitcher != CurrentSwitcher)
+            _currentSwitchHistory.Clear();
+        
+        CurrentSwitcher = newSwitcher;
     }
 
-    public bool SceneStarted { get; private set; }
-    public bool InMenu { get;  set; }
-    public bool GamePaused { get; private set; }
-    public bool OnHomeScreen { get; private set; } = true;
-    public bool AllowKeys { get; private set; }
-    public bool NoPopups  => ActiveOptionalPopUps.Count == 0 & ActiveResolvePopUps.Count == 0;
-    public bool NoHistory => History.Count == 0;
-    public IBranch ActiveBranch { get; set; }
-    public RectTransform MainCanvasRect { get; }
+    public List<Trunk> ActiveTrunks => _activeTrunks;
+    public Trunk CurrentTrunk => _currentTrunk;
+    public Trunk RootTrunk => _rootTrunk;
+    public bool NoResolvePopUp => _activeResolvePopUps.IsEmpty();
+    public List<IBranch> ActiveResolvePopUps => _activeResolvePopUps.ToList<IBranch>();
+    public List<IBranch> ActiveOptionalPopUps => _activeOptionalPopUps.ToList<IBranch>();
+
+    public void SwitchPressed(bool pressed) => _switchPressed = pressed;
+    public List<INode> History
+    {
+        get
+        {
+            if (_switchPressed || GamePaused)
+            {
+                return _currentSwitchHistory.ToList<INode>();
+            }
+            return _history.ToList<INode>();
+        }
+    }
+
+    public List<GameObject> SelectedGOs => _selectedGOs;
+    public INode Highlighted => _lastHighlighted;
     
-    //Todo Review when get to pause menu
-    public List<IBranch> AllActiveBranches { get; } = new List<IBranch>();
-    public ISwitch CurrentSwitcher { get; set; }
-    public List<Trunk> ActiveTrunks { get; set; } = new List<Trunk>();
-    public Trunk CurrentTrunk { get; set; }
-    public Trunk RootTrunk { get; set; }
-    public bool NoResolvePopUp => ActiveResolvePopUps.Count == 0;
-    public List<IBranch> ActiveResolvePopUps { get; } = new List<IBranch>();
-    public List<IBranch> ActiveOptionalPopUps { get; } = new List<IBranch>();
-    public List<INode> History { get;  } = new List<INode>();
+    public void SetHighLighted(INode newNode)
+    {
+        if(!SceneStarted) return;
+        
+        if(Highlighted.IsNotNull() && newNode != Highlighted)
+            Highlighted.ThisNodeNotHighLighted();
 
-    public List<GameObject> SelectedGOs { get;  } = new List<GameObject>();
-    public INode Highlighted { get; set; }
 
+        _lastHighlighted = (Node)newNode;
+        
+        if (_lastHighlighted.IsNotNull() && _lastHighlighted.InGameObject.IsNotNull())
+            _lastHighlightedGo = _lastHighlighted.InGameObject;
+        
+        DoHighlighted?.Invoke(this);
+    }
+
+    public INode SelectedNode => _lastSelected;
+    
+    public void SetSelected(INode newNode)
+    {
+        _lastSelected = (Node)newNode;
+        
+        if (_lastSelected.IsNotNull() && _lastSelected.InGameObject.IsNotNull())
+            _lastSelectedGo = _lastSelected.InGameObject;
+
+        DoSelected?.Invoke(this);
+    }
+
+
+    public Node NodeToUpdate { get; private set; }
+    public IBranch ThisPopUp{ get;  private set; }
+    //public Trunk ThisTrunk { get; private set; }
+
+
+    //Main
     public void OnAwake() => AddService();
 
-    public void OnEnable() => ObserveEvents();
+    public void SetUpDataHub(Trunk rootTrunk, RectTransform mainRect)
+    {
+        _rootTrunk = rootTrunk;
+        MainCanvasRect = mainRect;
+    }
+
+    public void OnEnable()
+    {
+        //ObserveEvents();
+        FetchEvents();
+    }
+
+    public void FetchEvents()
+    {
+        //DoAddANode = HistoryEvents.Do.Fetch<IStoreNodeHistoryData>();
+        DoAddOptionalPopUp = PopUpEvents.Do.Fetch<IAddOptionalPopUp>();
+        DoRemoveOptionalPopUp = PopUpEvents.Do.Fetch<IRemoveOptionalPopUp>();
+        DoAddResolvePopUp = PopUpEvents.Do.Fetch<IAddResolvePopUp>();
+        DoRemoveResolvePopUps = PopUpEvents.Do.Fetch<IRemoveResolvePopUp>();
+        // DoAddTrunk = HistoryEvents.Do.Fetch<IAddTrunk>();
+        // DoRemoveTrunk = HistoryEvents.Do.Fetch<IRemoveTrunk>();
+        DoHighlighted = HistoryEvents.Do.Fetch<IHighlightedNode>();
+        DoSelected = HistoryEvents.Do.Fetch<ISelectedNode>();
+        //DoSetAsActiveBranch = HistoryEvents.Do.Fetch<IActiveBranch>();
+        DoSetIsAtRoot = HistoryEvents.Do.Fetch<IIsAtRootTrunk>();
+
+    }
 
     public void AddService() => EZService.Locator.AddNew<IDataHub>(this);
 
     public void OnRemoveService() { }
 
-    public void ObserveEvents()
+    // public void ObserveEvents()
+    // {
+    //     //HistoryEvents.Do.Subscribe<IInMenu>(SetIfInMenu);
+    //     //HistoryEvents.Do.Subscribe<IGameIsPaused>(SetIfGamePaused);
+    // }
+
+    public void OnStart()
     {
-        HistoryEvents.Do.Subscribe<IStoreNodeHistoryData>(ManageHistory);
-        HistoryEvents.Do.Subscribe<IInMenu>(SetIfInMenu);
-        HistoryEvents.Do.Subscribe<IGameIsPaused>(SetIfGamePaused);
-        HistoryEvents.Do.Subscribe<IActiveBranch>(SetActiveBranch);
-        HistoryEvents.Do.Subscribe<IAddActiveBranch>(AddActiveBranch);
-        HistoryEvents.Do.Subscribe<IRemoveActiveBranch>(RemoveActiveBranch);
-        HistoryEvents.Do.Subscribe<IHighlightedNode>(SetHighlighted);
-        HistoryEvents.Do.Subscribe<IAddTrunk>(AddTrunk);
-        HistoryEvents.Do.Subscribe<IRemoveTrunk>(RemoveTrunk);
-        PopUpEvents.Do.Subscribe<IAddResolvePopUp>(AddResolvePopUp);
-        PopUpEvents.Do.Subscribe<IAddOptionalPopUp>(AddOptionalPopUp);
-        PopUpEvents.Do.Subscribe<IRemoveResolvePopUp>(RemoveResolvePopUp );
-        PopUpEvents.Do.Subscribe<IRemoveOptionalPopUp>(RemoveOptionalPopUp);
+        _lastHighlighted = (Node)RootTrunk.GroupsBranches.First().DefaultStartOnThisNode;
+        _activeBranch = (Branch)RootTrunk.GroupsBranches.First();
     }
 
-
-    private void AddResolvePopUp(IAddResolvePopUp args) => ActiveResolvePopUps.Add(args.ThisPopUp);
-
-    private void AddOptionalPopUp(IAddOptionalPopUp args) => ActiveOptionalPopUps.Add(args.ThisPopUp);
-
-    private void RemoveResolvePopUp(IRemoveResolvePopUp args) => ActiveResolvePopUps.Remove(args.ThisPopUp);
-
-    private void RemoveOptionalPopUp(IRemoveOptionalPopUp args) => ActiveOptionalPopUps.Remove(args.ThisPopUp);
-
-    public void UnObserveEvents()
+    public void AddResolvePopUp(IBranch popUpToAdd)
     {
-        HistoryEvents.Do.Unsubscribe<IStoreNodeHistoryData>(ManageHistory);
-        HistoryEvents.Do.Unsubscribe<IInMenu>(SetIfInMenu);
-        HistoryEvents.Do.Unsubscribe<IGameIsPaused>(SetIfGamePaused);
-        HistoryEvents.Do.Unsubscribe<IActiveBranch>(SetActiveBranch);
-        HistoryEvents.Do.Unsubscribe<IAddActiveBranch>(AddActiveBranch);
-        HistoryEvents.Do.Unsubscribe<IRemoveActiveBranch>(RemoveActiveBranch);
-        HistoryEvents.Do.Unsubscribe<IHighlightedNode>(SetHighlighted);
-        HistoryEvents.Do.Unsubscribe<IAddTrunk>(AddTrunk);
-        HistoryEvents.Do.Unsubscribe<IRemoveTrunk>(RemoveTrunk);
-        PopUpEvents.Do.Unsubscribe<IAddResolvePopUp>(AddResolvePopUp);
-        PopUpEvents.Do.Unsubscribe<IAddOptionalPopUp>(AddOptionalPopUp);
-        PopUpEvents.Do.Unsubscribe<IRemoveResolvePopUp>(RemoveResolvePopUp );
-        PopUpEvents.Do.Unsubscribe<IRemoveOptionalPopUp>(RemoveOptionalPopUp);
-
+        _activeResolvePopUps.Add((Branch)popUpToAdd);
+        ThisPopUp = popUpToAdd;
+        DoAddResolvePopUp?.Invoke(this);
     }
+
+    public void AddOptionalPopUp(IBranch popUpToAdd)
+    {
+        _activeOptionalPopUps.Add((Branch)popUpToAdd);
+        ThisPopUp = popUpToAdd;
+        DoAddOptionalPopUp?.Invoke(this);
+    }
+
+    public void RemoveResolvePopUp(IBranch popUpToRemove)
+    {
+        _activeResolvePopUps.Remove((Branch)popUpToRemove);
+        ThisPopUp = popUpToRemove;
+        DoRemoveResolvePopUps?.Invoke(this);
+    }
+
+    public void RemoveOptionalPopUp(IBranch popUpToRemove)
+    {
+        _activeOptionalPopUps.Remove((Branch)popUpToRemove);
+        ThisPopUp = popUpToRemove;
+        DoRemoveOptionalPopUp?.Invoke(this);
+    }
+
+    // public void UnObserveEvents()
+    // {
+    //    // HistoryEvents.Do.Unsubscribe<IInMenu>(SetIfInMenu);
+    //    // HistoryEvents.Do.Unsubscribe<IGameIsPaused>(SetIfGamePaused);
+    // }
+
+
+
+
+    //private void SetIfInMenu(IInMenu args) => InMenu = args.InTheMenu;
+
     
-    private void SetHighlighted(IHighlightedNode args) => Highlighted = args.Highlighted;
-
-    private void SetActiveBranch(IActiveBranch args) => ActiveBranch = args.ThisBranch;
-    private void AddActiveBranch(IAddActiveBranch args)
+    public void ManageHistory(INode node)
     {
-        if(AllActiveBranches.Contains(args.ThisBranch)) return;
-        AllActiveBranches.Add(args.ThisBranch);
-    }
-    private void RemoveActiveBranch(IRemoveActiveBranch args)
-    {
-        if(!AllActiveBranches.Contains(args.ThisBranch)) return;
-        AllActiveBranches.Remove(args.ThisBranch);
-    }
-
-    public void SetAllowKeys(bool newAllowKeysSetting) => AllowKeys = newAllowKeysSetting;
-    public void SetOnHomeScreen(bool IsOnHomeScreen) => OnHomeScreen = IsOnHomeScreen;
-
-    private void SetIfGamePaused(IGameIsPaused args) => GamePaused = args.IsPaused;
-
-    private void SetIfInMenu(IInMenu args) => InMenu = args.InTheMenu;
-
-    public void SetStarted() => SceneStarted = true;
-    
-    private void ManageHistory(IStoreNodeHistoryData args)
-    {
-        if (args.NodeToUpdate is null)
+        NodeToUpdate = (Node)node;
+        //DoAddANode?.Invoke(this);
+        
+        if (_history.Contains(NodeToUpdate))
         {
-            History.Clear();
-            SelectedGOs.Clear();
-            return;
-        }
-        if (History.Contains((UINode)args.NodeToUpdate))
-        {
-            History.Remove((UINode) args.NodeToUpdate);
-            SelectedGOs.Remove(args.NodeToUpdate.InGameObject);
+            _history.Remove( NodeToUpdate);
+            SelectedGOs.Remove(NodeToUpdate.InGameObject);
+            _currentSwitchHistory.Remove(NodeToUpdate);
         }
         else
         {
-            History.Add((UINode) args.NodeToUpdate);
-            if(args.NodeToUpdate.InGameObject.IsNull())return;
-            SelectedGOs.Add(args.NodeToUpdate.InGameObject);
+            _history.Add(NodeToUpdate);
+            _currentSwitchHistory.Add(NodeToUpdate);
+            if(NodeToUpdate.InGameObject.IsNull())return;
+            SelectedGOs.Add(NodeToUpdate.InGameObject);
         }
     }
     
-    private void AddTrunk(IAddTrunk trunkData)
+    public void AddTrunk(Trunk trunk)
     {
-        CurrentTrunk = trunkData.ThisTrunk;
-        if(ActiveTrunks.Contains(trunkData.ThisTrunk)) return;
-            ActiveTrunks.Add(trunkData.ThisTrunk);
+        _currentTrunk = trunk;
+        _onRootTrunk = RootTrunk == trunk;
+        DoSetIsAtRoot?.Invoke(this);
+        
+        if(ActiveTrunks.Contains(trunk)) return;
+        ActiveTrunks.Add(trunk);
+        //ThisTrunk = trunk;
+        //DoAddTrunk?.Invoke(this);
+        
     }
     
-    private void RemoveTrunk(IRemoveTrunk trunkData)
+    public void RemoveTrunk(Trunk trunk)
     {
-        if (!ActiveTrunks.Contains(trunkData.ThisTrunk)) return;
-            ActiveTrunks.Remove(trunkData.ThisTrunk);
+        if (!ActiveTrunks.Contains(trunk)) return;
+        ActiveTrunks.Remove(trunk);
+       // ThisTrunk = trunk;
+        //DoRemoveTrunk?.Invoke(this);
+    }
+    
+    public void SaveState()
+    {
+        //TODO Add InMenu so can switch from game and back
+        _wasAtRoot = _onRootTrunk;
+        _lastSelectedBeforePause = _lastSelected;
+        _lastActiveBranchBeforePause = _activeBranch;
+        _lastTrunkBeforePause = _currentTrunk;
+        _lastCurrentSwitchHistory = _currentSwitchHistory.ToList();
+        _lastSwitcher = CurrentSwitcher;
     }
 
+    public void RestoreState()
+    {
+        _onRootTrunk = _wasAtRoot;
+        _lastSelected = _lastSelectedBeforePause;
+        _activeBranch = _lastActiveBranchBeforePause;
+        _currentTrunk = _lastTrunkBeforePause;
+        SetSwitcher(_lastSwitcher);
+        _currentSwitchHistory = _lastCurrentSwitchHistory;
+    }
 }

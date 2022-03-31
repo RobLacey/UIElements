@@ -13,7 +13,7 @@ public class UINavigation : NodeFunctionBase
     }
 
     //Variables
-    private readonly UINode _up, _down, _left, _right;
+    private readonly Node _up, _down, _left, _right;
     private IBranch _myBranch;
     private INode _myNode;
     private readonly INavigationSettings _mySettings;

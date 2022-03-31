@@ -62,9 +62,9 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
     public void SwitchGroupProcess()
     {
         //TODO Change this check in in Input or in GOUI Switch
-        if(_myDataHub.OnHomeScreen && 
+        if(_myDataHub.IsAtRoot && 
            Switch(_gouiSwitcher, GOUIButtonsPressed, SwitchType.GOUI, _inputScheme.PressedPositiveGOUISwitch())) return;
-
+        
         Switch(SwitchTrunkGroup, SwitcherButtonsPressed, SwitchType.Normal, _inputScheme.PressedPositiveSwitch());
     }
 
@@ -102,7 +102,7 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
 
     public void ImmediateSwitch()
     {
-        if (_myDataHub.OnHomeScreen)
+        if (_myDataHub.IsAtRoot)
         {
             if (GOUIButtonsPressed)
                 _lastSwitchType = SwitchType.GOUI;

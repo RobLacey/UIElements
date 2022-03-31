@@ -5,19 +5,20 @@ public class CancelBindings : EZEventBindingsBase
     protected override void EventsToBind()
     {
         //Cancel
-        AutoRemove().CreateEvent<ICancelButtonActivated>();
-        AutoRemove().CreateEvent<ICancelHoverOver>();
+        AutoRemove().CreateEvent<ICancelActivated>();
+       // AutoRemove().CreateEvent<ICancelHoverOver>();
     }
 }
 
-public interface ICancelButtonActivated
+public interface ICancelActivated
 {
     EscapeKey EscapeKeyType { get; }
+    IBranch BranchToCancel { get; }
 } 
 
-public interface ICancelHoverOver
-{
-    EscapeKey EscapeKeyType { get; }
-}
+// public interface ICancelHoverOver
+// {
+//     EscapeKey EscapeKeyType { get; }
+// }
 
 

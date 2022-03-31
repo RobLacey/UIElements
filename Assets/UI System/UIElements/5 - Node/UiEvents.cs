@@ -3,7 +3,7 @@
 public interface IUiEvents
 {
     int MasterNodeID { get; }
-    UINode ReturnMasterNode { get; }
+    Node ReturnMasterNode { get; }
     event Action<bool> WhenPointerOver;
     event Action<bool> IsSelected;
     event Action IsPressed;
@@ -18,14 +18,14 @@ public interface IUiEvents
 
 public class UiEvents : IUiEvents
 {
-    public UiEvents(int instanceId, UINode node)
+    public UiEvents(int instanceId, Node node)
     {
         MasterNodeID = instanceId;
         ReturnMasterNode = node;
     }
 
     public int MasterNodeID { get; }
-    public UINode ReturnMasterNode { get; }
+    public Node ReturnMasterNode { get; }
     
     //Events
     public event Action<bool> WhenPointerOver;

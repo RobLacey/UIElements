@@ -32,7 +32,7 @@ public class SizeAndPositionSettings : ISizeAndPositionSettings
     
     private bool CanCreate(Setting functions) => (functions & Setting.SizeAndPosition) != 0;
 
-    private void CheckForSetUpError(Setting functions, UINode parentNode) 
+    private void CheckForSetUpError(Setting functions, Node parentNode) 
     {
         if(!CanCreate(functions)) return;
         

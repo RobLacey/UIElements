@@ -12,7 +12,7 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
     }
 
     //Variables
-    private SelectData _data;
+    private readonly HistoryData _data = new HistoryData();
     private InputScheme _inputScheme;
     private readonly Toggle _myToggle;
     
@@ -26,23 +26,22 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
                                        && MyNode.MultiSelectSettings.AllowMultiSelect == IsActive.Yes ;
     private bool LinkIsSelectedAndHasAChild => LinkBranch.LastSelected.IsNotNull() && LinkBranch.LastSelected.HasChildBranch.IsNotNull();
     private bool LinkBranchIsActive => LinkBranch.LastSelected.HasChildBranch.CanvasIsEnabled;
-    private UIBranch CloseBranchEvent => (UIBranch)MyBranch;
     
     //Main
     public void OnEnable()
     {
         if(!HasLink) return;
         UseEZServiceLocator();
-        CloseBranchEvent.EnterBranchEvent += OnBranchEnter;
-        CloseBranchEvent.ExitBranchEvent += OnBranchExit;
+        MyBranch.EnterBranchEvent += OnBranchEnter;
+        MyBranch.ExitBranchEvent += OnBranchExit;
     }
 
     public void OnDisable()
     {
         if(!HasLink) return;
 
-        CloseBranchEvent.EnterBranchEvent -= OnBranchEnter;
-        CloseBranchEvent.ExitBranchEvent -= OnBranchExit;
+        MyBranch.EnterBranchEvent -= OnBranchEnter;
+        MyBranch.ExitBranchEvent -= OnBranchExit;
     }
 
     public void OnStart()
@@ -51,11 +50,7 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
         LinkBranch.ParentTrunk = MyBranch.ParentTrunk;
     }
 
-    public void UseEZServiceLocator()
-    {
-        _data = new SelectData(EZService.Locator.Get<IHistoryTrack>(this));
-        _inputScheme = EZService.Locator.Get<InputScheme>(this);
-    }
+    public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
 
     private void OnBranchEnter()
     {
@@ -66,7 +61,7 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
     public void NavigateToChildBranch()
     {
         if (!HasLink || MultiSelectAllowed) return;
-        LinkBranch.MoveToThisBranch(MyBranch.MyParentBranch);
+        LinkBranch.OpenThisBranch(MyBranch.MyParentBranch);
     }
 
     private void OnBranchExit()
@@ -86,6 +81,6 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
          }
         
         if(_myToggle.IsToggleSelected) return;
-        LinkBranch.StartBranchExitProcess(OutTweenType.Cancel);
+        LinkBranch.ExitThisBranch(OutTweenType.Cancel);
     }
 }

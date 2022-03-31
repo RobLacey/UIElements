@@ -45,7 +45,6 @@ public static class SetUpToolTipClass
 
     private static Transform GetToolTipFolder()
     {
-        //TODO Change this as won't work
         var hub = Object.FindObjectOfType<Hub>();
         return new CreateNewObjects().CreateToolTipFolder(hub.transform);
     }

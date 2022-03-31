@@ -21,12 +21,13 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
     public bool InTheMenu { get; set; } = true;
     private InMenuOrGame StartWhere { get; set; }
 
+    /*
     private void SaveNoPopUps(INoPopUps args)
     {
-        //TODO Make Sure this all works still as withe the whole class
         if (!InTheMenu && !_myDataHub.NoPopups) _wasInGame = true;
          PopUpEventHandler();
     }
+    */
 
     public void OnEnable()
     {
@@ -48,7 +49,7 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
         InputEvents.Do.Subscribe<IMenuGameSwitchingPressed>(CheckForActivation);
         HistoryEvents.Do.Subscribe<IGameIsPaused>(WhenTheGameIsPaused);
         HistoryEvents.Do.Subscribe<IOnStart>(StartUp);
-        PopUpEvents.Do.Subscribe<INoPopUps>(SaveNoPopUps);
+       // PopUpEvents.Do.Subscribe<INoPopUps>(SaveNoPopUps);
     }
 
     public void OnDisable() => UnObserveEvents();
@@ -58,13 +59,14 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
         InputEvents.Do.Unsubscribe<IMenuGameSwitchingPressed>(CheckForActivation);
         HistoryEvents.Do.Unsubscribe<IGameIsPaused>(WhenTheGameIsPaused);
         HistoryEvents.Do.Unsubscribe<IOnStart>(StartUp);
-        PopUpEvents.Do.Unsubscribe<INoPopUps>(SaveNoPopUps);
+       // PopUpEvents.Do.Unsubscribe<INoPopUps>(SaveNoPopUps);
     }
 
     public void OnStart()
     {
         if (_inputScheme.InGameMenuSystem == InGameSystem.On)
             StartWhere = _inputScheme.WhereToStartGame;
+        //_myDataHub.SetInMenu(_inputScheme.star;
     }
 
     private void CheckForActivation(IMenuGameSwitchingPressed arg)
@@ -125,7 +127,14 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
         BroadcastState();
     }
 
-    private void BroadcastState() => IsInMenu?.Invoke(this);
+    /// <summary>
+    /// Change event so everything checks DataHub
+    /// </summary>
+    private void BroadcastState()
+    {
+        _myDataHub.SetInMenu(InTheMenu);
+        IsInMenu?.Invoke(this);
+    }
 
     private void WhenTheGameIsPaused(IGameIsPaused args)
     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using EZ.Events;
 using EZ.Service;
 using UnityEngine;
 using UnityEngine.UI;
 using NaughtyAttributes;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Canvas))]
 [RequireComponent(typeof(CanvasGroup))]
@@ -15,10 +15,9 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(UITweener))]
 
 
-public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBranch, IEZEventDispatcher,
-                                IPointerEnterHandler, IPointerExitHandler, ICloseBranch
+public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ IBranch, IEZEventDispatcher, ICloseBranch, IServiceUser
 {
-    [Header("Branch Main Settings")] [HorizontalLine(1f, EColor.Blue, order = 1)]
+    [Header("Branch Main Settings")] [HorizontalLine(2f, EColor.Blue, order = 1)]
     [SerializeField]
     private BranchType _branchType = BranchType.Standard;
 
@@ -28,38 +27,57 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     
     [SerializeField]
     [Label("Start On (Optional)")] 
-    private UINode _startOnThisNode;
+    private Node _startOnThisNode;
+
+    // [SerializeField]
+    // [ShowIf(EConditionOperator.Or, TimedBranch, ResolveBranch, OptionalBranch)]
+    // private IsActive _onlyAllowOnHomeScreen = IsActive.Yes;
+
+    [SerializeField] 
+    [ShowIf(EConditionOperator.Or, TimedBranch, OptionalBranch)] [Range(0f,20f)] 
+    private float _timer = 0f;
 
     [SerializeField]
-    [ShowIf(EConditionOperator.Or, TimedBranch, ResolveBranch, OptionalBranch)]
-    private IsActive _onlyAllowOnHomeScreen = IsActive.Yes;
+    [ShowIf(EConditionOperator.Or, OptionalBranch , ResolveBranch, TimedBranch/*, OnlyAllowOnHomeScreen*/)]
+    [Label("When Allowed...")]
+    private WhenAllowed _whenAllowed;
+    // [SerializeField] 
+    // [ShowIf(EConditionOperator.And, OptionalBranch/*, OnlyAllowOnHomeScreen*/)]
+    // [Label("When Not On Home Screen")]
+    // private StoreAndRestorePopUps _storeOrResetOptional = StoreAndRestorePopUps.DoNothing;
 
-    [SerializeField] 
-    [ShowIf(TimedBranch)] [Range(0f,20f)] 
-    private float _timer = 5f;
-
-    [SerializeField] 
-    [ShowIf(EConditionOperator.And, OptionalBranch, OnlyAllowOnHomeScreen)]
-    [Label("When Not On Home Screen")]
-    private StoreAndRestorePopUps _storeOrResetOptional = StoreAndRestorePopUps.Close;
+    // [SerializeField] 
+    // [ShowIf(EConditionOperator.And, OptionalBranch)] 
+    // [Label("Allow With Active Resolve PopUps")]
+    // private IsActive _allowWithActiveResolve = IsActive.No;
     
-    [SerializeField] 
-    [ShowIf(OptionalBranch)]
-    [Label("Buffer When Not On Home Screen")]
-    private IsActive _canAddToHomeScreenBuffer = IsActive.No;
+    // [SerializeField] 
+    // [ShowIf(OptionalBranch)]
+    // [Label("Buffer Until Can Activate")]
+    // private IsActive _canAddToHomeScreenBuffer = IsActive.No;
     
-    [SerializeField]
-    [Label("Move To Next Branch...")] [HideIf(InGamUIBranch)] 
-    private WhenToMove _moveType = WhenToMove.Immediately;
 
+    [Header("Canvas Order Settings")] [HorizontalLine(2f, EColor.Blue, order = 1)]
     [SerializeField] 
     [ShowIf(StandardBranch)] 
     private OrderInCanvas _canvasOrderSetting = OrderInCanvas.Default;
+    
+    [SerializeField] 
+    private IsActive _applyFocus = IsActive.No;
+    
+    [SerializeField] 
+    [Range(1,40)] private int _whenFocusedSortingOrder = 2;
 
     [SerializeField] 
     [ShowIf(ShowManualOrder)] 
     [OnValueChanged(SetUpCanvasOrder)] 
     private int _orderInCanvas;
+    
+    [Header("Navigation Settings")] [HorizontalLine(2f, EColor.Blue, order = 1)]
+
+    [SerializeField]
+    [Label("Move To Next Branch...")] [HideIf(InGamUIBranch)] 
+    private WhenToMove _moveType = WhenToMove.Immediately;
 
     [SerializeField] 
     [HideIf(EConditionOperator.Or, AnyPopUpBranch, ControlBarBranch, InGamUIBranch)]
@@ -67,6 +85,13 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     [Label("Visible When Child Active")]
     private IsActive _stayVisible = IsActive.No;
 
+   [SerializeField] 
+   [Label("Block Other Branches While Open")]
+   private IsActive _blockRaycastToOpenBranches = IsActive.No;
+
+    [SerializeField] 
+    [ShowIf(EConditionOperator.Or, StandardBranch)]
+    private EscapeKey _escapeKeyFunction = EscapeKey.GlobalSetting;
     // [SerializeField] 
     // [ShowIf(EConditionOperator.Or, NotControlBar, Stored)] 
     // [Label("Tween On Return")]
@@ -86,11 +111,8 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     [Label("Auto Close Delay")]
     [Range(0f, 1f)]private float _autoCloseDelay = 0.25f;
 
-    [SerializeField] 
-    [ShowIf(EConditionOperator.Or, StandardBranch)]
-    private EscapeKey _escapeKeyFunction = EscapeKey.GlobalSetting;
 
-    [Header("Events & Create New Buttons", order = 2)][HorizontalLine(1f, EColor.Blue, order = 3)] 
+    [Header("Events & Create New Buttons", order = 2)][HorizontalLine(2f, EColor.Blue, order = 3)] 
     [Space(20, order = 1)]
     [SerializeField] 
     private BranchEvents _branchEvents;
@@ -111,11 +133,12 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     private bool _tweening = true;
 
     private IBranchBase _branchTypeBaseClass;
+    private IDataHub _myDataHub;
     
 
     //Delegates & Events
     private Action TweenFinishedCallBack { get; set; }
-    private  Action<IActiveBranch> SetAsActiveBranch { get; set; }        
+    // private  Action<IActiveBranch> SetAsActiveBranch { get; set; }        
     private Action<ICloseBranch> CloseAndResetBranch { get; set; }
     public event Action EnterBranchEvent;
     public event Action ExitBranchEvent;
@@ -159,12 +182,16 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
 
     public void OnEnable()
     {
+        UseEZServiceLocator();
         FetchEvents();
         ObserveEvents();
         _branchTypeBaseClass.OnEnable();
         AutoOpenCloseClass.OnEnable();
+        _whenAllowed.OnEnable();
     }
-    
+
+    public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
+
     private void SetDefaultStartPosition()
     {
         if (_startOnThisNode)
@@ -178,13 +205,13 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
             Debug.Log($"This Branch Has No Nodes : {this}");
             return;
         }
-        DefaultStartOnThisNode = (UINode) ThisBranchesNodes.First();
+        DefaultStartOnThisNode = (Node) ThisBranchesNodes.First();
     }
 
     public void FetchEvents()
     {
         CloseAndResetBranch = BranchEvent.Do.Fetch<ICloseBranch>();
-        SetAsActiveBranch = HistoryEvents.Do.Fetch<IActiveBranch>();
+        // SetAsActiveBranch = HistoryEvents.Do.Fetch<IActiveBranch>();
     }
 
     public void ObserveEvents() => HistoryEvents.Do.Subscribe<ISceneIsChanging>(SceneIsChanging);
@@ -197,10 +224,11 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
 //        ExitBranchEvent?.Invoke();
         UnObserveEvents();
         AutoOpenCloseClass.OnDisable();
+        _whenAllowed.OnDisable();
         
         if(_sceneIsChanging) return;
         _branchTypeBaseClass.OnDisable();
-        SetAsActiveBranch = null;
+        //SetAsActiveBranch = null;
     }
 
     public void OnDestroy()
@@ -209,7 +237,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
             MyCanvas.enabled = false;
         UnObserveEvents();
         _branchTypeBaseClass.OnDestroy();
-        SetAsActiveBranch = null;
+        //SetAsActiveBranch = null;
     }
 
     private void Start() => _branchTypeBaseClass.OnStart();
@@ -218,12 +246,13 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     {
         if(fromPool)
             OnEnable();
-        MoveToThisBranch();
+        OpenThisBranch();
     }
 
-    public void MoveToThisBranch(IBranch newParentBranch = null)
+    public void OpenThisBranch(IBranch newParentBranch = null)
     {
         if(!_branchTypeBaseClass.CanStartBranch()) return;
+
         _branchTypeBaseClass.SetUpBranch(newParentBranch);
         
         SetBranchAsActive();
@@ -246,7 +275,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
         _branchEvents.OnBranchEnter();
         EnterBranchEvent?.Invoke();
         if (!_canSetAsActivateBranch) return;
-        SetAsActiveBranch?.Invoke(this);
+        _myDataHub.SetActiveBranch(this);
     }
 
     private void InTweenCallback()
@@ -264,13 +293,14 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     private void SetHighlightedNode()
     {
         if(LastHighlighted.IsNull()) return;
-        
+
         if (_canSetAsActivateBranch)
             LastHighlighted.SetNodeAsActive();
     }
 
-    public void StartBranchExitProcess(OutTweenType outTweenType, Action endOfTweenCallback = null)
+    public void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null)
     {
+        //Debug.Log(ThisBranch);
         if(!CanvasIsEnabled || DontExitBranch())
         {
             endOfTweenCallback?.Invoke();
@@ -287,8 +317,7 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
             endOfTweenCallback?.Invoke();
         }
 
-        //TODO make these statements match rather than check an opposite
-        bool DontExitBranch() => !_branchTypeBaseClass.CanExitBranch(outTweenType);
+        bool DontExitBranch() => _branchTypeBaseClass.DontExitBranch(outTweenType);
     }
 
     private void StartOutTween(Action endOfTweenCallback = null)
@@ -321,19 +350,27 @@ public partial class UIBranch : MonoBehaviour, IEZEventUser, IActiveBranch, IBra
     public void SetBlockRaycast(BlockRaycast blockRaycast) => _branchTypeBaseClass.SetBlockRaycast(blockRaycast);
     public void SetUpGOUIBranch(IGOUIModule module) => _branchTypeBaseClass.SetUpGOUIBranch(module);
 
-    public void OnPointerEnter(PointerEventData eventData) => AutoOpenCloseClass.OnPointerEnter();
-
-    public void OnPointerExit(PointerEventData eventData) => AutoOpenCloseClass.OnPointerExit();
-
-    public void StartOrStopPopUp(bool activate)
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        if (activate)
-        {
-            MoveToThisBranch();
-        }
-        else
-        {
-            StartBranchExitProcess(OutTweenType.Cancel);
-        }
+        if (_applyFocus == IsActive.Yes)
+            _branchTypeBaseClass.SetFocus(_whenFocusedSortingOrder);
+        AutoOpenCloseClass.OnPointerEnter();
     }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (_applyFocus == IsActive.Yes)
+            _branchTypeBaseClass.ResetFocus();
+
+        AutoOpenCloseClass.OnPointerExit();
+    }
+
+    /// <summary>
+    /// Method is used to close a branch from Inspector events or from external scripts
+    /// </summary>
+    public void ExitBranch_Runtime()
+    {
+        ExitThisBranch(OutTweenType.Cancel);
+    }
+
 }

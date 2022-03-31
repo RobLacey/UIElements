@@ -24,7 +24,7 @@ namespace UIElements
 
         [SerializeField] 
         [Foldout(NavigationFoldOut)]
-        private UIBranch _childBranch;
+        private Branch _childBranch;
 
         [SerializeField] 
         [Foldout(EventFoldOut)] [InfoBox(EventFoldOutInfo)]
@@ -107,7 +107,7 @@ namespace UIElements
             _mySetter.SetWorldFixedPosition?.Invoke(newPos);
         }
 
-        private void SetChildBranch(UIBranch childBranch)
+        private void SetChildBranch(Branch childBranch)
         {
             if(childBranch.IsNull()) return;
             

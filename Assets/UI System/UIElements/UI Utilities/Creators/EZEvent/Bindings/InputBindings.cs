@@ -1,4 +1,5 @@
 ﻿using EZ.Events;
+using UIElements;
 
 public class InputBindings : EZEventBindingsBase
 {
@@ -6,7 +7,6 @@ public class InputBindings : EZEventBindingsBase
     {
         //Input
         AutoRemove().CreateEvent<IPausePressed>();
-        AutoRemove().CreateEvent<IHotKeyPressed>();
         AutoRemove().CreateEvent<IMenuGameSwitchingPressed>();
         AutoRemove().CreateEvent<ICancelPressed>();
 
@@ -16,13 +16,10 @@ public class InputBindings : EZEventBindingsBase
    }
 }
 
-public interface IPausePressed { } // This one is test
-
-public interface IHotKeyPressed
+public interface IPausePressed
 {
-    INode ParentNode { get; }
-    IBranch MyBranch { get; }
-}
+    bool ClearScreen { get; }
+} // This one is test
 
 public interface IMenuGameSwitchingPressed { }
 

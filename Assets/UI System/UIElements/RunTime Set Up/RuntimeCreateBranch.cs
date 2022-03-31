@@ -7,18 +7,18 @@ public class RuntimeCreateBranch
 {
     private CreateNewObjects _binGetter = new CreateNewObjects();
 
-    public IBranch CreateGOUI(UIBranch template)
+    public IBranch CreateGOUI(Branch template)
     {
         var parent = _binGetter.MakeGOUIBin(HubTransform());
         return CreateBranch(template, parent);
     }
         
-    public IBranch CreatePopUp(UIBranch template, Transform parent)
+    public IBranch CreatePopUp(Branch template, Transform parent)
     {
         return CreateBranch(template, parent);
     }
     
-    public IBranch CreatePopUp(UIBranch template)
+    public IBranch CreatePopUp(Branch template)
     {
         var parent = _binGetter.MakePopUpBin(HubTransform());
         return CreateBranch(template, parent);
@@ -31,7 +31,7 @@ public class RuntimeCreateBranch
     }
 
     //Main
-    private IBranch CreateBranch(UIBranch template, Transform createParent)
+    private IBranch CreateBranch(Branch template, Transform createParent)
     {
         IBranch newBranch = template;
             

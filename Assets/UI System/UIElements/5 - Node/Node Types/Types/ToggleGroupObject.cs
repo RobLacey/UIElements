@@ -70,7 +70,7 @@ using UnityEngine.Serialization;
         {
             if(CanUseToggleSwitcher && _myDataHub.CurrentSwitcher != ToggleSwitcher)
             {
-                _myDataHub.CurrentSwitcher = ToggleSwitcher;
+                _myDataHub.SetSwitcher(ToggleSwitcher);
             }
         }
 

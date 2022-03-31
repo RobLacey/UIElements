@@ -28,21 +28,26 @@ public class StandardBranch : BranchBase, IStandardBranch
     {
         base.ObserveEvents();
         HistoryEvents.Do.Subscribe<IOnStart>(SetUpOnStart);
+        BlockRaycasts += SetBlockRaycast;
+
     }
 
     public override void UnObserveEvents()
     {
         base.UnObserveEvents();
         HistoryEvents.Do.Unsubscribe<IOnStart>(SetUpOnStart);
+        BlockRaycasts -= SetBlockRaycast;
     }
+    
 
     public override void OnStart()
     {
         base.OnStart();
         SetCanvas(ActiveCanvas.No);
+        SetControlBarCanvasOrder();
     }
 
-    protected override void SetUpBranchesOnStart(ISetUpStartBranches args) => SetControlBarCanvasOrder();
+    //protected override void SetUpBranchesOnStart(ISetUpStartBranches args) => SetControlBarCanvasOrder();
 
     private void SetUpOnStart(IOnStart args)
     {
@@ -74,7 +79,6 @@ public class StandardBranch : BranchBase, IStandardBranch
         //CanGoToFullscreen();
         
        // Debug.Log($"New Parent : {newParentController} for {_myBranch}");
-        //TODO Check I still need this
         // if(!_isOnRootTrunk)
         // {
             SetNewParentBranch(newParentController);
@@ -109,27 +113,13 @@ public class StandardBranch : BranchBase, IStandardBranch
     
     public override void SetBlockRaycast(BlockRaycast active)
     {
-        if(!GameIsPaused && NoResolvePopUps)
-        {
-            base.SetBlockRaycast(IsControlBar ? BlockRaycast.Yes: active);
-        }
-        else
-        {
-            base.SetBlockRaycast(active);
-        }
+        
+        base.SetBlockRaycast(IsControlBar ? BlockRaycast.Yes: active);
     }
     
     public override void SetCanvas(ActiveCanvas active)
     {
-        if(IsControlBar && CanStart) return;
-        //TODO why is this check here
-        if(!GameIsPaused && NoResolvePopUps)
-        {
-            base.SetCanvas(active);
-        }
-        else
-        {
-            base.SetCanvas(active);
-        }
+        if(IsControlBar /*|| CanStart*/) return;
+        base.SetCanvas(active);
     }
 }

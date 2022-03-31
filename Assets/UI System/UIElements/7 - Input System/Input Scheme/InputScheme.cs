@@ -4,21 +4,6 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[Serializable]
-public class CursorSettings
-{
-    [SerializeField] 
-    [ShowIf("CustomCursor")] 
-    private Texture2D _cursor = default;
-
-    [SerializeField] 
-    [ShowIf("CustomCursor")] 
-    private Vector2 _hotSpot =default;
-
-    public Texture2D CursorTexture => _cursor;
-    public Vector2 HotSpot => _hotSpot;
-}
-
 public abstract class InputScheme : ScriptableObject, IIsAService
 {
     [Space(EditorSpace, order = 0)]
@@ -57,16 +42,16 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     private VirtualCursorSettings _virtualCursorSettings;
     
     [SerializeField] [Space(EditorSpace)] [DisableIf(IsPlaying)]
-    protected InMenuOrGame _startGameWhere = InMenuOrGame.InGameControl;
+    protected InMenuOrGame _startGameWhere = InMenuOrGame.InMenu;
     
-    [Header("Cancel / Back Settings")] [Space(10f)] [HorizontalLine(1, color: EColor.Blue, order = 1)]
+   // [Header("Cancel / Back Settings")] [Space(10f)] [HorizontalLine(1, color: EColor.Blue, order = 1)]
     
-    [SerializeField] 
-    [Label("Nothing to Cancel Action")] 
-    protected PauseOptionsOnEscape _pauseOptionsOnEscape = PauseOptionsOnEscape.DoNothing;
+    // [SerializeField] 
+    // [Label("Nothing to Cancel Action")] 
+    // protected PauseOptionsOnEscape _pauseOptionsOnEscape = PauseOptionsOnEscape.DoNothing;
     
-    [SerializeField]
-    private PauseFunction _globalEscapeFunction;
+    // [SerializeField]
+    // private PauseFunction _globalEscapeFunction;
     
 
     public void Awake()
@@ -85,9 +70,7 @@ public abstract class InputScheme : ScriptableObject, IIsAService
 
     //Variables
     protected Vector3 _virtualCursorPosition;
-
-    private enum PauseFunction { DoNothing, BackOneLevel, BackToHome }
-
+    
     
     //Editor
     private bool InGameOn => _inGameMenuSystem == InGameSystem.On;
@@ -125,8 +108,8 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     }
 
     public ControlMethod ControlType => _mainControlType;
-    public PauseOptionsOnEscape PauseOptions => _pauseOptionsOnEscape;
-    public EscapeKey GlobalCancelAction => SetGlobalEscapeFunction();
+    //public PauseOptionsOnEscape PauseOptions => _pauseOptionsOnEscape;
+    // public EscapeKey GlobalCancelAction => SetGlobalEscapeFunction();
     public InGameSystem InGameMenuSystem => _inGameMenuSystem;
     public InMenuOrGame WhereToStartGame => _startGameWhere;
     public bool CanUseVirtualCursor => _useVirtualCursor == VirtualControl.Yes;
@@ -167,19 +150,19 @@ public abstract class InputScheme : ScriptableObject, IIsAService
     public abstract bool PressSelect();
     public abstract bool HotKeyChecker(HotKey hotKey);
 
-    private EscapeKey SetGlobalEscapeFunction()
-    {
-        switch (_globalEscapeFunction)
-        {
-            case PauseFunction.DoNothing:
-                return EscapeKey.None;
-            case PauseFunction.BackOneLevel:
-                return EscapeKey.BackOneLevel;
-            case PauseFunction.BackToHome:
-                return EscapeKey.BackToHome;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+    // private EscapeKey SetGlobalEscapeFunction()
+    // {
+    //     switch (_globalEscapeFunction)
+    //     {
+    //         case PauseFunction.DoNothing:
+    //             return EscapeKey.None;
+    //         case PauseFunction.BackOneLevel:
+    //             return EscapeKey.BackOneLevel;
+    //         case PauseFunction.BackToHome:
+    //             return EscapeKey.BackToHome;
+    //         default:
+    //             throw new ArgumentOutOfRangeException();
+    //     }
+    // }
 
 }

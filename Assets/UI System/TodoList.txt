@@ -1,0 +1,115 @@
+﻿ 
+//Branch Fixes
+- Pause Menu. Needs to trigger seperately. Use same pattern as switcherHistory to track whilePausedHistory
+- Disable Input when tweening between branches
+- Have a clear all Canvas's option on Branch (Same as Pause uses). Add To PopUps
+- Fix Control Bar functionality (seperate it from everything else, add to each trunk / switcher etc etc)
+- Disable /  enable Branches working still (removes from groups and can a add to group). Need to fix Dynamic Branches so functionality works
+- Check when all nodes are disabled in branch that it will switch to next branch and / or pass over it when switching
+- Make MoveToBranch Call OnEnable, StartBranchExit to call OnDisable.
+   Only active branches and nodes are assigned to Events etc (Potentially quick big!!)
+- Turn off Canvas then disable for Dynamic branches / Nodes. Needed for pooling
+- Look into when Branches have to turn canvas's on and off as Trunk can do it most the time when leaving to full screens. May only need it on going to child. 
+    Remove it as a auto conditon of tweening out.
+- Stop Parent Branch re-opening child when it is already open/tweening from a different parent.
+- Runtime Pool setting which disables everything i.e RestoreBranch and also check that it can be activated as it's pooled
+- Set Resolve to not show block raycast but just set it automatically.
+- Add on focus user event to Branch 
+- Add while activeBranch user event
+
+//Runtime Setter
+- Rework to have all functionality needed
+   
+//Switcher
+- Checks for disables branch and skip
+
+// Auto Open Close
+- Doesn't work properly with Multi- Select
+- Doesn't Stay closed when escape pressed from child
+
+//Multi Select
+- Make work with any node. Will need option to be set or not depending on node type
+- Turn into a Scriptable object like with toggle group.
+
+//PopUps
+ - Need to rework PopUps so clear screen and work properly. 
+ - Add close all open branches when started option (may be restricted to Root Trunk)
+ - Check for escape key working
+ - Do PopUps allow branching to normal branches??? Decide if allowable or not. Implement like hot key so opens up hiearchy
+ - Buffering system for when not allowed
+ - Add check in navigate to child and toggle linked branch to no allow popups here (doesn't work like this)
+ 
+//HistoryManagement
+- Cancel has no sound
+- When Escape pressed doesn't go back to parent node in branch but last highlighted. Must be parent node
+- Have clear current Trunk cancel option (maybe on the back of currentSwitcher list)
+
+//Trunk
+- Move Branch types to Trunk (Not sure this is needed!!)
+- Add option not to tween branches when opening new trunk
+- Trunk needs to have Immediate or AfterExit option to tween
+- Update Make New tree Button
+
+//Hub
+- New Button in Hub to create project properly (canvas and scaler set-up correctly). 
+    Or have a scriptable project settings file that can be dragged in
+- Remove Load next scene, add to seperate script
+- Hard coded in delay in Hub to stop race conditions. Remove this by calling OnEnable in MoveToBranch (see Branch todo list)
+- Check constructor buttons all work properly
+- Move Where to start into approaprite class. At the moment it is in various places. Moving Input may help this as settings move to Hub
+
+//UiInput
+- Start with Keys doesn't work
+- Make UI Input a normal c# class and have settings in Hub
+- Make Hotspot class for VC
+- Make sure mouse hiding is working properly
+- Make sure mouse doesn't work when Controller is active
+- Implement new input system
+- Add timer to VC raycast so does it every other frame (for example) to improve performace)
+- Add check that goes through HotKeys and checks for duplicate hotkey assignments
+
+//Nodes
+- Add Checks for empty schemes on all Nodes (warning or exception??)
+- Make a linked / Shadow / Mimic / bypass system that passes on controls to / copies the state of the linked branch / node
+    What happens to me isn't tracked but happens to you. That way it doesn't matter what the node is doing.
+ - Sliders, do they work
+ - Check functionality with other UI types (scroll bars etc etc). Maybe need tween for scroll bar value?
+ 
+ //Drag Bar
+ - Add drag bar functionality. Have save new setting or reset position on close (See Tweener for other settings needed)
+
+//Tweeners
+ - Add Time Percentage to other tweens
+ - Add Looping to tweener
+ - Update all Tweens so they only set to start settings when used
+ - Need to implement isRelative to Position to make it easier to move Branches with screen size and dragBar
+ - Have a runtime setter function so can set values on the fly (search list by using recttransform). This also good for making scrollbar selection menus etc
+ - Add a Horizontial and Vertical lock option to stop dragging breaking tweening off screen
+ - Add colour tweener like from Node (cut and paste)
+ 
+//GOUI
+- Make GOUI switcher work like other ones i.e replaces currentSwitcher
+- When selecting an already selected GOUI there is no sound
+- Offscreen marker needs a max distance from camera cull setting so doesn't mark forever
+- Rework InGameObject reporting to DataHub
+
+//MyDataHub
+- InGame / InMenu needs checking and rework
+
+//EZEvent, EzService, Eject
+- look at moving EZvents to spereate Mono's so can activae in scene by adding to Gameobject
+- look into using same buffering system in Events as in Services
+- EJect need no params and params??
+- Fetch<> have interface check like EZvent (not sure what this is??)
+
+//Audio
+- Needs master audio Access point that applies to all schemes
+
+//Tooltips
+- Grab current canvas sorting order and add 1 rather than use Preset from Hub
+- Changing screen resolution doesn't break functionality, especially tooltips (may need to grab data when active not at start)
+- May need to change how I check screen size
+- Review GetTooltipFolder  in SetUpTooltipClass
+
+//General Test
+- Check switching between scenes doesn't break system

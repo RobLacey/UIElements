@@ -105,9 +105,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a427e419e3a5c458bd440912184959, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _scheme: {fileID: 0}
   _buildObjectsList:
   - _name: Resolve Tween
     _element: {fileID: 5200821024454179415}
+    _buildNextAfterDelay: 0
     _positionSettings:
       _grabStartPosition: 0
       _grabMidPosition: 0
@@ -120,19 +122,16 @@ MonoBehaviour:
       _tweenTargetPosition: {x: 0, y: 0, z: 0}
     _scaleSettings:
       _startScale: {x: 1, y: 1, z: 1}
-      _fullSize: {x: 0, y: 0, z: 0}
       _endScale: {x: 0, y: 0, z: 0}
     _rotationSettings:
-      _rotateFrom: {x: 0, y: 0, z: 0}
+      _rotateFrom: {x: -0, y: 0, z: 0}
       _rotateMidPoint: {x: 0, y: 0, z: 0}
       _rotateToo: {x: 0, y: 0, z: 0}
-    _buildNextAfterDelay: 0
     _moveTo: {x: 0, y: 0, z: 0}
     _scaleTo: {x: 0, y: 0, z: 0}
     _targetRotation: {x: 0, y: 0, z: 0}
     _punchStartScale: {x: 0, y: 0, z: 0}
     _shakeStartScale: {x: 0, y: 0, z: 0}
-  _scheme: {fileID: 0}
   _tweenEvents:
     _inTweenEventStart:
       m_PersistentCalls:
@@ -161,23 +160,33 @@ MonoBehaviour:
   _branchType: 2
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _onlyAllowOnHomeScreen: 1
   _timer: 2
-  _storeOrResetOptional: 0
-  _moveType: 1
+  _whenAllowed:
+    _notOnRootScreen: 1
+    _whilePaused: 1
+    _withActiveResolvePopUps: 1
   _canvasOrderSetting: 0
+  _applyFocus: 0
+  _whenFocusedSortingOrder: 10
   _orderInCanvas: 2
+  _moveType: 1
   _stayVisible: 1
-  _tweenOnReturn: 0
+  _blockRaycastToOpenBranches: 0
+  _escapeKeyFunction: 1
   _saveExitSelection: 0
   _autoClose: 1
   _autoCloseDelay: 0.25
-  _escapeKeyFunction: 1
   _branchEvents:
     _onBranchEnter:
       m_PersistentCalls:
         m_Calls: []
     _onBranchExit:
+      m_PersistentCalls:
+        m_Calls: []
+    _onBranchEnterEnd:
+      m_PersistentCalls:
+        m_Calls: []
+    _onBranchExitEnd:
       m_PersistentCalls:
         m_Calls: []
 --- !u!1001 &5200821023944592220

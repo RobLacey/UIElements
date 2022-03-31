@@ -131,6 +131,6 @@ public class Toggle : NodeBase, IToggle
         if (IsSelected) return;
        _toggleData.ToggleGroupData.TurnOffOtherTogglesInGroup(this);
         _toggleAsTab.NavigateToChildBranch();
-        Activate(DoPressOnNode);
+        Activate();
     }
 }

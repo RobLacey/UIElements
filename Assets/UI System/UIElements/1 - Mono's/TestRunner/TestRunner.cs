@@ -26,13 +26,13 @@ public class TestRunner : MonoBehaviour
     
     [Header("New Node")]
     [SerializeField] private GameObject _nodePrefab;
-    [SerializeField] private UIBranch _targetBranch;
+    [SerializeField] private Branch _targetBranch;
     [SerializeField] private Transform _parentTransform;
 
     [SerializeField] private PopUpTester _popUpPrefabs;
 
     [Header("Disable This Node Test")] 
-    [SerializeField] private UINode[] _disableTheseNodes;
+    [SerializeField] private Node[] _disableTheseNodes;
     
     
     private int minV = -5;
@@ -66,22 +66,22 @@ public class TestRunner : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.G))
         {
             AddANewInGameObject();
         }
 
-        if (Input.GetKeyDown(KeyCode.H))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.H))
         {
             RemoveInGameObject();
         }
         
-        if (Input.GetKeyDown(KeyCode.T))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.T))
         {
             AddANewNodeAtRuntime();
         }
 
-        if (Input.GetKeyDown(KeyCode.Y))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Y))
         {
             RemoveNodeAtRuntime();
         }

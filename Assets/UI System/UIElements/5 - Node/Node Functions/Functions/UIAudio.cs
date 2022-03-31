@@ -33,8 +33,8 @@ public class UIAudio : NodeFunctionBase
     {
         base.ObserveEvents();
         _uiEvents.MuteAudio += AudioIsMuted;
-        InputEvents.Do.Subscribe<IHotKeyPressed>(HotKeyPressed);
-        _audioIsMute = true;
+        //InputEvents.Do.Subscribe<IHotKeyPressed>(HotKeyPressed);
+       // _audioIsMute = true;
     }
 
     protected override void LateStartSetUp()
@@ -55,7 +55,7 @@ public class UIAudio : NodeFunctionBase
     public override void UnObserveEvents()
     {
         base.UnObserveEvents();
-        InputEvents.Do.Unsubscribe<IHotKeyPressed>(HotKeyPressed);
+       // InputEvents.Do.Unsubscribe<IHotKeyPressed>(HotKeyPressed);
         _uiEvents.MuteAudio -= AudioIsMuted;
     }
 
@@ -76,8 +76,7 @@ public class UIAudio : NodeFunctionBase
 
     protected override void SaveIsSelected(bool isSelected)
     {
-        if(!CanBePressed()) return;
-        if (IsAudioMuted()) return;
+        if(!CanBePressed() || IsAudioMuted()) return;
         
         if (!isSelected)
         {
@@ -91,12 +90,9 @@ public class UIAudio : NodeFunctionBase
 
     private bool IsAudioMuted()
     {
-        if (AudioIsMute)
-        {
-            _audioIsMute = false;
-            return true;
-        }
-        return false;
+        if (!AudioIsMute) return false;
+        _audioIsMute = false;
+        return true;
     }
 
     private protected override void ProcessPress() { }
@@ -129,9 +125,9 @@ public class UIAudio : NodeFunctionBase
         PlayDisabledSound();
     }
 
-    private void HotKeyPressed(IHotKeyPressed args)
-    {
-        if (ReferenceEquals(args.ParentNode, _uiEvents.ReturnMasterNode))
-            PlaySelectedAudio();
-    }
+    // private void HotKeyPressed(IHotKeyPressed args)
+    // {
+    //     if (ReferenceEquals(args.ParentNode, _uiEvents.ReturnMasterNode))
+    //         PlaySelectedAudio();
+    // }
 }
