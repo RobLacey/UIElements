@@ -22,6 +22,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
     private bool _fromHotKey;
     private IHistoryTrack _historyTracker;
     protected bool _dontAddToHistoryTracking;
+    private HotKeys _popUpBranch;
 
     //Events
     // private Action<IHighlightedNode> DoHighlighted { get; set; } 
@@ -35,7 +36,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
     protected bool PointerOverNode { get; private set; }
     protected IBranch MyBranch { get; set; }
     public UINavigation Navigation { get; set; }
-    protected bool IsSelected { get; private set; }
+    protected bool IsSelected { get; set; }
     // public INode Highlighted => _uiNode;
     // public INode SelectedNode { get; private set; }
 
@@ -61,13 +62,21 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         _hasFinishedSetUp = true;
         return true;
     }
-    
-    protected void DoPressOnNode() => _uiFunctionEvents.DoIsPressed();
+
+    private void DoPressOnNode() => _uiFunctionEvents.DoIsPressed();
     public virtual void ExitNodeByType() => OnExitingNode();
 
     
     //Main
-    public virtual void OnAwake() { }
+    public virtual void OnAwake()
+    {
+        if (MyBranch.IsAPopUpBranch() && _uiNode.HasChildBranch.IsNotNull())
+        {
+            _popUpBranch = new HotKeys();
+            _popUpBranch.SetBranchRunTime((Branch)_uiNode.HasChildBranch);
+            _uiNode.HasChildBranch = null;
+        }    
+    }
 
     public virtual void OnEnable()
     {
@@ -134,7 +143,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
 
     private void ThisNodeIsSelected()
     {
-        MyBranch.SetNewSelected(_uiNode);
+        MyBranch.SetNewSelected(IsSelected ? _uiNode : null);
         //SelectedNode = _uiNode;
         if(_dontAddToHistoryTracking || !_myDataHub.SceneStarted) return;
        // DoSelected?.Invoke(this);
@@ -165,7 +174,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
 
    public virtual void OnEnteringNode() 
     {
-        _myDataHub.SetHighLighted(_uiNode);
+        _myDataHub.SetAsHighLighted(_uiNode);
         PointerOverNode = true;
         _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
         MyBranch.SetNewHighlighted(_uiNode);
@@ -202,16 +211,16 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
 
     protected void Activate()
     {
+        if(ActivatePopUpChildNode()) return;
         SetSelectedStatus(true, DoPressOnNode);
         ThisNodeIsSelected();
     }
 
     private void Deactivate()
     {
-        //TODO Is this needed here or can just be handled by History Tracker??
-        ThisNodeIsSelected();
-        if(!_historyTracker.NodeNeededForMultiSelect(_uiNode))
+        if (!_historyTracker.NodeNeededForMultiSelect(_uiNode))
             SetSelectedStatus(false, DoPressOnNode);
+        ThisNodeIsSelected();
     }
 
     private void SetSelectedStatus(bool isSelected, Action endAction)
@@ -221,10 +230,23 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         endAction?.Invoke();
     }
 
+    private bool ActivatePopUpChildNode()
+    {
+        if (_popUpBranch.IsNull()) return false;
+        
+        _historyTracker.CancelHasBeenPressed(EscapeKey.BackOneLevel, MyBranch);
+        _popUpBranch.HotKeyActivation();
+        return true;
+    }
+
     public void HotKeyPressed(bool setAsActive)
     {
+        _myDataHub.SetAsHighLighted(_uiNode); // Sets the switcher to the correct Branch
+        MyBranch.SetNewHighlighted(_uiNode);
+
         if (setAsActive)
         {
+            Debug.Log($"Activate : {_uiNode}");
             Activate();
         }
         else

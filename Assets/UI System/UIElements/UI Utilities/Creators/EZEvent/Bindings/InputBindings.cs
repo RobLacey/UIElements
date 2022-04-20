@@ -7,6 +7,7 @@ public class InputBindings : EZEventBindingsBase
     {
         //Input
         AutoRemove().CreateEvent<IPausePressed>();
+        AutoRemove().CreateEvent<ICancelPause>();
         AutoRemove().CreateEvent<IMenuGameSwitchingPressed>();
         AutoRemove().CreateEvent<ICancelPressed>();
 
@@ -20,6 +21,8 @@ public interface IPausePressed
 {
     bool ClearScreen { get; }
 } // This one is test
+
+public interface ICancelPause { }
 
 public interface IMenuGameSwitchingPressed { }
 

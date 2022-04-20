@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface INavigationSettings : IComponentSettings
 {
-     IBranch ChildBranch { get; }
+    IBranch ChildBranch { get; set; }
     NavigationType NavType { get; }
     Node Up { get; }
     Node Down { get; }
@@ -17,7 +17,10 @@ public interface INavigationSettings : IComponentSettings
 public class NavigationSettings :INavigationSettings
 {
     [SerializeField] 
-    [AllowNesting] [Label("Move To When Clicked")] [HideIf("CantNavigate")] private Branch _childBranch = default;
+    [ValidateInput(ValidBranch, ErrorMessage)]
+    [AllowNesting] [Label("Move To When Clicked")] [HideIf(CannotNav)] 
+    private Branch _childBranch = default;
+    
     [SerializeField] 
     private NavigationType _setKeyNavigation = NavigationType.None;
     [SerializeField] 
@@ -30,6 +33,9 @@ public class NavigationSettings :INavigationSettings
     [AllowNesting] [ShowIf("RightLeftNav")] private Node _right = default;
 
     //Editor Scripts
+    private const string ValidBranch = nameof(CheckValidBranch);
+    private const string CannotNav = nameof(CantNavigate);
+    private const string ErrorMessage = "Must NOT use a Pop Up here. Do this via the Event Functions Or HotKeys instead.";
     public bool CantNavigate { get; set; }
 
     public bool UpDownNav()
@@ -37,12 +43,18 @@ public class NavigationSettings :INavigationSettings
 
     public bool RightLeftNav()
         => _setKeyNavigation == NavigationType.RightAndLeft || _setKeyNavigation == NavigationType.AllDirections;
+    
+    private bool CheckValidBranch(Branch branch)
+    {
+        if (branch.IsNull()) return true;
+        return !branch.IsAPopUpBranch();
+    }
 
     //Properties, Setters & Getters
     public IBranch ChildBranch
     {
         get => _childBranch;
-        set => _childBranch = (Branch) value;
+        set => _childBranch = (Branch)value;
     }
     
     private void SetNewChild(IBranch newChild) => ChildBranch = newChild;
@@ -65,5 +77,4 @@ public class NavigationSettings :INavigationSettings
     }
 
     private bool CanCreate(Setting functions) => (functions & Setting.NavigationAndOnClick) != 0;
-
 }

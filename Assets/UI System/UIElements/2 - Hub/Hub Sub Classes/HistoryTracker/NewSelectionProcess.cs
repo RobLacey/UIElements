@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UIElements.Hub_Sub_Classes.HistoryTracker;
 using UnityEngine;
 
@@ -22,9 +23,14 @@ public static class NewSelectionProcess
 
     private static void DoesntContainNewNode(HistoryData data)
     {
-        NodeInDifferentBranchAndNotAChildObject(data);
-        data.AddToHistory(data.NewNode);
-        NavigateToChildBranch(data);
+        NodeInDifferentBranchAndNotAChildObject(data, EndOfTrunkClose);
+        
+        void EndOfTrunkClose()
+        {
+            data.AddToHistory(data.NewNode);
+            NavigateToChildBranch(data);
+            data.EndOfTrunkCloseAction = null;
+        }
     }
 
     private static void NavigateToChildBranch(HistoryData data)
@@ -38,15 +44,27 @@ public static class NewSelectionProcess
         void StartChild() => data.NewNode.HasChildBranch.OpenThisBranch(data.NewNodesBranch);
     }
 
-    private static void NodeInDifferentBranchAndNotAChildObject(HistoryData data)
+    private static void NodeInDifferentBranchAndNotAChildObject(HistoryData data, Action endOfTrunkClose)
     {
         bool NodeIsInSameHierarchy() => data.LastSelected().HasChildBranch.IsNotNull() && 
                                         data.LastSelected().HasChildBranch.MyParentBranch == data.NewNode.MyBranch.MyParentBranch;
         
-        if (data.NoHistory || NodeIsInSameHierarchy()) return;
-        
+        if (data.NoHistory || NodeIsInSameHierarchy())
+        {
+            endOfTrunkClose?.Invoke();
+            return;
+        }
+
+        data.EndOfTrunkCloseAction = endOfTrunkClose;
+        NewBranchIsAlreadyOpen(data);
         data.AddStopPoint(data.NewNode);
         data.TweenType = OutTweenType.MoveToChild;
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.StopAt);
+    }
+
+    private static void NewBranchIsAlreadyOpen(HistoryData data)
+    {
+        if (data.NewNode.HasChildBranch == data.ActiveBranch)
+            data.ActiveBranch.DoNotTween();
     }
 }

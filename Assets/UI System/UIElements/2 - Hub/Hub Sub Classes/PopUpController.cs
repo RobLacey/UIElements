@@ -16,16 +16,29 @@ public static class PopUpController
         int index = popUpList.Count - 1;
         return popUpList[index];
     }
-    
-    public static void RemoveNextPopUp(HistoryData data, Action moveToLastBranchInHistory)
+
+    private static void RemoveNextPopUp(HistoryData data, Action moveToLastBranchInHistory)
     {
         var popUpToRemove = NextPopUp(data);
 
         popUpToRemove.ExitThisBranch(OutTweenType.Cancel, moveToLastBranchInHistory);
     }
 
-    public static void CloseExactPopUp(IBranch popUp, Action moveToLastBranchInHistory)
+    private static void CloseExactPopUp(IBranch popUp, Action moveToLastBranchInHistory)
     {
         popUp.ExitThisBranch(OutTweenType.Cancel, moveToLastBranchInHistory);
+    }
+
+    public static void HandlePopUps(HistoryData historyData, IBranch branchToClose, Action moveToLastBranchInHistory)
+    {
+        if(branchToClose.IsNotNull())
+        {
+            CloseExactPopUp(branchToClose, moveToLastBranchInHistory);
+        }
+        else
+        {
+            RemoveNextPopUp(historyData, moveToLastBranchInHistory);
+        }
+
     }
 }

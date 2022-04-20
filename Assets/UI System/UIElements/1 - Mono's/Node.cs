@@ -223,7 +223,7 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
 
     private void Start()
     {
-        SetChildParentBranch();        
+        SetChildParentBranch(); 
         _nodeBase.OnStart();
         
         foreach (var nodeFunctionBase in _activeFunctions)
@@ -237,7 +237,7 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
         if(_buttonFunction == ButtonFunction.InGameUi) return;
         if (HasChildBranch.IsNotNull())
         {
-            HasChildBranch.MyParentBranch = MyBranch;
+            HasChildBranch.SetParentBranch(MyBranch);
         }
     }
 
@@ -291,24 +291,32 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        //if(_myDataHub.PlayingTweens > 0) return;
         _nodeBase.OnEnteringNode();
     }
 
-    public void OnPointerExit(PointerEventData eventData) => _nodeBase.OnExitingNode();
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        //if(_myDataHub.PlayingTweens > 0) return;
+        _nodeBase.OnExitingNode();
+    }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(IsNodeDisabled()) return;
+        if(_myDataHub.PlayingTweens > 0 || IsNodeDisabled()) return;
         _nodeBase.NodeSelected();
     }
 
     public void OnSubmit(BaseEventData eventData)
     {
-        if(!AllowKeys || IsNodeDisabled()) return;
+        if(_myDataHub.PlayingTweens > 0 || !AllowKeys || IsNodeDisabled()) return;
         _nodeBase.NodeSelected();
     }
 
-    public void OnPointerUp(PointerEventData eventData) { }
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if(_myDataHub.PlayingTweens > 0) return;
+    }
 
 
     /// <summary>

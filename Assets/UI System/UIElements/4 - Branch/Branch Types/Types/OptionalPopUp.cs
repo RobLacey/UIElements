@@ -31,8 +31,6 @@ public class OptionalPopUpPopUp : BranchBase, IOptionalPopUpBranch
         BranchEvent.Do.Subscribe<IClearScreen>(ClearBranchForFullscreen);
         OptionalPopUpExited += CheckIfCanRestore;
         RestoreBranches += CheckIfCanRestore;
-        BlockRaycasts += SetBlockRaycast;
-
     }
 
     public override void UnObserveEvents()
@@ -41,8 +39,6 @@ public class OptionalPopUpPopUp : BranchBase, IOptionalPopUpBranch
         BranchEvent.Do.Unsubscribe<IClearScreen>(ClearBranchForFullscreen);
         OptionalPopUpExited -= CheckIfCanRestore;
         RestoreBranches -= CheckIfCanRestore;
-        BlockRaycasts -= SetBlockRaycast;
-
     }
 
     protected override void CheckIfAtRootTrunk(IIsAtRootTrunk args)
@@ -73,9 +69,9 @@ public class OptionalPopUpPopUp : BranchBase, IOptionalPopUpBranch
         return ThisBranch.WhenAllowed.IsAllowed(_myDataHub.ActiveOptionalPopUps, ThisBranch);
     }
 
-    public override void SetUpBranch(IBranch newParentController = null)
+    public override void SetUpBranch(/*IBranch newParentController = null*/)
     {
-        base.SetUpBranch(newParentController);
+        base.SetUpBranch(/*newParentController*/);
 
         if(!ThisBranch.CanvasIsEnabled)
         {
@@ -120,7 +116,7 @@ public class OptionalPopUpPopUp : BranchBase, IOptionalPopUpBranch
 
     public override void EndOfBranchExit()
     {
-        SetCanvas(ActiveCanvas.No);
+        base.EndOfBranchExit();
         OptionalPopUpExited?.Invoke();
         
         if(ThisBranch.WhenAllowed.RestoreBranch) return;

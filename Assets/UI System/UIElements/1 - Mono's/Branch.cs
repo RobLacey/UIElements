@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using NaughtyAttributes;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Canvas))]
 [RequireComponent(typeof(CanvasGroup))]
@@ -28,41 +29,27 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     [SerializeField]
     [Label("Start On (Optional)")] 
     private Node _startOnThisNode;
-
-    // [SerializeField]
-    // [ShowIf(EConditionOperator.Or, TimedBranch, ResolveBranch, OptionalBranch)]
-    // private IsActive _onlyAllowOnHomeScreen = IsActive.Yes;
+    
+    [SerializeField]
+    [Label("Preset Parent (Optional)")] 
+    private Node _presetParent;
 
     [SerializeField] 
     [ShowIf(EConditionOperator.Or, TimedBranch, OptionalBranch)] [Range(0f,20f)] 
     private float _timer = 0f;
 
     [SerializeField]
+    [Space(10f)]
     [ShowIf(EConditionOperator.Or, OptionalBranch , ResolveBranch, TimedBranch/*, OnlyAllowOnHomeScreen*/)]
-    [Label("When Allowed...")]
+    [Label("Pop-Up Allowed When...")]
     private WhenAllowed _whenAllowed;
-    // [SerializeField] 
-    // [ShowIf(EConditionOperator.And, OptionalBranch/*, OnlyAllowOnHomeScreen*/)]
-    // [Label("When Not On Home Screen")]
-    // private StoreAndRestorePopUps _storeOrResetOptional = StoreAndRestorePopUps.DoNothing;
-
-    // [SerializeField] 
-    // [ShowIf(EConditionOperator.And, OptionalBranch)] 
-    // [Label("Allow With Active Resolve PopUps")]
-    // private IsActive _allowWithActiveResolve = IsActive.No;
-    
-    // [SerializeField] 
-    // [ShowIf(OptionalBranch)]
-    // [Label("Buffer Until Can Activate")]
-    // private IsActive _canAddToHomeScreenBuffer = IsActive.No;
-    
 
     [Header("Canvas Order Settings")] [HorizontalLine(2f, EColor.Blue, order = 1)]
     [SerializeField] 
     [ShowIf(StandardBranch)] 
     private OrderInCanvas _canvasOrderSetting = OrderInCanvas.Default;
     
-    [SerializeField] 
+    [SerializeField]
     private IsActive _applyFocus = IsActive.No;
     
     [SerializeField] 
@@ -73,29 +60,29 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     [OnValueChanged(SetUpCanvasOrder)] 
     private int _orderInCanvas;
     
+    [FormerlySerializedAs("_moveType")]
     [Header("Navigation Settings")] [HorizontalLine(2f, EColor.Blue, order = 1)]
 
     [SerializeField]
-    [Label("Move To Next Branch...")] [HideIf(InGamUIBranch)] 
-    private WhenToMove _moveType = WhenToMove.Immediately;
+    [Label("Move To Child When...")] [HideIf(InGamUIBranch)] 
+    private WhenToMove _moveToChild = WhenToMove.Immediately;
+    
+    [FormerlySerializedAs("_moveBackType")]
+    [SerializeField]
+    [Label("Move Back When...")] [HideIf(InGamUIBranch)] 
+    private WhenToMove _moveBackWhen = WhenToMove.Immediately;
 
     [SerializeField] 
     [HideIf(EConditionOperator.Or, AnyPopUpBranch, ControlBarBranch, InGamUIBranch)]
-   // [ValidateInput(ValidInAndOutTweens, MessageINAndOutTweens)]
     [Label("Visible When Child Active")]
     private IsActive _stayVisible = IsActive.No;
 
    [SerializeField] 
-   [Label("Block Other Branches While Open")]
-   private IsActive _blockRaycastToOpenBranches = IsActive.No;
+   [Label("When Active Do This...")] [ValidateInput(SetForResolve)]
+   private WhenActiveDo _whenActiveDo = WhenActiveDo.Nothing;
 
     [SerializeField] 
-    [ShowIf(EConditionOperator.Or, StandardBranch)]
     private EscapeKey _escapeKeyFunction = EscapeKey.GlobalSetting;
-    // [SerializeField] 
-    // [ShowIf(EConditionOperator.Or, NotControlBar, Stored)] 
-    // [Label("Tween On Return")]
-    // private DoTween _tweenOnReturn = DoTween.Tween;
 
     [SerializeField] 
     [Label("Save Last Highlighted")] [HideIf(EConditionOperator.Or,AnyPopUpBranch, InGamUIBranch)] 
@@ -128,37 +115,51 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     
     //Variables
     private UITweener _uiTweener;
-    private bool _tweenOnChange = true, _canSetAsActivateBranch = true;
+    private bool _tweenOnChange = true, _canActivateBranch = true;
     private bool _sceneIsChanging;
     private bool _tweening = true;
+    private bool _overThisBranch;
 
     private IBranchBase _branchTypeBaseClass;
     private IDataHub _myDataHub;
+    private INode _lastSelectedBeforeExit;
     
 
     //Delegates & Events
     private Action TweenFinishedCallBack { get; set; }
-    // private  Action<IActiveBranch> SetAsActiveBranch { get; set; }        
     private Action<ICloseBranch> CloseAndResetBranch { get; set; }
-    public event Action EnterBranchEvent;
-    public event Action ExitBranchEvent;
+    public event Action OpenBranchStartEvent;
+    public event Action OpenBranchEndEvent;
+    public event Action ExitBranchStartEvent;
+    public event Action ExitBranchEndEvent;
+    public event Action OnMouseEnterEvent;
+    public event Action OnMouseExitEvent;
 
     //Getters & Setters
     private void SceneIsChanging(ISceneIsChanging args) => _sceneIsChanging = true;
-    public void SetNewSelected(INode newNode) => LastSelected = newNode;
+    public void SetNewSelected(INode newNode)
+    {
+        LastSelected = newNode;
+        
+        if (newNode.IsNotNull())
+            _lastSelectedBeforeExit = newNode;
+    }
     public void SetNewHighlighted(INode newNode) => LastHighlighted = newNode;
 
     //Main
     private void Awake()
     {
-        //CheckForValidSetUp();
+        // Debug.Log("Upto : When in full screen or another trunk pressing a hotkey that isn't in that trunk doesn't return to that branch." +
+        //           "Also possiblily opens child to soon. Need to make sure that it doesn't do anything until back to correct trunk");
+        
         ThisBranchesNodes = BranchChildNodeUtil.GetChildNodes(this);
         MyCanvasGroup = GetComponent<CanvasGroup>();
         MyCanvasGroup.blocksRaycasts = false;
         _uiTweener = GetComponent<UITweener>();
         MyCanvas = GetComponent<Canvas>();
-        if(IsHomeScreenBranch() || IsInGameBranch())
-            MyParentBranch = this;
+        // if(IsInGameBranch()) 
+        //     MyParentBranch = this;
+        SetParentBranch(MyParentBranch);
         AutoOpenCloseClass = EZInject.Class.WithParams<IAutoOpenClose>(this); 
         _branchTypeBaseClass = BranchFactory.Factory.PassThisBranch(this).CreateType(_branchType);
         _branchTypeBaseClass.OnAwake();
@@ -172,19 +173,12 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
         LastSelected = DefaultStartOnThisNode;
     }
 
-    // private void CheckForValidSetUp()
-    // {
-    //     if (AllowableInAndOutTweens(_stayVisible)) return;
-    //     
-    //     throw new Exception($"Can't have Stay Visible and also have IN AND OUT Tweens on : {this} " +
-    //               $"{Environment.NewLine} OutTween NOT Allowed");
-    // }
-
     public void OnEnable()
     {
         UseEZServiceLocator();
         FetchEvents();
         ObserveEvents();
+        _branchEvents.SetUpClass(this);
         _branchTypeBaseClass.OnEnable();
         AutoOpenCloseClass.OnEnable();
         _whenAllowed.OnEnable();
@@ -208,11 +202,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
         DefaultStartOnThisNode = (Node) ThisBranchesNodes.First();
     }
 
-    public void FetchEvents()
-    {
-        CloseAndResetBranch = BranchEvent.Do.Fetch<ICloseBranch>();
-        // SetAsActiveBranch = HistoryEvents.Do.Fetch<IActiveBranch>();
-    }
+    public void FetchEvents() => CloseAndResetBranch = BranchEvent.Do.Fetch<ICloseBranch>();
 
     public void ObserveEvents() => HistoryEvents.Do.Subscribe<ISceneIsChanging>(SceneIsChanging);
 
@@ -221,14 +211,13 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     public void OnDisable()
     {
         CloseAndResetBranch?.Invoke(this);
-//        ExitBranchEvent?.Invoke();
         UnObserveEvents();
         AutoOpenCloseClass.OnDisable();
         _whenAllowed.OnDisable();
         
         if(_sceneIsChanging) return;
         _branchTypeBaseClass.OnDisable();
-        //SetAsActiveBranch = null;
+        _branchEvents.OnDisable();
     }
 
     public void OnDestroy()
@@ -237,7 +226,6 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
             MyCanvas.enabled = false;
         UnObserveEvents();
         _branchTypeBaseClass.OnDestroy();
-        //SetAsActiveBranch = null;
     }
 
     private void Start() => _branchTypeBaseClass.OnStart();
@@ -253,9 +241,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     {
         if(!_branchTypeBaseClass.CanStartBranch()) return;
 
-        _branchTypeBaseClass.SetUpBranch(newParentBranch);
-        
-        SetBranchAsActive();
+        SetBranchAsActive(newParentBranch);
 
         if (_tweenOnChange)
         {
@@ -269,45 +255,56 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
         
         _tweenOnChange = true;
     }
-
-    public void SetBranchAsActive()
+    
+    private void SetBranchAsActive(IBranch newParentBranch)
     {
-        _branchEvents.OnBranchEnter();
-        EnterBranchEvent?.Invoke();
-        if (!_canSetAsActivateBranch) return;
+        SetParentBranch(newParentBranch);
+        OpenBranchStartEvent?.Invoke();
+        if (!_canActivateBranch) return;
         _myDataHub.SetActiveBranch(this);
     }
 
+    public void SetParentBranch(IBranch newParentBranch)
+    {
+        if (newParentBranch.IsNotNull())
+            MyParentBranch = newParentBranch;
+    }
+    
     private void InTweenCallback()
     {
         _tweening = false;
-
-        _branchTypeBaseClass.EndOfBranchStart();
-        _branchEvents.OnBranchEnterEnd();
-       
+        OpenBranchEndEvent?.Invoke();
         SetHighlightedNode();
-        
-        _canSetAsActivateBranch = true;
+        _canActivateBranch = true;
     }
 
     private void SetHighlightedNode()
     {
-        if(LastHighlighted.IsNull()) return;
-
-        if (_canSetAsActivateBranch)
+        if (_saveExitSelection == IsActive.Yes && _lastSelectedBeforeExit.IsNotNull())
+        {
+            LastHighlighted = _lastSelectedBeforeExit;
+            _lastSelectedBeforeExit = null;
+        }
+        
+        if (_canActivateBranch && _myDataHub.CanSetAsHighlighted(LastHighlighted))
+        {
             LastHighlighted.SetNodeAsActive();
+        }
     }
 
     public void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null)
     {
-        //Debug.Log(ThisBranch);
-        if(!CanvasIsEnabled || DontExitBranch())
+        bool DontExitBranch() => _branchTypeBaseClass.DontExitBranch(outTweenType);
+        var moveType = outTweenType == OutTweenType.MoveToChild ? _moveToChild : _moveBackWhen;
+        
+        if(!CanvasIsEnabled || DontExitBranch() || !_tweenOnChange)
         {
             endOfTweenCallback?.Invoke();
+            _tweenOnChange = true;
             return;
         }
-        
-        if (WhenToMove == WhenToMove.AfterEndOfTween)
+
+        if (moveType == WhenToMove.AfterEndOfTween)
         {
             StartOutTween(endOfTweenCallback);
         }
@@ -316,53 +313,42 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
             StartOutTween();
             endOfTweenCallback?.Invoke();
         }
-
-        bool DontExitBranch() => _branchTypeBaseClass.DontExitBranch(outTweenType);
     }
 
     private void StartOutTween(Action endOfTweenCallback = null)
     {
         _tweening = true;
-        
         TweenFinishedCallBack = endOfTweenCallback;
-        _branchEvents.OnBranchExit();
-        _branchTypeBaseClass.StartBranchExit();
-        ExitBranchEvent?.Invoke();
+        ExitBranchStartEvent?.Invoke();
         _uiTweener.StartOutTweens(OutTweenCallback);
-        SetSaveLastSelected();
-        
-        void OutTweenCallback()
-        {
-            _tweening = false;
-            _branchTypeBaseClass.EndOfBranchExit();
-            TweenFinishedCallBack?.Invoke();
-            _branchEvents.OnBranchExitEnd();
-        }
     }
 
-    private void SetSaveLastSelected()
+    private void OutTweenCallback()
     {
+        _tweening = false;
+        ExitBranchEndEvent?.Invoke();
+        TweenFinishedCallBack?.Invoke();
+        
         if (_saveExitSelection == IsActive.No)
-            LastHighlighted = ThisBranchesNodes[0];
+            LastHighlighted = DefaultStartOnThisNode;
     }
-
+    
     public void SetCanvas(ActiveCanvas activeCanvas) => _branchTypeBaseClass.SetCanvas(activeCanvas);
     public void SetBlockRaycast(BlockRaycast blockRaycast) => _branchTypeBaseClass.SetBlockRaycast(blockRaycast);
     public void SetUpGOUIBranch(IGOUIModule module) => _branchTypeBaseClass.SetUpGOUIBranch(module);
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_applyFocus == IsActive.Yes)
-            _branchTypeBaseClass.SetFocus(_whenFocusedSortingOrder);
-        AutoOpenCloseClass.OnPointerEnter();
+        if (_overThisBranch) return;
+        OnMouseEnterEvent?.Invoke();
+        _overThisBranch = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_applyFocus == IsActive.Yes)
-            _branchTypeBaseClass.ResetFocus();
-
-        AutoOpenCloseClass.OnPointerExit();
+        if(!_overThisBranch || eventData.IsNull() && ThisBranchesNodes.Contains(_myDataHub.Highlighted)) return;
+        OnMouseExitEvent?.Invoke();
+        _overThisBranch = false;
     }
 
     /// <summary>
@@ -372,5 +358,8 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     {
         ExitThisBranch(OutTweenType.Cancel);
     }
+
+    public void InTest() => Debug.Log($"Mouse over {this}");
+    public void OutTest() => Debug.Log($"Mouse not over {this}");
 
 }

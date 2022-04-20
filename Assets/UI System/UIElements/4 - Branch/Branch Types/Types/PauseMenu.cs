@@ -6,8 +6,10 @@ using UnityEngine.Android;
 /// Need To Make this a singleton or check thee is only one of these
 /// </summary>
 
+[Obsolete("Reworked so works as a Standard branch", true)]
 public interface IPauseBranch : IBranchBase { }
 
+[Obsolete("Reworked so works as a Standard branch", true)]
 public class PauseMenu : BranchBase, IGameIsPaused, IPauseBranch
 {
     public PauseMenu(IBranch branch) : base(branch) { } 
@@ -72,9 +74,9 @@ public class PauseMenu : BranchBase, IGameIsPaused, IPauseBranch
 
     private void ExitPause() => ThisBranch.ExitThisBranch(OutTweenType.Cancel);
 
-    public override void SetUpBranch(IBranch newParentController = null)
+    public override void SetUpBranch(/*IBranch newParentController = null*/)
     {
-        base.SetUpBranch(newParentController);
+        base.SetUpBranch(/*newParentController*/);
         SetCanvas(ActiveCanvas.Yes);
         //CanGoToFullscreen();
     }

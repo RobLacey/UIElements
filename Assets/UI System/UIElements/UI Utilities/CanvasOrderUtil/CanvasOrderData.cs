@@ -14,6 +14,7 @@ namespace UIElements
         int ReturnVirtualCursorCanvasOrder();
         int ReturnOffScreenMarkerCanvasOrder();
         int ReturnControlBarCanvasOrder();
+        int ReturnPauseCanvasOrder();
     }
 
     [Serializable]
@@ -35,6 +36,7 @@ namespace UIElements
         public int ReturnVirtualCursorCanvasOrder() => _virtualCursor;
         public int ReturnOffScreenMarkerCanvasOrder() => _offScreenMarker;
         public int ReturnControlBarCanvasOrder() => _controlBar;
+        public int ReturnPauseCanvasOrder() => _pauseMenu;
         
         //Main
         public void OnEnable() => AddService();
@@ -53,8 +55,6 @@ namespace UIElements
                     return _optionalPopUp;
                 case BranchType.TimedPopUp:
                     return _timedPopUp;
-                case BranchType.PauseMenu:
-                    return _pauseMenu;
                 case BranchType.Standard:
                     return SetStandardCanvasOrder(calculator);
                 case BranchType.InternalObsolete:

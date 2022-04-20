@@ -30,7 +30,7 @@ public class InGameNode : NodeBase, IInGameNode, ICloseThisGOUIModule
     public override void NodeSelected()
     {
         if(!AllowKeys)
-            MyBranch.SetBranchAsActive();
+            MyBranch.OpenThisBranch();
         base.NodeSelected();
     }
 

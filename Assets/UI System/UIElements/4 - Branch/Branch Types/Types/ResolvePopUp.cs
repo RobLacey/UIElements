@@ -67,9 +67,9 @@ public class ResolvePopUp : BranchBase, IResolvePopUpBranch
         }
     }
 
-    public override void SetUpBranch(IBranch newParentController = null)
+    public override void SetUpBranch(/*IBranch newParentController = null*/)
     {
-        base.SetUpBranch(newParentController);
+        base.SetUpBranch(/*newParentController*/);
         
         if (!ThisBranch.CanvasIsEnabled)
         {
@@ -86,10 +86,10 @@ public class ResolvePopUp : BranchBase, IResolvePopUpBranch
         //CanGoToFullscreen();
     }
 
-    public override void SetBlockRaycast(BlockRaycast active)
-    {
-        _myCanvasGroup.blocksRaycasts = active == BlockRaycast.Yes;
-    }
+    // public override void SetBlockRaycast(BlockRaycast active)
+    // {
+    //     _myCanvasGroup.blocksRaycasts = active == BlockRaycast.Yes;
+    // }
 
     public override void StartBranchExit()
     {

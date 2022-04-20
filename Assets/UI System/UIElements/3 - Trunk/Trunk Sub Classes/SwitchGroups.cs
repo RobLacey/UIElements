@@ -54,7 +54,7 @@ public class SwitchGroups : IParameters, IServiceUser, ISwitchGroup
         _gouiSwitcher.OnStart();
     }
     
-    public bool CanSwitchBranches() => _myDataHub.NoPopups && !_myDataHub.GamePaused
+    public bool CanSwitchBranches() => _myDataHub.NoPopUps && !_myDataHub.GamePaused
                                                            && _myDataHub.SceneStarted
                                                            && !_inputScheme.MultiSelectPressed()
                                                            && _inputScheme.SwitchKeyPressed();

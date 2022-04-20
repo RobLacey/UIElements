@@ -3,9 +3,10 @@ using UnityEngine;
 using System;
 using DG.Tweening;
 using EZ.Events;
+using EZ.Service;
 using NaughtyAttributes;
 
-public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
+public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher, IServiceUser
 {
     [SerializeField] 
     [BoxGroup("Tween Settings")] [HorizontalLine(1, EColor.Blue , order = 1)]
@@ -23,19 +24,21 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
     private int _counter, _effectCounter;
     private List<ITweenBase> _activeTweens;
     private readonly ITweenInspector _tweenInspector = EZInject.Class.NoParams<ITweenInspector>();
+    private IDataHub _myDataHub;
 
     //Properties
     public RectTransform EndTweenRect { get; private set; }
+    public bool HasBuildList => _buildObjectsList.Count > 0 && _buildObjectsList[0].Element.IsNotNull();
     public TweenScheme Scheme => _scheme;
 
     //Delegates
-    private Action FinishedTweenCallback{ get; set; }
+    private Action UserTweenEndCallback{ get; set; }
     private Action<IEndTween> EndTweenEffect { get; set; }
-    private TweenTrigger TweenEvent{ get; set; }
+    private TweenTrigger TweenTypeEndEvent{ get; set; }
     //public bool HasInAndOutTween() => !(_scheme is null) && _scheme.InAndOutTween();
     
     //Editor
-    private const string BuildListName = "Order To Tween (Reorderable)"; 
+    private const string BuildListName = "Order To Tween (Reorderable)";
 
     //Main
     public void Awake()
@@ -55,12 +58,15 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
 
     private void OnEnable()
     {
+        UseEZServiceLocator();
         if (_activeTweens is null) return;
         foreach (var activeTween in _activeTweens)
         {
             activeTween.ObserveEvents();
         }
     }
+    
+    public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
 
     private void OnDisable()
     {
@@ -77,18 +83,20 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
 
     public void StartInTweens(Action callBack)
     {
+        _myDataHub.AddPlayingTween();
         _tweenEvents.InTweenEventStart?.Invoke();
         StartProcessingTweens(TweenType.In, callBack, _tweenEvents.InTweenEventEnd);
     }
     public void StartOutTweens(Action callBack)
     {
+        _myDataHub.AddPlayingTween();
         _tweenEvents.OutTweenEventStart?.Invoke();
         StartProcessingTweens(TweenType.Out, callBack, _tweenEvents.OutTweenEventEnd);
     }
     private void StartProcessingTweens(TweenType tweenType, Action callBack, TweenTrigger tweenTypeEvent)
     {
-        FinishedTweenCallback = callBack;
-        TweenEvent = tweenTypeEvent;
+        UserTweenEndCallback = callBack;
+        TweenTypeEndEvent = tweenTypeEvent;
 
         if (IfTweenCounterIsZero_In()) return;
 
@@ -113,10 +121,11 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
     
     private void EndOfTween()
     {
+        _myDataHub.RemovePlayingTween();
         _effectCounter--;
         if (_effectCounter > 0) return;
-        TweenEvent?.Invoke();
-        FinishedTweenCallback?.Invoke();
+        TweenTypeEndEvent?.Invoke();
+        UserTweenEndCallback?.Invoke();
     }
     
     private void PunchOrShakeEndEffect(BuildTweenData item)
@@ -124,5 +133,6 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher
         EndTweenRect = item.Element;
         EndTweenEffect?.Invoke(this);
     }
+
 }
 

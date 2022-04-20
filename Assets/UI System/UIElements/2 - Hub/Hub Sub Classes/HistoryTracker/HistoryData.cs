@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EZ.Service;
 using UIElements;
@@ -15,13 +16,13 @@ public class HistoryData : IServiceUser
     public void AddData(INode newNode)
     {
         NewNode = newNode;
-        MultiSelectIsActive = false;
+        MyDataHub.SetMultiSelect(false);
     }
     
     public void AddStopPoint(INode newNode)
     {
         StopPoint = newNode;
-        MultiSelectIsActive = false;
+        MyDataHub.SetMultiSelect(false);
     }
 
     public void SetToThisTrunkWhenFinished(Trunk trunk) => SetToThisTrunk = trunk;
@@ -29,16 +30,17 @@ public class HistoryData : IServiceUser
     public void RemoveFromHistory(INode node) => MyDataHub.ManageHistory(node);
     public void AddMultiSelectData(INode newNode) => NewNode = newNode;
     public void SwitchPressed(bool pressed) => MyDataHub.SwitchPressed(pressed);
-    public void MultiSelectOn() => MultiSelectIsActive = true;
-    public void MultiSelectOff() => MultiSelectIsActive = false;
+    public void MultiSelectOn() => MyDataHub.SetMultiSelect(true);
+    public void MultiSelectOff() => MyDataHub.SetMultiSelect(false);
     public INode NewNode { get; private set; }
     public INode StopPoint { get; private set; }
     public INode LastSelected() => MyDataHub.History.IsNotEmpty() ? MyDataHub.History.Last() : null;
 
+    public Action EndOfTrunkCloseAction { get; set; }
     public List<INode> History => MyDataHub.History;
     public bool GameIsPaused => MyDataHub.GamePaused;
     public bool CanStart => MyDataHub.SceneStarted;
-    public bool NoPopUps => MyDataHub.NoPopups;
+    public bool NoPopUps => MyDataHub.NoPopUps;
     public bool NoHistory => MyDataHub.NoHistory;
     public List<IBranch> ActiveResolvePopUps => MyDataHub.ActiveResolvePopUps;
     public List<IBranch> ActiveOptionalPopUps => MyDataHub.ActiveOptionalPopUps;
@@ -48,7 +50,7 @@ public class HistoryData : IServiceUser
     public IBranch NewNodesBranch => NewNode.MyBranch;
     public IBranch ActiveBranch => MyDataHub.ActiveBranch;
     public Trunk CurrentTrunk => MyDataHub.CurrentTrunk;
-    public bool MultiSelectIsActive { get; private set; }
+    public bool MultiSelectIsActive => MyDataHub.MultiSelectActive;
     private IDataHub MyDataHub { get; set; }
     public Trunk RootTrunk => MyDataHub.RootTrunk;
     public Trunk SetToThisTrunk { get; private set; }

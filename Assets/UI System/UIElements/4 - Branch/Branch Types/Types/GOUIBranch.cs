@@ -126,11 +126,11 @@ public class GOUIBranch : BranchBase, IGOUIBranch
         return _canStartGOUI || AlwaysOn || CanAllowKeys;
     }
 
-    public override void SetUpBranch(IBranch newParentController = null)
+    public override void SetUpBranch(/*IBranch newParentController = null*/)
     {
         bool AlwaysOnActivated() => AlwaysOn && ThisBranch.CanvasIsEnabled;
 
-        base.SetUpBranch(newParentController);
+        base.SetUpBranch(/*newParentController*/);
         _canvasOrderCalculator.SetCanvasOrder();
         
         if(ThisBranch.CanvasIsEnabled || AlwaysOnActivated() || !_canStartGOUI )

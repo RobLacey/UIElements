@@ -71,18 +71,18 @@ public class MenuAndGameSwitching : IMenuAndGameSwitching, IInMenu, IEZEventDisp
 
     private void CheckForActivation(IMenuGameSwitchingPressed arg)
     {
-        if (!_myDataHub.NoPopups) return;
+        if (_myDataHub.HasPopUps) return;
         SwitchBetweenGameAndMenu();
     }
     
     private void PopUpEventHandler()
     {
-        if (!_myDataHub.NoPopups && !InTheMenu)
+        if (_myDataHub.HasPopUps && !InTheMenu)
         {
             SwitchBetweenGameAndMenu();
         }
         
-        if (_myDataHub.NoPopups && _wasInGame)
+        if (_myDataHub.NoPopUps && _wasInGame)
         {
             _wasInGame = false;
             SwitchBetweenGameAndMenu();

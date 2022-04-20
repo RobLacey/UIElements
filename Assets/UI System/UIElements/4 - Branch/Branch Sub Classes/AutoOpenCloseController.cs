@@ -14,7 +14,6 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
     
     //Variables
     private readonly IBranch _myBranch;
-
     private static Coroutine runningCoroutine;
 
     //Properties
@@ -30,19 +29,23 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
     public void OnEnable()
     {
         FetchEvents();
-       // ObserveEvents();
+        _myBranch.OnMouseEnterEvent += OnPointerEnter;
+        _myBranch.OnMouseExitEvent += OnPointerExit;
+        // ObserveEvents();
     }
 
     public void OnDisable()
     {
       //  UnObserveEvents();
+        _myBranch.OnMouseEnterEvent -= OnPointerEnter;
+        _myBranch.OnMouseExitEvent -= OnPointerExit;
         CancelHooverOver = null;
         StaticCoroutine.StopCoroutines(runningCoroutine);
     }
     
     public void FetchEvents() => CancelHooverOver = CancelEvents.Do.Fetch<ICancelActivated>();
 
-    public void OnPointerEnter()
+    private void OnPointerEnter()
     {
         if (runningCoroutine.IsNotNull())
         {
@@ -51,7 +54,7 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
         PointerOverBranch = true;
     }
 
-    public void OnPointerExit()
+    private void OnPointerExit()
     {
         PointerOverBranch = false;
         

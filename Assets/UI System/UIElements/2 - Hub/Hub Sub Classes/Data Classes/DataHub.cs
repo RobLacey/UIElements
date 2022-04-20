@@ -9,7 +9,7 @@ using UnityEngine;
 
 
 [Serializable]
-public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatcher/*, IStoreNodeHistoryData*/
+public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
 {
     [SerializeField] private Node _lastHighlighted = default;
     [SerializeField] private GameObject _lastHighlightedGo = default;
@@ -18,12 +18,14 @@ public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatch
     [SerializeField] private Branch _activeBranch = default;
     [SerializeField] private Trunk _currentTrunk = default;
     [SerializeField] private Trunk _pausedTrunk = default;
+    [SerializeField] private Trunk _escapeTrunk = default;
     [SerializeField] [ReadOnly] private Trunk _rootTrunk;
     [SerializeField] [ReadOnly] private bool _sceneStarted;
     [SerializeField] [ReadOnly] private bool _onRootTrunk = true;
     [SerializeField] [ReadOnly] private bool _controllingWithKeys = default;
     [SerializeField] [ReadOnly] private bool _inMenu;
     [SerializeField] [ReadOnly] private bool _gameIsPaused;
+    [SerializeField] [ReadOnly] private bool _multiSelectActive;
     [SerializeField] [ReadOnly] private EscapeKey _globalEscapeKey;
     [SerializeField] private List<Trunk> _activeTrunks = default;
     [SerializeField] private List<Node> _history = default;
@@ -40,70 +42,58 @@ public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatch
     private Trunk _lastTrunkBeforePause;
     private ISwitch _lastSwitcher;
     private List<Node> _lastCurrentSwitchHistory = new List<Node>();
-
-    //private readonly List<INode> _history = new List<INode>();
+    private IHistoryTrack _historyTracker;
 
     //Events
-    //private Action<IStoreNodeHistoryData> DoAddANode { get; set; }
     private Action<IAddOptionalPopUp> DoAddOptionalPopUp { get; set; }
     private Action<IRemoveOptionalPopUp> DoRemoveOptionalPopUp { get; set; }
     private Action<IAddResolvePopUp> DoAddResolvePopUp { get; set; }
     private Action<IRemoveResolvePopUp> DoRemoveResolvePopUps { get; set; }
-    // private Action<IAddTrunk> DoAddTrunk { get; set; }
-    // private Action<IRemoveTrunk> DoRemoveTrunk { get; set; }
-
     private Action<IHighlightedNode> DoHighlighted { get; set; } 
-
     private Action<ISelectedNode> DoSelected { get; set; }
-    //private  Action<IActiveBranch> DoSetAsActiveBranch { get; set; } 
     private Action<IIsAtRootTrunk> DoSetIsAtRoot { get; set; }
 
-
-    
+    //Properties, Getters / Setters
     public RectTransform MainCanvasRect { get; private set; }
-
+    public void SetMasterRectTransform(RectTransform mainRect) => MainCanvasRect = mainRect;
     public bool SceneStarted => _sceneStarted;
     public void SetStarted() => _sceneStarted = true;
-
     public bool InMenu => _inMenu;
     public void SetInMenu(bool inMenu) => _inMenu = inMenu;
-
-    public Trunk PausedTrunk => _pausedTrunk;
+    public bool PausedOrEscapeTrunk(Trunk compare) => compare == _pausedTrunk || compare == _escapeTrunk;
     public void SetPausedTrunk(Trunk pausedTrunk) => _pausedTrunk = pausedTrunk;
+    public void SetEscapeTrunk(Trunk escapeTrunk) => _escapeTrunk = escapeTrunk;
     public bool GamePaused => _gameIsPaused;
     public void SetIfGamePaused(bool paused) => _gameIsPaused = paused;
-
     public void SetGlobalEscapeSetting(EscapeKey setting) => _globalEscapeKey = setting;
     public EscapeKey GlobalEscapeSetting => _globalEscapeKey;
-
-    public bool IsAtRoot => _onRootTrunk;
-
     public bool AllowKeys => _controllingWithKeys;
     public void SetAllowKeys(bool newAllowKeysSetting) => _controllingWithKeys = newAllowKeysSetting;
-
-    public bool NoPopups  => _activeOptionalPopUps.Count == 0 & _activeResolvePopUps.Count == 0;
-    public bool NoHistory => History.Count == 0;
-    
+    public bool NoPopUps  => _activeOptionalPopUps.IsEmpty() & _activeResolvePopUps.IsEmpty();
+    public bool HasPopUps  => _activeOptionalPopUps.IsNotEmpty() || _activeResolvePopUps.IsNotEmpty();
+    public bool NoResolvePopUp => _activeResolvePopUps.IsEmpty();
+    public bool HasResolvePopUp => _activeResolvePopUps.IsNotEmpty();
+    public List<IBranch> ActiveResolvePopUps => _activeResolvePopUps.ToList<IBranch>();
+    public List<IBranch> ActiveOptionalPopUps => _activeOptionalPopUps.ToList<IBranch>();
+    public bool NoHistory => History.IsEmpty();
     public IBranch ActiveBranch => _activeBranch;
     public void SetActiveBranch(Branch activeBranch) => _activeBranch = activeBranch;
-
 
     public ISwitch CurrentSwitcher { get; private set; }
     public void SetSwitcher(ISwitch newSwitcher)
     {
         if(newSwitcher != CurrentSwitcher)
-            _currentSwitchHistory.Clear();
-        
+        {
+            _currentSwitchHistory = newSwitcher.SwitchHistory;
+        }        
         CurrentSwitcher = newSwitcher;
     }
 
+    public void SetRootTrunk(Trunk root) => _rootTrunk = root; 
+    public bool IsAtRoot => _onRootTrunk;
     public List<Trunk> ActiveTrunks => _activeTrunks;
     public Trunk CurrentTrunk => _currentTrunk;
     public Trunk RootTrunk => _rootTrunk;
-    public bool NoResolvePopUp => _activeResolvePopUps.IsEmpty();
-    public List<IBranch> ActiveResolvePopUps => _activeResolvePopUps.ToList<IBranch>();
-    public List<IBranch> ActiveOptionalPopUps => _activeOptionalPopUps.ToList<IBranch>();
-
     public void SwitchPressed(bool pressed) => _switchPressed = pressed;
     public List<INode> History
     {
@@ -117,23 +107,36 @@ public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatch
         }
     }
 
+    public List<Node> CurrentSwitchHistory => _currentSwitchHistory;
+
     public List<GameObject> SelectedGOs => _selectedGOs;
     public INode Highlighted => _lastHighlighted;
     
-    public void SetHighLighted(INode newNode)
+    public void SetAsHighLighted(INode newNode)
     {
-        if(!SceneStarted) return;
-        
-        if(Highlighted.IsNotNull() && newNode != Highlighted)
-            Highlighted.ThisNodeNotHighLighted();
-
-
+        UnhighlightLastNode(newNode);
         _lastHighlighted = (Node)newNode;
+        IsAnInGameObject();
+        DoHighlighted?.Invoke(this);
+    }
+
+    public bool CanSetAsHighlighted(INode newNode)
+    {
+        if (!SceneStarted/* || !AllowKeys*/) return false;
         
+        return _historyTracker.ReturnNextBranch() == newNode.MyBranch;
+    }
+
+    private void UnhighlightLastNode(INode newNode)
+    {
+        if (Highlighted.IsNotNull() && newNode != Highlighted) 
+            Highlighted.ThisNodeNotHighLighted();
+    }
+
+    private void IsAnInGameObject()
+    {
         if (_lastHighlighted.IsNotNull() && _lastHighlighted.InGameObject.IsNotNull())
             _lastHighlightedGo = _lastHighlighted.InGameObject;
-        
-        DoHighlighted?.Invoke(this);
     }
 
     public INode SelectedNode => _lastSelected;
@@ -148,52 +151,46 @@ public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatch
         DoSelected?.Invoke(this);
     }
 
-
+    public bool MultiSelectActive => _multiSelectActive;
+    public void SetMultiSelect(bool active) => _multiSelectActive = active;
     public Node NodeToUpdate { get; private set; }
     public IBranch ThisPopUp{ get;  private set; }
-    //public Trunk ThisTrunk { get; private set; }
+    public int PlayingTweens { get; private set; }
+
+    public void AddPlayingTween()
+    {
+        PlayingTweens++;
+    }
+    public void RemovePlayingTween()
+    {
+        PlayingTweens--;
+    }
 
 
     //Main
     public void OnAwake() => AddService();
 
-    public void SetUpDataHub(Trunk rootTrunk, RectTransform mainRect)
-    {
-        _rootTrunk = rootTrunk;
-        MainCanvasRect = mainRect;
-    }
-
     public void OnEnable()
     {
-        //ObserveEvents();
+        UseEZServiceLocator();
         FetchEvents();
     }
 
     public void FetchEvents()
     {
-        //DoAddANode = HistoryEvents.Do.Fetch<IStoreNodeHistoryData>();
         DoAddOptionalPopUp = PopUpEvents.Do.Fetch<IAddOptionalPopUp>();
         DoRemoveOptionalPopUp = PopUpEvents.Do.Fetch<IRemoveOptionalPopUp>();
         DoAddResolvePopUp = PopUpEvents.Do.Fetch<IAddResolvePopUp>();
         DoRemoveResolvePopUps = PopUpEvents.Do.Fetch<IRemoveResolvePopUp>();
-        // DoAddTrunk = HistoryEvents.Do.Fetch<IAddTrunk>();
-        // DoRemoveTrunk = HistoryEvents.Do.Fetch<IRemoveTrunk>();
         DoHighlighted = HistoryEvents.Do.Fetch<IHighlightedNode>();
         DoSelected = HistoryEvents.Do.Fetch<ISelectedNode>();
-        //DoSetAsActiveBranch = HistoryEvents.Do.Fetch<IActiveBranch>();
         DoSetIsAtRoot = HistoryEvents.Do.Fetch<IIsAtRootTrunk>();
-
     }
+    public void UseEZServiceLocator() => _historyTracker = EZService.Locator.Get<IHistoryTrack>(this);
 
     public void AddService() => EZService.Locator.AddNew<IDataHub>(this);
 
     public void OnRemoveService() { }
-
-    // public void ObserveEvents()
-    // {
-    //     //HistoryEvents.Do.Subscribe<IInMenu>(SetIfInMenu);
-    //     //HistoryEvents.Do.Subscribe<IGameIsPaused>(SetIfGamePaused);
-    // }
 
     public void OnStart()
     {
@@ -228,23 +225,10 @@ public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatch
         ThisPopUp = popUpToRemove;
         DoRemoveOptionalPopUp?.Invoke(this);
     }
-
-    // public void UnObserveEvents()
-    // {
-    //    // HistoryEvents.Do.Unsubscribe<IInMenu>(SetIfInMenu);
-    //    // HistoryEvents.Do.Unsubscribe<IGameIsPaused>(SetIfGamePaused);
-    // }
-
-
-
-
-    //private void SetIfInMenu(IInMenu args) => InMenu = args.InTheMenu;
-
     
     public void ManageHistory(INode node)
     {
         NodeToUpdate = (Node)node;
-        //DoAddANode?.Invoke(this);
         
         if (_history.Contains(NodeToUpdate))
         {
@@ -269,17 +253,12 @@ public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatch
         
         if(ActiveTrunks.Contains(trunk)) return;
         ActiveTrunks.Add(trunk);
-        //ThisTrunk = trunk;
-        //DoAddTrunk?.Invoke(this);
-        
     }
     
     public void RemoveTrunk(Trunk trunk)
     {
         if (!ActiveTrunks.Contains(trunk)) return;
         ActiveTrunks.Remove(trunk);
-       // ThisTrunk = trunk;
-        //DoRemoveTrunk?.Invoke(this);
     }
     
     public void SaveState()
@@ -302,4 +281,5 @@ public class DataHub:  /*IEZEventUser,*/ IIsAService, IDataHub, IEZEventDispatch
         SetSwitcher(_lastSwitcher);
         _currentSwitchHistory = _lastCurrentSwitchHistory;
     }
+
 }

@@ -13,7 +13,7 @@ public class ToggleSwitcher: ISwitch
     //Properties, Getter / Setters
     private List<Toggle> ThisToggleGroup { get; set; } = new List<Toggle>();
     public bool HasOnlyOneMember => ThisToggleGroup.Count == 1;
-    public List<INode> SwitchHistory { get; private set; }
+    public List<Node> SwitchHistory { get; } = new List<Node>();
     public void ClearSwitchHistory() => SwitchHistory.Clear();
 
     //Main

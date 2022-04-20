@@ -1,7 +1,9 @@
-﻿using EZ.Service;
+﻿using EZ.Events;
+using EZ.Service;
 using UIElements;
+using UnityEngine;
 
-public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
+public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart, IEZEventUser
 {
     public ToggleAsTab(IBranch linkBranch, IBranch myBranch, INode myNode, Toggle toggle)
     {
@@ -32,16 +34,24 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
     {
         if(!HasLink) return;
         UseEZServiceLocator();
-        MyBranch.EnterBranchEvent += OnBranchEnter;
-        MyBranch.ExitBranchEvent += OnBranchExit;
+        ObserveEvents();
+        MyBranch.OpenBranchStartEvent += OnBranchEnter;
+        MyBranch.ExitBranchStartEvent += OnBranchExit;
     }
+    
+    public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
+
+    public void ObserveEvents() => HistoryEvents.Do.Subscribe<IOnStart>(OnSceneStart);
+
+    public void UnObserveEvents() => HistoryEvents.Do.Unsubscribe<IOnStart>(OnSceneStart);
 
     public void OnDisable()
     {
         if(!HasLink) return;
 
-        MyBranch.EnterBranchEvent -= OnBranchEnter;
-        MyBranch.ExitBranchEvent -= OnBranchExit;
+        UnObserveEvents();
+        MyBranch.OpenBranchStartEvent -= OnBranchEnter;
+        MyBranch.ExitBranchStartEvent -= OnBranchExit;
     }
 
     public void OnStart()
@@ -50,8 +60,14 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
         LinkBranch.ParentTrunk = MyBranch.ParentTrunk;
     }
 
-    public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
-
+    private void OnSceneStart(IOnStart args)
+    {
+        if(_myToggle.IsToggleSelected)
+        {
+            LinkBranch.MyCanvas.enabled = true;
+        }
+    }
+    
     private void OnBranchEnter()
     {
         if (!_myToggle.IsToggleSelected) return;
@@ -83,4 +99,5 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart
         if(_myToggle.IsToggleSelected) return;
         LinkBranch.ExitThisBranch(OutTweenType.Cancel);
     }
+
 }

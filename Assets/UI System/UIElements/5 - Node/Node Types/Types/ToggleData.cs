@@ -5,23 +5,31 @@ using UnityEngine;
 [Serializable]
 public class ToggleData
 {
-    // [SerializeField] 
-    // private ToggleGroup _toggleGroupId = ToggleGroup.TG1;
-
     [SerializeField] private ToggleGroupObject _toggleGroup;
     
     [SerializeField] 
     [AllowNesting] [HideIf(NotInGroup)]
     private IsActive _startAsSelected = IsActive.No;
+    
     [SerializeField] 
-    [AllowNesting] [Label("Tab Branch")] [HideIf(NotInGroup)]  private Branch _linkBranch = default;
+    [AllowNesting] [ValidateInput(ValidBranch, ErrorMessage)] [Label("Tab Branch")] [HideIf(NotInGroup)]  
+    private Branch _linkBranch = default;
 
+    //Editor
+    private const string ValidBranch = nameof(CheckValidBranch);
+    private const string ErrorMessage = "Must NOT use a Pop Up here. Do this via the Event Functions Or HotKeys instead.";
 
-    //public ToggleGroup ReturnToggleId => _toggleGroupId;
-   // public bool CanUseToggleSwitcher => _toggleGroup.CanUseToggleSwitcher;
+    private bool CheckValidBranch(Branch branch)
+    {
+        if (branch.IsNull()) return true;
+        return !branch.IsAPopUpBranch();
+    }
+
+    //Properties, Getters & Setters
     public ToggleGroupObject ToggleGroupData => _toggleGroup;
     public bool HasToggleGroup => _toggleGroup.IsNotNull();
-    
+     public IsActive StartAsSelected => _startAsSelected;
+
     public IBranch LinkBranch
     {
         get => _linkBranch;
@@ -37,14 +45,6 @@ public class ToggleData
             _startAsSelected = IsActive.No;
         }        
         return _toggleGroup.IsNull();
-        // if (_toggleGroupId == ToggleGroup.None)
-        // {
-        //     _linkBranch = null;
-        //     _startAsSelected = IsActive.No;
-        // }        
-        // return _toggleGroupId == ToggleGroup.None;
     }
 
-    public IsActive StartAsSelected => _startAsSelected;
-    public void SetStartAsSelected() => _startAsSelected = IsActive.Yes;
 }

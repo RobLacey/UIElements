@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EZ.Events;
-using EZ.Service;
 using NaughtyAttributes;
 using UIElements;
 using UnityEngine;
@@ -17,12 +15,16 @@ public partial class HotKeys : IMonoEnable
     [SerializeField] 
     [AllowNesting] [OnValueChanged(IsAllowed)]
     private Branch _myBranch  = default;
+    [SerializeField] 
+    [AllowNesting] [OnValueChanged(Check)]
+    private Node _presetParent  = default;
     
     //Variables
     private bool _hasParentNode;
+    private bool _hasPresetParentNode;
     private INode _parentNode;
     private bool _isPopUp;
-    private List<INode> HistoricHierachy = new List<INode>();
+    private List<INode> _historicHierarchy = new List<INode>();
     private const string SetName = "Set My Name";
 
     public void ResetOnNewHotKey()
@@ -34,12 +36,15 @@ public partial class HotKeys : IMonoEnable
 
     //Properties, Getters / Setters
     public HotKey HotKeyInput => _hotKeyInput;
+    public void SetBranchRunTime(Branch branch) => _myBranch = branch;
 
     //Main
     public void OnEnable() => IsAllowedType();
 
     public void HotKeyActivation()
     {    
+        if(_myBranch.IsNull() || _myBranch.CanvasIsEnabled) return;
+        
         if(!_hasParentNode)
             GetParentNode();
         
@@ -56,48 +61,82 @@ public partial class HotKeys : IMonoEnable
     {
         if (SetIfIsAPopUpBranch()) return;
         
-        CheckForInvalidBranch();
-        GetHistoricParents();
+        //CheckForInvalidBranch();
+        GetImmediateParent();
         
         var currentBranch = (IBranch)_myBranch;
         var parentBranch = _myBranch.MyParentBranch;
         
         while (parentBranch.IsNotNull())
         {
-            var parentNode = parentBranch.ThisBranchesNodes
-                                    .First(node => ReferenceEquals(currentBranch, node.HasChildBranch));
-            HistoricHierachy.Add(parentNode);
+            INode parentNode;
+            
+            parentNode = ReturnNextParentNode(parentBranch, currentBranch);
+            _historicHierarchy.Add(parentNode);
             currentBranch = parentBranch;
             parentBranch = parentBranch.MyParentBranch;
         }
     }
 
-    private bool SetIfIsAPopUpBranch() => _isPopUp = _myBranch.IsAPopUpBranch();
-
-    private void CheckForInvalidBranch()
+    private INode ReturnNextParentNode(IBranch parentBranch, IBranch currentBranch)
     {
-        if (_myBranch.MyParentBranch.IsNull())
+        INode parentNode;
+        if (_hasPresetParentNode)
         {
-            throw new Exception("Hot Key has no parent and isn't a PopUp so is invalid. Make into a POPUP or REMOVE");
+            parentNode = _presetParent;
+            _hasPresetParentNode = false;
         }
+        else
+        {
+            parentNode = parentBranch.ThisBranchesNodes
+                                     .First(node => ReferenceEquals(currentBranch, node.HasChildBranch));
+        }
+        return parentNode;
     }
 
-    private void GetHistoricParents()
+    private bool SetIfIsAPopUpBranch() => _isPopUp = _myBranch.IsAPopUpBranch();
+
+    // private void CheckForInvalidBranch()
+    // {
+    //     if (_myBranch.MyParentBranch.IsNull())
+    //     {
+    //         throw new Exception($"{_myBranch} :Hot Key has no parent and isn't a PopUp so is invalid. Make into a POPUP or REMOVE");
+    //     }
+    //
+    //     // if (_presetParent.IsNotNull() && _presetParent.HasChildBranch != (IBranch)_myBranch)
+    //     // {
+    //     //     throw new Exception($"{_myBranch} HotKey has a preset that isn't linked to it. Set it's child to this hotkey");
+    //     // }
+    // }
+
+    private void GetImmediateParent()
     {
+        if (_presetParent.IsNotNull())
+        {
+            _parentNode = _presetParent;
+            _hasPresetParentNode = true;
+            return;
+        }
+        
         var branchesNodes = _myBranch.MyParentBranch.ThisBranchesNodes;
         _parentNode = branchesNodes.First(node => ReferenceEquals(_myBranch, node.HasChildBranch));
     }
 
     private void StartThisHotKeyBranch()
     {
-        foreach (var node in HistoricHierachy)
+        foreach (var node in _historicHierarchy)
         {
             if(node == _parentNode) continue;
             node.SetAsHotKeyParent(false);
         }
         
         if(!_isPopUp)
+        {
             _parentNode.SetAsHotKeyParent(true);
-        _myBranch.OpenThisBranch();
+        }
+        else
+        {
+            _myBranch.OpenThisBranch();
+        }
     }
 }

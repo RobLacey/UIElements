@@ -181,32 +181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scheme: {fileID: 0}
-  _buildObjectsList:
-  - _name: Optional Tween
-    _element: {fileID: 7784941672309937744}
-    _buildNextAfterDelay: 0
-    _positionSettings:
-      _grabStartPosition: 0
-      _grabMidPosition: 0
-      _grabEndPosition: 0
-      _goToStartPosition: 0
-      _goToMidPosition: 0
-      _goToEndPosition: 0
-      _tweenStartPosition: {x: 0, y: 0, z: 0}
-      _tweenMiddlePosition: {x: 0, y: 0, z: 0}
-      _tweenTargetPosition: {x: 0, y: 0, z: 0}
-    _scaleSettings:
-      _startScale: {x: 1, y: 1, z: 1}
-      _endScale: {x: 0, y: 0, z: 0}
-    _rotationSettings:
-      _rotateFrom: {x: -0, y: 0, z: 0}
-      _rotateMidPoint: {x: 0, y: 0, z: 0}
-      _rotateToo: {x: 0, y: 0, z: 0}
-    _moveTo: {x: 0, y: 0, z: 0}
-    _scaleTo: {x: 0, y: 0, z: 0}
-    _targetRotation: {x: 0, y: 0, z: 0}
-    _punchStartScale: {x: 0, y: 0, z: 0}
-    _shakeStartScale: {x: 0, y: 0, z: 0}
+  _buildObjectsList: []
   _tweenEvents:
     _inTweenEventStart:
       m_PersistentCalls:
@@ -238,7 +213,6 @@ MonoBehaviour:
   _timer: 0
   _whenAllowed:
     _notOnRootScreen: 1
-    _whilePaused: 1
     _withSamePopUpType: 0
     _withActiveResolvePopUps: 1
   _canvasOrderSetting: 0
@@ -247,22 +221,28 @@ MonoBehaviour:
   _orderInCanvas: 0
   _moveType: 1
   _stayVisible: 1
-  _blockRaycastToOpenBranches: 1
-  _escapeKeyFunction: 1
+  _whenActiveDo: 1
+  _escapeKeyFunction: 0
   _saveExitSelection: 0
   _autoClose: 1
   _autoCloseDelay: 0.25
   _branchEvents:
-    _onBranchEnter:
+    _onBranchMouseEnter:
       m_PersistentCalls:
         m_Calls: []
-    _onBranchExit:
+    _onBranchMouseExit:
       m_PersistentCalls:
         m_Calls: []
-    _onBranchEnterEnd:
+    _onOpenBranch:
       m_PersistentCalls:
         m_Calls: []
-    _onBranchExitEnd:
+    _onExitBranch:
+      m_PersistentCalls:
+        m_Calls: []
+    _onOpenBranchEnd:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitBranchEnd:
       m_PersistentCalls:
         m_Calls: []
 --- !u!1001 &7784941670941888764

@@ -76,9 +76,9 @@ public class HomeScreenBranch: BranchBase, IHomeScreenBranch
     //     _myBranch.MyCanvas.sortingOrder = _canvasOrderData.ReturnControlBarCanvasOrder();
     // }
 
-    public override void SetUpBranch(IBranch newParentController = null)
+    public override void SetUpBranch(/*IBranch newParentController = null*/)
     {
-        base.SetUpBranch(newParentController);
+        base.SetUpBranch(/*newParentController*/);
         
         if(!InMenu) return;
         

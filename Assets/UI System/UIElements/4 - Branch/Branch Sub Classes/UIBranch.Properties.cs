@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UIElements;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public partial class Branch
     public bool IsStandardBranch() => _branchType == BranchType.Standard;
     public bool IsInGameBranch() => _branchType == BranchType.InGameObject;
     public void DoNotTween() => _tweenOnChange = false;
-    public void DontSetAsActiveBranch() => _canSetAsActivateBranch = false;
+    public void DontSetAsActiveBranch() => _canActivateBranch = false;
     public bool IsTimedPopUp() => _branchType == BranchType.TimedPopUp;
     public bool StayVisibleMovingToChild() => _stayVisible == IsActive.Yes;
     public void SetNotAControlBar() => _controlBar = IsActive.No;
@@ -39,12 +40,12 @@ public partial class Branch
     public INode DefaultStartOnThisNode { get; set; }
     public INode LastSelected { get; set; }
     public INode LastHighlighted { get; set; }
-    public INode[] ThisBranchesNodes { get; set; } = new INode[0];
+    public INode[] ThisBranchesNodes { get; private set; } = Array.Empty<INode>();
     public void SetThisGroupsNode(INode[] groupsNodes) => ThisBranchesNodes = groupsNodes;
     public IsActive GetSaveOnExit => _saveExitSelection;
     public Canvas MyCanvas { get; private set; } 
     public CanvasGroup MyCanvasGroup { get; private set; }
-    public IBranch MyParentBranch { get; set; }
+    public IBranch MyParentBranch { get; private set; }
     public IBranch ThisBranch => this;
     public GameObject ThisBranchesGameObject => gameObject;
     //public IBranch ActiveBranch => this;
@@ -53,7 +54,7 @@ public partial class Branch
     public float Timer => _timer;
     public Trunk ParentTrunk { get; set; }
     public bool IsAlreadyActive => !_tweening && CanvasIsEnabled;
-    public bool BlockRaycastToOpenBranches => _blockRaycastToOpenBranches == IsActive.Yes;
+    public WhenActiveDo WhenActiveDoThis => _whenActiveDo;
 
 
     public IsActive SetSaveLastSelectionOnExit
@@ -67,11 +68,11 @@ public partial class Branch
         set => _escapeKeyFunction = value;
     }
 
-    public WhenToMove WhenToMove
-    {
-        get => _moveType;
-        set => _moveType = value;
-    }
+    // public WhenToMove WhenToMoveToChild
+    // {
+    //     get => _moveToChild;
+    //     set => _moveToChild = value;
+    // }
 
     // public DoTween TweenOnSceneStart
     // {
@@ -96,6 +97,9 @@ public partial class Branch
     public int ReturnManualCanvasOrder => _orderInCanvas;
     public IBranch TargetBranch => this;
     public GOUIModule ReturnGOUIModule => _branchTypeBaseClass.ReturnGOUIModule() as GOUIModule;
-    
+
+    public bool ApplyFocus => _applyFocus == IsActive.Yes;
+    public int FocusSortingOrder => _whenFocusedSortingOrder;
+
 
 }

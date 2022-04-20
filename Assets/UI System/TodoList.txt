@@ -1,27 +1,29 @@
 ﻿ 
 //Branch Fixes
-- Pause Menu. Needs to trigger seperately. Use same pattern as switcherHistory to track whilePausedHistory
-- Disable Input when tweening between branches
-- Have a clear all Canvas's option on Branch (Same as Pause uses). Add To PopUps
-- Fix Control Bar functionality (seperate it from everything else, add to each trunk / switcher etc etc)
-- Disable /  enable Branches working still (removes from groups and can a add to group). Need to fix Dynamic Branches so functionality works
-- Check when all nodes are disabled in branch that it will switch to next branch and / or pass over it when switching
+
+- add Disable Branch functionality (disables all). It just disables all Nodes. Link to switcher (move or not option and check when switching)
+    Check when all nodes are disabled in branch that it will switch to next branch and / or pass over it when switching when set to
 - Make MoveToBranch Call OnEnable, StartBranchExit to call OnDisable.
    Only active branches and nodes are assigned to Events etc (Potentially quick big!!)
+- Disable /  enable Branches working still (removes from groups and can a add to group). Need to fix Dynamic Branches so functionality works
 - Turn off Canvas then disable for Dynamic branches / Nodes. Needed for pooling
-- Look into when Branches have to turn canvas's on and off as Trunk can do it most the time when leaving to full screens. May only need it on going to child. 
-    Remove it as a auto conditon of tweening out.
 - Stop Parent Branch re-opening child when it is already open/tweening from a different parent.
 - Runtime Pool setting which disables everything i.e RestoreBranch and also check that it can be activated as it's pooled
-- Set Resolve to not show block raycast but just set it automatically.
-- Add on focus user event to Branch 
-- Add while activeBranch user event
+
+//Control Bar
+- Doesn't work properly, sometimes disappears on going to full screen (to with Trunk). Need to add itself to each trunks switcher and be independant
+
+//Trunk
+- Add option to not tween branches when opening or closing a trunk
+- Trunk needs to have Immediate or AfterExit option to tween
+- Update Make New tree Button
 
 //Runtime Setter
 - Rework to have all functionality needed
    
 //Switcher
 - Checks for disables branch and skip
+- Add loop around or not option
 
 // Auto Open Close
 - Doesn't work properly with Multi- Select
@@ -30,25 +32,12 @@
 //Multi Select
 - Make work with any node. Will need option to be set or not depending on node type
 - Turn into a Scriptable object like with toggle group.
-
-//PopUps
- - Need to rework PopUps so clear screen and work properly. 
- - Add close all open branches when started option (may be restricted to Root Trunk)
- - Check for escape key working
- - Do PopUps allow branching to normal branches??? Decide if allowable or not. Implement like hot key so opens up hiearchy
- - Buffering system for when not allowed
- - Add check in navigate to child and toggle linked branch to no allow popups here (doesn't work like this)
  
 //HistoryManagement
 - Cancel has no sound
 - When Escape pressed doesn't go back to parent node in branch but last highlighted. Must be parent node
 - Have clear current Trunk cancel option (maybe on the back of currentSwitcher list)
 
-//Trunk
-- Move Branch types to Trunk (Not sure this is needed!!)
-- Add option not to tween branches when opening new trunk
-- Trunk needs to have Immediate or AfterExit option to tween
-- Update Make New tree Button
 
 //Hub
 - New Button in Hub to create project properly (canvas and scaler set-up correctly). 
@@ -74,18 +63,35 @@
     What happens to me isn't tracked but happens to you. That way it doesn't matter what the node is doing.
  - Sliders, do they work
  - Check functionality with other UI types (scroll bars etc etc). Maybe need tween for scroll bar value?
+ - Add loop around or not to auto navigation
  
  //Drag Bar
- - Add drag bar functionality. Have save new setting or reset position on close (See Tweener for other settings needed)
+ - Add drag bar functionality. Will work on Branch or node. Seperate Class. Have save new setting or reset position on close (See Tweener for other settings needed)
+ - Make a reordrable list as a seperate class that can be added to branch with allows adding, removing, or repostion nodes in branch. See below:
+        - When released ontop or over (as option) of other node in same branch swap positions & reorder in autonav. Or dragged in add to
+        - Allow removal from Branch when dragged off - All Linked to Dynamic Nodes
+ 
+ //Dynamic Nodes - see above
+ - Make sure this works. Linked to Drag bar functionality
+ - Have option to replace with another object (i.e a place holder to not break layout group)
 
 //Tweeners
+- Replace all node tweening to be done via UITween instead. Means making it a class, node functions inherit it and have a Mono that serialises it. 
+    Also need to restrict usage in node functions so colour can't move too. 
+    - Need to look at redesign and fesablility first. Redsign could incluse:
+            - Seperate class for Start, Middle Ends
+            - Set either by Rect Settings (as is now), relative, fed from external script or target object
+            - Have a grab current position option too
+ - Add Target Object to Position tween
  - Add Time Percentage to other tweens
  - Add Looping to tweener
+ - Make sure tweens sequence without timer (may need to add this option
  - Update all Tweens so they only set to start settings when used
  - Need to implement isRelative to Position to make it easier to move Branches with screen size and dragBar
- - Have a runtime setter function so can set values on the fly (search list by using recttransform). This also good for making scrollbar selection menus etc
+ - Have a runtime setter function so can set values on the fly (search list by using recttransform). 
+    This also good for making scrollbar selection menus etc
  - Add a Horizontial and Vertical lock option to stop dragging breaking tweening off screen
- - Add colour tweener like from Node (cut and paste)
+ - Add colour & Event call(so can caal custom script instead of Tween) option to tweener like from Node (cut and paste)
  
 //GOUI
 - Make GOUI switcher work like other ones i.e replaces currentSwitcher

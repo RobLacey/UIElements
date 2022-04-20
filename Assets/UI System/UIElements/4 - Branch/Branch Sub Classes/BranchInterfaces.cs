@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 
 public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoDisable, IMonoEnable, IMonoOnDestroy,
-                           IDynamicBranch, IToggleEvents, IPointerEnterHandler, IPointerExitHandler
+                           IDynamicBranch, IBranchStateEvents, IPointerEnterHandler, IPointerExitHandler, IApplyFocus
 {
     bool IsControlBar();
     bool IsPauseMenuBranch();
@@ -23,14 +23,15 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     CanvasGroup MyCanvasGroup { get; }
     Trunk ParentTrunk { get; set; }
     EscapeKey EscapeKeyType { get; set; }
-    WhenToMove WhenToMove { set; }
+    //WhenToMove WhenToMoveToChild { set; }
     bool CanvasIsEnabled { get; }
     WhenAllowed WhenAllowed { get; }
     //StoreAndRestorePopUps StoreCloseOrDoNothing { get; }
    // bool AllowWithActiveResolvePopUp { get; }
     //bool CanBufferPopUp { get; }
    // DoTween TweenOnSceneStart { get; set; }
-    IBranch MyParentBranch { get; set; }
+   IBranch MyParentBranch { get; }
+   // INode PresetParent { get; }
     float Timer { get; }
     INode[] ThisBranchesNodes { get; }
     bool PointerOverBranch { get;}
@@ -43,14 +44,13 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     GameObject ThisBranchesGameObject { get; }
     //bool RestoreBranch { get; set; }
     bool IsAlreadyActive { get; }
-    bool BlockRaycastToOpenBranches { get; }
+    WhenActiveDo WhenActiveDoThis { get; }
 
 
     bool StayVisibleMovingToChild();
     void SetNotAControlBar();
     void StartPopUp_RunTimeCall(bool fromPool);
     void OpenThisBranch(IBranch newParentBranch = null);
-    void SetBranchAsActive();
     void DontSetAsActiveBranch();
     void DoNotTween();
     void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null);
@@ -58,12 +58,11 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     void SetBlockRaycast(BlockRaycast blockRaycast);
    // void SetUpAsTabBranch();
     void SetUpGOUIBranch(IGOUIModule module);
+    void SetParentBranch(IBranch newParentBranch);
 }
 
 public interface IAutoOpenClose : IMonoEnable, IMonoDisable
 {
-    void OnPointerEnter();
-    void OnPointerExit();
     bool PointerOverBranch { get;}
     IBranch ChildNodeHasOpenChild { set; }
 }
@@ -98,10 +97,21 @@ public interface IDynamicBranch : IThisBranch
     bool IsInGameBranch();
 }
 
-public interface IToggleEvents
+public interface IBranchStateEvents
 {
-    event Action EnterBranchEvent;
-    event Action ExitBranchEvent;
+    event Action OpenBranchStartEvent;
+    event Action OpenBranchEndEvent;
+    event Action ExitBranchStartEvent;
+    event Action ExitBranchEndEvent;
+    event Action OnMouseEnterEvent;
+    event Action OnMouseExitEvent;
+
+}
+
+public interface IApplyFocus
+{
+    bool ApplyFocus { get; }
+    int FocusSortingOrder { get; }
 }
 
 

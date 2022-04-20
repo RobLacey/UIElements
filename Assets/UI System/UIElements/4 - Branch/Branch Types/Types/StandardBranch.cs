@@ -8,16 +8,11 @@ public class StandardBranch : BranchBase, IStandardBranch
 {
     public StandardBranch(IBranch branch) : base(branch) { }
     
+    //Variables
     private ICanvasOrderData _canvasOrderData;
-   // private bool _isOnRootTrunk;
-
-    //private IBranch[] AllBranches => _myDataHub.AllBranches;
-    private bool IsControlBar => ThisBranch.IsControlBar() && CanStart;
     
-    // private bool OnlyTweenOnSceneStart => _myBranch.TweenOnSceneStart == DoTween.DoNothing 
-    //                                   && _myDataHub.SceneStarted;
-
-
+    private bool IsControlBar => ThisBranch.IsControlBar();
+    
     public override void UseEZServiceLocator()
     {
         base.UseEZServiceLocator();
@@ -28,17 +23,13 @@ public class StandardBranch : BranchBase, IStandardBranch
     {
         base.ObserveEvents();
         HistoryEvents.Do.Subscribe<IOnStart>(SetUpOnStart);
-        BlockRaycasts += SetBlockRaycast;
-
     }
 
     public override void UnObserveEvents()
     {
         base.UnObserveEvents();
         HistoryEvents.Do.Unsubscribe<IOnStart>(SetUpOnStart);
-        BlockRaycasts -= SetBlockRaycast;
     }
-    
 
     public override void OnStart()
     {
@@ -46,8 +37,6 @@ public class StandardBranch : BranchBase, IStandardBranch
         SetCanvas(ActiveCanvas.No);
         SetControlBarCanvasOrder();
     }
-
-    //protected override void SetUpBranchesOnStart(ISetUpStartBranches args) => SetControlBarCanvasOrder();
 
     private void SetUpOnStart(IOnStart args)
     {
@@ -63,63 +52,30 @@ public class StandardBranch : BranchBase, IStandardBranch
         ThisBranch.MyCanvas.sortingOrder = _canvasOrderData.ReturnControlBarCanvasOrder();
     }
 
-    public override void SetUpBranch(IBranch newParentController = null)
+    public override void SetUpBranch(/*IBranch newParentController = null*/)
     {
-        base.SetUpBranch(newParentController);
+        base.SetUpBranch(/*newParentController*/);
         
         if(!IsControlBar)
             _canvasOrderCalculator.SetCanvasOrder();
         
-        if(/*OnlyTweenOnSceneStart ||*/ IsControlBar || ThisBranch.IsAlreadyActive)
+        if( IsControlBar || ThisBranch.IsAlreadyActive)
         {
-            //Debug.Log($"Cant Tween : {ThisBranch} :  {_myCanvas.enabled} ");
             ThisBranch.DoNotTween();
         }        
         SetCanvas(ActiveCanvas.Yes);
-        //CanGoToFullscreen();
         
-       // Debug.Log($"New Parent : {newParentController} for {_myBranch}");
-        // if(!_isOnRootTrunk)
-        // {
-            SetNewParentBranch(newParentController);
-       // }
-        // else
-        // {
-        //     // if(!OnHomeScreen && _isOnRootTrunk)
-        //     //     InvokeOnHomeScreen();
-        //     //_justReturnedHome = false;
-        // }
-        // if(_myBranch.ParentTrunk == ScreenType.FullScreen)
-        //     _screenData.StoreClearScreenData(AllBranches, _myBranch, BlockRaycast.Yes);
+       // SetNewParentBranch(newParentController);
     }
 
-    // protected override void ClearBranchForFullscreen(IClearScreen args)
+    // private void SetNewParentBranch(IBranch newParentController) 
     // {
-    //    // if(_isTabBranch) return;
-    //     base.ClearBranchForFullscreen(args);
-    // }
-
-    private void SetNewParentBranch(IBranch newParentController) 
-    {
-        if(newParentController is null) return;
-        ThisBranch.MyParentBranch = newParentController;
-    }
-
-    // public override void SetBlockRaycast(BlockRaycast active)
-    // {
-    //     if(!NoResolvePopUps) return;
-    //     base.SetBlockRaycast(active);
+    //     if(newParentController is null) return;
+    //     ThisBranch.MyParentBranch = newParentController;
     // }
     
-    public override void SetBlockRaycast(BlockRaycast active)
-    {
-        
-        base.SetBlockRaycast(IsControlBar ? BlockRaycast.Yes: active);
-    }
-    
-    public override void SetCanvas(ActiveCanvas active)
-    {
-        if(IsControlBar /*|| CanStart*/) return;
-        base.SetCanvas(active);
-    }
+    public override void SetBlockRaycast(BlockRaycast active) 
+        => base.SetBlockRaycast(IsControlBar ? BlockRaycast.Yes: active);
+
+    public override void SetCanvas(ActiveCanvas active) => base.SetCanvas(IsControlBar ? ActiveCanvas.Yes: active);
 }

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a3957f5af254c3d828636b70ef1feae, type: 3}
   m_Name: FullScreen
   m_EditorClassIdentifier: 
-  _overrideTrunkSwitcher: 0
-  _activeToggleOneSwitch: 0
+  _overrideTrunkSwitcher: 1
+  _activeToggleOnSwitch: 1

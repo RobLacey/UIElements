@@ -52,7 +52,7 @@ public class ClassBindings : EZInjectBindingBase
         _injectMaster.Bind<ResolvePopUp>().To<IResolvePopUpBranch>().WithParameters();
         _injectMaster.Bind<OptionalPopUpPopUp>().To<IOptionalPopUpBranch>().WithParameters();
         _injectMaster.Bind<TimedPopUp>().To<ITimedPopUpBranch>().WithParameters();
-        _injectMaster.Bind<PauseMenu>().To<IPauseBranch>().WithParameters();
+        //_injectMaster.Bind<PauseMenu>().To<IPauseBranch>().WithParameters();
         _injectMaster.Bind<GOUIBranch>().To<IGOUIBranch>().WithParameters();
         _injectMaster.Bind<SetScreenPosition>().To<ISetScreenPosition>().WithParameters();
         

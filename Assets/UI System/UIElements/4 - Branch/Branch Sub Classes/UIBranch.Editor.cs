@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public partial class Branch
 {
@@ -11,7 +12,8 @@ public partial class Branch
     private const string InGamUIBranch = nameof(InGameUI);
     private const string TimedBranch = nameof(IsTimedPopUp);
     private const string ResolveBranch = nameof(IsResolve);
-    private const string AnyPopUpBranch = nameof(IsAPopUpEditor);
+    private const string AnyPopUpBranch = nameof(IsAPopUpBranch);
+    private const string SetForResolve = nameof(DoSetForResolve);
     //private const string NotControlBar = nameof(IsNotControlBar);
     //private const string Stored = nameof(IsStored);
     //private const string Fullscreen = nameof(IsFullScreen);
@@ -37,48 +39,20 @@ public partial class Branch
     }
 
     private bool InGameUI => _branchType == BranchType.InGameObject;
-    private bool PauseMenu => _branchType == BranchType.PauseMenu;
-    private bool IsManualOrder => _canvasOrderSetting == OrderInCanvas.Manual 
-                                  && (IsStandardBranch() || IsInternalBranch() || IsHomeScreenBranch());
+   // private bool PauseMenu => _branchType == BranchType.PauseMenu;
+    private bool IsManualOrder => _canvasOrderSetting == OrderInCanvas.Manual && IsStandardBranch();
     private bool IsResolve => _branchType == BranchType.ResolvePopUp;
     private bool IsOptional() => _branchType == BranchType.OptionalPopUp;
-   // private bool OnlyOnHomeScreen() => _onlyAllowOnHomeScreen == IsActive.Yes;
 
-    // private bool IsStored() =>
-    //     _branchType == BranchType.OptionalPopUp && _storeOrResetOptional == StoreAndRestorePopUps.StoreAndRestore;
-    //
-    // private bool IsNotControlBar() => _controlBar == IsActive.No;
-
-    /*
-    private bool IsFullScreen()
+    private bool DoSetForResolve(WhenActiveDo whenActiveDo)
     {
-        if (_screenType != ScreenType.FullScreen) return false;
+        if (IsResolve && whenActiveDo == WhenActiveDo.Nothing)
+        {
+            _whenActiveDo = WhenActiveDo.BlockAllOtherRaycasts;
+        }
 
-        _stayVisible = IsActive.No;
         return true;
     }
-    */
 
-    private bool IsAPopUpEditor()
-    {
-        return _branchType == BranchType.OptionalPopUp
-               || _branchType == BranchType.ResolvePopUp
-               || _branchType == BranchType.TimedPopUp;
-    }
-
-    // private bool AllowableInAndOutTweens(IsActive active)
-    // {
-    //     if (active == IsActive.Yes)
-    //     {
-    //         var tweener = GetComponent<UITweener>();
-    //         if (tweener.HasInAndOutTween())
-    //         {
-    //             return false;
-    //         }
-    //     }
-    //
-    //     return true;
-    // }
-
-   // private const string MessageINAndOutTweens = "Can't have IN And Out tweens and Stay Visible set";
 }
+

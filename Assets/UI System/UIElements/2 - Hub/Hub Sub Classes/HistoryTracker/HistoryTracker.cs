@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using EZ.Events;
 using EZ.Service;
 using UIElements.Input_System;
 using UnityEngine;
 
-public class HistoryTracker : IHistoryTrack, IEZEventUser, /*IEZEventDispatcher,*/ IServiceUser/*, INoPopUps*/
+public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, IServiceUser, ICancelPause
 {
     //Variables
     private InputScheme _inputScheme;
@@ -16,17 +15,19 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, /*IEZEventDispatcher,
                                                         HistoryData.History.Contains(node) & 
                                                         !_inputScheme.MultiSelectPressed();
     //Events
-    // private Action<INoPopUps> OnNoPopUps { get; set; }
+     private Action<ICancelPause> CancelPause { get; set; }
      
     //Main
     public void OnEnable()
     {
+        FetchEvents();
         UseEZServiceLocator();
         AddService();
-      //  FetchEvents();
         ObserveEvents();
     }
-    
+
+    public void FetchEvents() => CancelPause = InputEvents.Do.Fetch<ICancelPause>();
+
     public void UseEZServiceLocator() => _inputScheme = EZService.Locator.Get<InputScheme>(this);
 
     public void AddService() => EZService.Locator.AddNew<IHistoryTrack>(this);
@@ -96,19 +97,6 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, /*IEZEventDispatcher,
         HistoryListManagement.ResetAndClearHistoryList(HistoryData, ClearAction.StopAt);
     }
 
-    private void BackOneLevel()
-    {
-        if (HistoryData.MultiSelectIsActive)
-        {
-            HistoryData.SetToThisTrunkWhenFinished(HistoryData.CurrentTrunk);
-            ClearAllHistory();
-        }
-        else
-        {
-            MoveBackInHistory.BackOneLevelProcess(HistoryData);
-        }
-    }
-
     private void SwitchToGame(IInMenu args)
     {
         if (!args.InTheMenu && HistoryData.CanStart)
@@ -141,67 +129,63 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, /*IEZEventDispatcher,
     public void CancelHasBeenPressed(EscapeKey cancelType, IBranch branchToCancel)
     {
         if(cancelType == EscapeKey.None) return;
-
-        // if (HistoryData.GameIsPaused)
-        // {
-        //     if (HistoryData.NoHistory)
-        //     {
-        //         Debug.Log("No History");
-        //         MoveToLastBranchInHistory();
-        //     }
-        // }
-        //Handle Cancelling out of a child in pause
-        //Handle coming out of pause. Need a setting to allow this or not
+        if (CheckIfCanExitPauseScreen()) return;
         
         if (HistoryData.GameIsPaused || HistoryData.NoPopUps)
         {
-            switch (cancelType)
-            {
-                case EscapeKey.BackOneLevel:
-                    BackOneLevel();
-                    break;
-                case EscapeKey.BackToHome:
-                    MoveBackInHistory.BackToHomeProcess(HistoryData);
-                    break;
-            }
+            if(ClearMultiSelect()) return;
+            BackInHistory(cancelType);
         }
         else
         {
-            
-            if(branchToCancel.IsNotNull())
-            {
-                PopUpController.CloseExactPopUp(branchToCancel, MoveToLastBranchInHistory);
-            }
-            else
-            {
-                PopUpController.RemoveNextPopUp(HistoryData, MoveToLastBranchInHistory);
-            }
+            PopUpController.HandlePopUps(HistoryData, branchToCancel, MoveToLastBranchInHistory);
         }
     }
 
-    //TODO Check that GameIsPaused is relivant here once redone
-    public void MoveToLastBranchInHistory()
+    private bool CheckIfCanExitPauseScreen()
+    {
+        if (HistoryData.GameIsPaused & HistoryData.NoHistory)
+        {
+            CancelPause?.Invoke(this);
+            return true;
+        }
+        return false;
+    }
+
+    private void BackInHistory(EscapeKey cancelType)
+    {
+        switch (cancelType)
+        {
+            case EscapeKey.BackOneLevel:
+                MoveBackInHistory.BackOneLevelProcess(HistoryData);
+                break;
+            case EscapeKey.BackToHome:
+                MoveBackInHistory.BackToHomeProcess(HistoryData).OpenThisBranch();
+                break;
+        }
+    }
+
+    private bool ClearMultiSelect()
+    {
+        if (!HistoryData.MultiSelectIsActive) return false;
+        
+        HistoryData.SetToThisTrunkWhenFinished(HistoryData.CurrentTrunk);
+        ClearAllHistory();
+        return true;
+    }
+
+    public void MoveToLastBranchInHistory() => ReturnNextBranch().OpenThisBranch();
+
+    public IBranch ReturnNextBranch()
     {
         if (HistoryData.GameIsPaused)
-        {
-            HistoryData.ActiveBranch.OpenThisBranch();
-            return;
-        }
+            return HistoryData.ActiveBranch;
         
         if (!HistoryData.NoPopUps)
-        {
-            PopUpController.NextPopUp(HistoryData).OpenThisBranch();
-            return;
-        }
+            return PopUpController.NextPopUp(HistoryData);
         
-        if (HistoryData.NoHistory)
-        {
-            MoveBackInHistory.BackToHomeProcess(HistoryData);
-        }
-        else
-        {
-            HistoryData.LastSelected().HasChildBranch.OpenThisBranch();
-        }
+        return HistoryData.NoHistory ? HistoryData.RootTrunk.ActiveBranch : HistoryData.ActiveBranch;
+        // return HistoryData.NoHistory ? MoveBackInHistory.BackToHomeProcess(HistoryData) : HistoryData.ActiveBranch;
     }
     
     public void CheckListsAndRemove(IBranch branchToClose)
@@ -214,4 +198,5 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, /*IEZEventDispatcher,
         HistoryListManagement.ResetAndClearHistoryList(HistoryData, ClearAction.StopAt);
         branchToClose.LastSelected.ExitNodeByType();
     }
+
 }

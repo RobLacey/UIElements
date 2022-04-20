@@ -9,18 +9,22 @@ using UnityEngine;
 [Serializable]
 public class WhenAllowed : IServiceUser, IMonoEnable, IMonoDisable
 {
-    [SerializeField] private AllowBuffer _notOnRootScreen = AllowBuffer.Allow;
+    [SerializeField]
+    [AllowNesting] [Label("When Not On Root Screen")]
+    private AllowBuffer _notOnRootScreen = AllowBuffer.Allow;
     
     [SerializeField] 
-    [InfoBox("Applies to Optional & Timed Only")] [AllowNesting] [Label("If Same Type Of PopUps Are Open")]
+    [InfoBox(SamePopUpMessage)] 
+    [AllowNesting] [Label("When Same Pop-Ups Open")]
     private Allow _withSamePopUpType = Allow.Buffer;
     
     [SerializeField] 
-    [InfoBox("Resolve Pop Ups disable blocking raycast by default. This stops activation and hides open branches")]
-    [AllowNesting] [Label("If Other Resolve PopUps Are Open")]
+    [Tooltip(ActiveResolveTooltip)]
     private Allow _withActiveResolvePopUps = Allow.Allow;
 
-
+    private const string ActiveResolveTooltip = "Resolve Pop Ups disable raycast by default. " +
+                                                "This stops Pop-Up activation and hides open Pop-Ups";
+    private const string SamePopUpMessage = "This stops Pop-Up activation and hides open Pop-Ups. Doesn's aplly To Resolve Pop-Ups";
     private enum Allow
     {
         Allow, Buffer

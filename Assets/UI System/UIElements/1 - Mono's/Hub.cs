@@ -38,7 +38,8 @@ namespace UIElements
         [Required("Must have a start point")]
         [SerializeField] private Trunk _rootTrunk;
 
-        [SerializeField] private int _nextLevel;
+        [SerializeField] 
+        private int _nextLevel;
         [SerializeField] private AudioSource _uiAudioSource;
         
         [Header("Start Delay")] [Space(10f)] [HorizontalLine(1, color: EColor.Blue, order = 1)]
@@ -81,13 +82,10 @@ namespace UIElements
         {
             var uIInput = GetComponent<IInput>();
             AddService();
-
             _startingInGame = uIInput.StartInGame();
-            //_myDataHub = new DataHub(GetComponent<RectTransform>());
-            //_myDataHub.OnAwake();
             _myDataHub.OnAwake();
-            _myDataHub.SetUpDataHub(_rootTrunk, GetComponent<RectTransform>());
-            //_myDataHub.RootTrunk = _rootTrunk;
+            _myDataHub.SetMasterRectTransform(GetComponent<RectTransform>());
+            _myDataHub.SetRootTrunk(_rootTrunk);
             _audioService = EZInject.Class.WithParams<IAudioService>(this);
             _historyTrack = EZInject.Class.NoParams<IHistoryTrack>();
             _cancelHandler = EZInject.Class.NoParams<ICancel>();
@@ -109,6 +107,7 @@ namespace UIElements
         {
             UnObserveEvents();
             _audioService.OnDisable();
+            _cancelHandler.OnDisable();
             DOTween.KillAll();
         }
 
@@ -155,7 +154,7 @@ namespace UIElements
             if(_delayUIStart != 0)
                 yield return new WaitForSeconds(_delayUIStart);
             CheckIfStartingInGame();
-            _rootTrunk.SetStartPositionsAndSettings();
+            _rootTrunk.OnStartTrunk();
             StartCoroutine(EnableStartControls());
         }
 

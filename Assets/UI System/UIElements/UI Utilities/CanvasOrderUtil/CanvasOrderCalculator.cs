@@ -21,6 +21,7 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
 {
     public CanvasOrderCalculator(ICanvasCalcParms data)
     {
+        _myBranch = data.ThisBranch;
         _myCanvas = data.ThisBranch.MyCanvas;
         GetOrderInCanvas = data.ThisBranch.CanvasOrder;
         GetBranchType = data.ThisBranch.ReturnBranchType;
@@ -36,6 +37,7 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
     private int _activeOrder;
     private ICanvasOrderData _canvasOrderData;
     private IDataHub _myDataHub;
+    private IBranch _myBranch;
     private bool _overrideSorting;
     private bool _focusActive;
 
@@ -61,7 +63,7 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
     private void SetUpCanvasOrderAtStart()
     {
         if (CheckIfSetToDefaultOrder()) return;
-        SetStartingSortingOrder();
+        SetStartingSortingOrder(_canvasOrderData.ReturnPresetCanvasOrder(this));
     }
 
     private bool CheckIfSetToDefaultOrder()
@@ -76,10 +78,10 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
         return true;
     }
 
-    private void SetStartingSortingOrder()
+    private void SetStartingSortingOrder(int canvasOrder)
     {
         _myCanvas.enabled = true;
-        _startingOrder = _canvasOrderData.ReturnPresetCanvasOrder(this);
+        _startingOrder = canvasOrder;
         _activeOrder = _startingOrder;
         _myCanvas.overrideSorting = true;
         _myCanvas.sortingOrder = _startingOrder;
@@ -88,6 +90,11 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
 
     public void SetCanvasOrder()
     {
+        if (_myDataHub.PausedOrEscapeTrunk(_myBranch.ParentTrunk) || _myDataHub.GamePaused)
+        {
+            SetStartingSortingOrder(_canvasOrderData.ReturnPauseCanvasOrder());
+        }
+
         if(ActiveBranch.IsNull() || _myCanvas.sortingOrder > _startingOrder) return;
 
         switch (GetOrderInCanvas)

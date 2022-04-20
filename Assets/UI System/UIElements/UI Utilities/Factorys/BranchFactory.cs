@@ -43,11 +43,11 @@ public class BranchFactory
                  CreateTimedPopUp(_branch);
                  return ieJect.WithParams<ITimedPopUpBranch>(_branch);
              }
-            case BranchType.PauseMenu:
-            {
-                CreatePauseMenu(_branch);
-                return ieJect.WithParams<IPauseBranch>(_branch);
-            }
+            // case BranchType.PauseMenu:
+            // {
+            //     CreatePauseMenu(_branch);
+            //     return ieJect.WithParams<IPauseBranch>(_branch);
+            // }
             // case BranchType.Internal:
             // {
             //     CreateInternal(_branch);
@@ -93,7 +93,7 @@ public class BranchFactory
     private static void CreateResolvePopUp(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.EscapeKeyType = EscapeKey.BackOneLevel;
+        //branch.EscapeKeyType = EscapeKey.BackOneLevel;
       //  branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
@@ -103,7 +103,7 @@ public class BranchFactory
     private static void CreateOptionalPopUp(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.EscapeKeyType = EscapeKey.BackOneLevel;
+        //branch.EscapeKeyType = EscapeKey.BackOneLevel;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
         branch.SetSaveLastSelectionOnExit = IsActive.No;
@@ -113,31 +113,31 @@ public class BranchFactory
     {
         branch.SetNotAControlBar();
        // branch.TweenOnSceneStart = DoTween.DoNothing;
-        branch.WhenToMove = WhenToMove.Immediately;
+       // branch.WhenToMoveToChild = WhenToMove.Immediately;
         branch.SetStayOn = IsActive.No;
         branch.CanvasOrder = OrderInCanvas.Manual;
         branch.SetSaveLastSelectionOnExit = IsActive.No;
     }
 
-    private static void CreatePauseMenu(IBranch branch)
-    {
-        branch.SetNotAControlBar();
-        branch.EscapeKeyType = EscapeKey.BackOneLevel;
-      //  branch.TweenOnSceneStart = DoTween.DoNothing;
-        branch.CanvasOrder = OrderInCanvas.Manual;
-    }
-    
-    private static void CreateInternal(IBranch branch)
-    {
-        branch.SetNotAControlBar();
-       // branch.TweenOnSceneStart = DoTween.DoNothing;
-        branch.EscapeKeyType = EscapeKey.BackOneLevel;
-    }
+    // private static void CreatePauseMenu(IBranch branch)
+    // {
+    //     branch.SetNotAControlBar();
+    //     branch.EscapeKeyType = EscapeKey.BackOneLevel;
+    //   //  branch.TweenOnSceneStart = DoTween.DoNothing;
+    //     branch.CanvasOrder = OrderInCanvas.Manual;
+    // }
+    //
+    // private static void CreateInternal(IBranch branch)
+    // {
+    //     branch.SetNotAControlBar();
+    //    // branch.TweenOnSceneStart = DoTween.DoNothing;
+    //     branch.EscapeKeyType = EscapeKey.BackOneLevel;
+    // }
     
     private static void CreateInGameUi(IBranch branch)
     {
         branch.SetNotAControlBar();
-        branch.WhenToMove = WhenToMove.Immediately;
+        //branch.WhenToMoveToChild = WhenToMove.Immediately;
         branch.EscapeKeyType = EscapeKey.BackOneLevel;
        // branch.TweenOnSceneStart = DoTween.DoNothing;
         branch.CanvasOrder = OrderInCanvas.Manual;

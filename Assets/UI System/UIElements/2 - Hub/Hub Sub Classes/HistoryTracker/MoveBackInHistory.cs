@@ -10,14 +10,14 @@ public static class MoveBackInHistory
         data.AddStopPoint(lastSelected);
         data.TweenType = OutTweenType.Cancel;
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.StopAt);
-        lastSelected.MyBranch.OpenThisBranch();
     }
 
-    public static void BackToHomeProcess(HistoryData data)
+    public static IBranch BackToHomeProcess(HistoryData data)
     {
+        //TODO Fix this process so it's the dame as Back One level. Doesn't need return
         data.TweenType = OutTweenType.Cancel;
         data.SetToThisTrunkWhenFinished(data.RootTrunk);
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.All);
-        data.RootTrunk.ActiveBranch.OpenThisBranch();
+        return data.RootTrunk.ActiveBranch;
     }
 }

@@ -25,7 +25,6 @@ public class TimedPopUp : BranchBase, ITimedPopUpBranch
         BranchEvent.Do.Subscribe<IClearScreen>(ClearBranchForFullscreen);
         TimedFinished += CheckIfCanRestore;
         RestoreBranches += CheckIfCanRestore;
-        BlockRaycasts += SetBlockRaycast;
     }
 
     public override void OnDisable()
@@ -35,7 +34,6 @@ public class TimedPopUp : BranchBase, ITimedPopUpBranch
         timedPopUps.Remove(ThisBranch);
         TimedFinished += CheckIfCanRestore;
         RestoreBranches -= CheckIfCanRestore;
-        BlockRaycasts -= SetBlockRaycast;
     }
     
     protected override void CheckIfAtRootTrunk(IIsAtRootTrunk args)
@@ -104,9 +102,9 @@ public class TimedPopUp : BranchBase, ITimedPopUpBranch
         // }
     }
 
-    public override void SetUpBranch(IBranch newParentController = null)
+    public override void SetUpBranch(/*IBranch newParentController = null*/)
     {
-        base.SetUpBranch(newParentController);
+        base.SetUpBranch(/*newParentController*/);
         SetIfRunningOrNot();
         StaticCoroutine.StopCoroutines(_coroutine);
         _coroutine = StaticCoroutine.StartCoroutine(TimedPopUpProcess());

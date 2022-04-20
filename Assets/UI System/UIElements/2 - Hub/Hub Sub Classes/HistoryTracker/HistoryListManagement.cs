@@ -1,4 +1,5 @@
-﻿using UIElements.Hub_Sub_Classes.HistoryTracker;
+﻿using System.Linq;
+using UIElements.Hub_Sub_Classes.HistoryTracker;
 using UnityEngine;
 
 public static class HistoryListManagement
@@ -31,22 +32,25 @@ public static class HistoryListManagement
 
     private static void ClearHistoryWithStopPoint(HistoryData data)
     {
+        var currentNode = data.History.Last();
+        
         for (int i = data.History.Count -1; i >= 0; i--)
         {
-            var currentNode = data.History[i];
-
+            currentNode = data.History[i];
             ExitNode(data, currentNode);
 
             if (CheckIfAtStopPoint(data.StopPoint, currentNode)) break;
 
-            if (CheckIfStillInSameTrunk(data.NewNodesBranch, currentNode.MyBranch)) break;
+           // if (CheckIfStillInSameTrunk(data.NewNodesBranch, currentNode.MyBranch)) break;
         }
+        data.EndOfTrunkCloseAction?.Invoke();
+        //currentNode.MyBranch.ParentTrunk.OnStartTrunk();
     }
     private static bool CheckIfAtStopPoint(INode stopAtThisNode, INode currentNode) 
         => currentNode.MyBranch == stopAtThisNode.MyBranch;
 
-    private static bool CheckIfStillInSameTrunk(IBranch newNodeTrunk, IBranch currentTrunk) 
-        => newNodeTrunk.ParentTrunk == currentTrunk.ParentTrunk;
+    // private static bool CheckIfStillInSameTrunk(IBranch newNodeTrunk, IBranch currentTrunk) 
+    //     => newNodeTrunk.ParentTrunk == currentTrunk.ParentTrunk;
 
     private static void ClearHistoryWithSkippedNode(HistoryData data)
     {
@@ -68,10 +72,15 @@ public static class HistoryListManagement
     {
         currentNode.ExitNodeByType();
         data.RemoveFromHistory(currentNode);
-        
         if(currentNode.HasChildBranch.IsNull())return;
         if(TrunkTracker.MoveBackATrunk(data, currentNode)) return;
-        
-        currentNode.HasChildBranch.ExitThisBranch(OutTweenType.Cancel);
+
+        currentNode.HasChildBranch.ExitThisBranch(OutTweenType.Cancel, EndAction);
+
+        void EndAction()
+        {
+            if(currentNode != data.StopPoint) return;
+            currentNode.MyBranch.OpenThisBranch();
+        }
     }
 }

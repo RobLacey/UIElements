@@ -31,6 +31,8 @@ public class Toggle : NodeBase, IToggle
     {
         base.OnEnable();
         _toggleAsTab.OnEnable();
+        if (StartAsSelected)
+            IsSelected = true;
         if(_toggleData.HasToggleGroup)
         {
             _toggleData.ToggleGroupData.AddToGroupAndIsStartingPoint(this);

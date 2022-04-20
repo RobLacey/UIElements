@@ -22,8 +22,8 @@ MonoBehaviour:
   _globalInTime: 1
   _globalOutTime: 1
   _positionData:
-    _inTime: 0.2
-    _outTime: 0.2
+    _inTime: 1
+    _outTime: 1
     _easeIn: 6
     _easeOut: 5
   _rotationData:

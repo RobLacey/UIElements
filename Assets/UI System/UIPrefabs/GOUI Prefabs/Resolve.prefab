@@ -163,30 +163,36 @@ MonoBehaviour:
   _timer: 2
   _whenAllowed:
     _notOnRootScreen: 1
-    _whilePaused: 1
-    _withActiveResolvePopUps: 1
+    _withSamePopUpType: 1
+    _withActiveResolvePopUps: 0
   _canvasOrderSetting: 0
   _applyFocus: 0
   _whenFocusedSortingOrder: 10
   _orderInCanvas: 2
   _moveType: 1
   _stayVisible: 1
-  _blockRaycastToOpenBranches: 0
-  _escapeKeyFunction: 1
+  _whenActiveDo: 1
+  _escapeKeyFunction: 2
   _saveExitSelection: 0
   _autoClose: 1
   _autoCloseDelay: 0.25
   _branchEvents:
-    _onBranchEnter:
+    _onBranchMouseEnter:
       m_PersistentCalls:
         m_Calls: []
-    _onBranchExit:
+    _onBranchMouseExit:
       m_PersistentCalls:
         m_Calls: []
-    _onBranchEnterEnd:
+    _onOpenBranch:
       m_PersistentCalls:
         m_Calls: []
-    _onBranchExitEnd:
+    _onExitBranch:
+      m_PersistentCalls:
+        m_Calls: []
+    _onOpenBranchEnd:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitBranchEnd:
       m_PersistentCalls:
         m_Calls: []
 --- !u!1001 &5200821023944592220

@@ -18,7 +18,7 @@ public class FadeTween : TweenBase, IFadeTween
 
         foreach (var item in _buildList)
         {
-            item.MyCanvasGroup.alpha = 0;
+           // item.MyCanvasGroup.alpha = 0;
         }
     }
 

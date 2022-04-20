@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using EZ.Events;
 using EZ.Service;
 using NaughtyAttributes;
@@ -33,7 +34,6 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
     private IDataHub _myDataHub;
 
     //Events
-    //private Action<IPausePressed> OnPausedPressed { get; set; }
     private Action<IMenuGameSwitchingPressed> OnMenuAndGameSwitch { get; set; }
     private Action<ICancelPressed> OnCancelPressed { get; set; }
     private Action<IChangeControlsPressed> OnChangeControlPressed { get; set; }
@@ -41,8 +41,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
     //Properties and Getters / Setters
     private bool GameIsPaused => _myDataHub.GamePaused;
     private bool AllowKeys => _myDataHub.AllowKeys;
-    private bool NoActivePopUps => _myDataHub.NoPopups;
-    private bool ActivePopUps => !_myDataHub.NoPopups;
+    private bool ActiveResolvePopUps => _myDataHub.HasResolvePopUp;
     private bool IsAtRootTrunk => _myDataHub.IsAtRoot;
     private IBranch ActiveBranch => _myDataHub.ActiveBranch;
     private bool CanStart => _myDataHub.SceneStarted;
@@ -70,9 +69,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
     }
 
     public Transform GetParentTransform => _virtualCursorParent;
-    //private void SaveGameIsPaused(IGameIsPaused args) => _uiInputEvents.GamePausedStatus(GameIsPaused);
     public EscapeKey EscapeKeySettings => ActiveBranch.EscapeKeyType;
-    //private bool NothingSelectedAction => _inputScheme.PauseOptions == PauseOptionsOnEscape.EnterPauseOrEscapeMenu;
     private IMenuAndGameSwitching MenuToGameSwitching { get; set; }
     private IChangeControl ChangeControl { get; set; }
     private ISwitchGroup SwitchGroups { get; set; }
@@ -115,6 +112,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
         UnObserveEvents();
         ChangeControl.OnDisable();
         MenuToGameSwitching.OnDisable();
+        _pauseAndEscapeSettings.OnDisable();
     }
 
     public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
@@ -130,7 +128,6 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
     
     public void FetchEvents()
     {
-        //OnPausedPressed = InputEvents.Do.Fetch<IPausePressed>();
         OnMenuAndGameSwitch = InputEvents.Do.Fetch<IMenuGameSwitchingPressed>();
         OnCancelPressed = InputEvents.Do.Fetch<ICancelPressed>();
         OnChangeControlPressed = InputEvents.Do.Fetch<IChangeControlsPressed>();
@@ -138,13 +135,11 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
 
     public void ObserveEvents()
     {
-       // HistoryEvents.Do.Subscribe<IGameIsPaused>(SaveGameIsPaused);
         HistoryEvents.Do.Subscribe<IInMenu>(SaveInMenu);
     }
 
     public void UnObserveEvents()
     {
-        ///HistoryEvents.Do.Unsubscribe<IGameIsPaused>(SaveGameIsPaused);
         HistoryEvents.Do.Unsubscribe<IInMenu>(SaveInMenu);
     }
 
@@ -160,15 +155,16 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
 
     private void Update()
     {
+        if(_myDataHub.PlayingTweens > 0) return;
+        
         if(_inputScheme.CanUseVirtualCursor)
             VirtualCursor.PreStartMovement();
         
         if (!CanStart) return;
-
         
         if (CanPauseGame())
         {
-            _pauseAndEscapeSettings.PausePressed();
+            _pauseAndEscapeSettings.DoPauseOrEscapeProcess();
             return;
         }
         
@@ -183,7 +179,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
     {
         if (CanDoCancel())
         {
-            WhenCancelPressed();
+            CancelPressed();
             return;
         }
         
@@ -250,9 +246,11 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
 
     private bool MultiSelectPressed => _inputScheme.MultiSelectPressed() && !AllowKeys;
 
-    private bool CanPauseGame() => _inputScheme.PressPause() && _pauseAndEscapeSettings.CanPause(); /*&& !MultiSelectPressed;*/
+    private bool CanPauseGame() => Paused() || Cancel() && !MultiSelectPressed;
 
-   // private void PausedPressedActions() => OnPausedPressed?.Invoke(this);
+    private bool Paused() => _inputScheme.PressPause() && _pauseAndEscapeSettings.CanPause();
+
+    private bool Cancel() => _inputScheme.PressedCancel() && _pauseAndEscapeSettings.CanEscape();
 
     private bool CanSwitchBetweenInGameAndMenu()
     {
@@ -263,7 +261,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
 
     private bool CheckIfHotKeyAllowed()
     {
-        if (GameIsPaused || ActivePopUps || MultiSelectPressed) return false;
+        if (GameIsPaused || ActiveResolvePopUps || MultiSelectPressed) return false;
         if (!HasMatchingHotKey()) return false;
         if(!_inMenu)
             OnMenuAndGameSwitch?.Invoke(this);
@@ -285,25 +283,5 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
 
     private bool CanDoCancel() => _inputScheme.PressedCancel() && !MultiSelectPressed;
 
-    private void WhenCancelPressed()
-    {
-         if (_pauseAndEscapeSettings.HandlePauseOrEscapeMenu())
-         {
-             _pauseAndEscapeSettings.PausePressed();
-            //PausedPressedActions();
-         }
-         else
-         {
-             CancelPressed();
-         }
-    }
-
-    //private bool CanUnpauseGame() => GameIsPaused && ActiveBranch.IsPauseMenuBranch();
-    
     private void CancelPressed() => OnCancelPressed?.Invoke(this);
-
-    // private bool CanEnterPauseWithNothingSelected() =>
-    //     (NoActivePopUps && !GameIsPaused && _myDataHub.NoHistory)
-    //     && NothingSelectedAction;
-
 }

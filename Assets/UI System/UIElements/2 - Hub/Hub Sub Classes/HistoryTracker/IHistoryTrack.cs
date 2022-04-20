@@ -14,6 +14,7 @@ public interface IHistoryTrack : IParameters, IIsAService
     void SwitchGroupPressed();
     void ExitPause();
     void MoveToLastBranchInHistory();
+    IBranch ReturnNextBranch();
     void CancelHasBeenPressed(EscapeKey cancelType, IBranch argsBranchToCancel);
 
     //void CancelUIButtonPressed(EscapeKey escapeKey, IBranch argsBranchToCancel);

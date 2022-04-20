@@ -22,7 +22,7 @@ namespace UIElements
         private IHistoryTrack _historyTrack;
         private IDataHub _myDataHub;
         
-        public List<INode> SwitchHistory { get; private set; }
+        public List<Node> SwitchHistory { get; } = new List<Node>();
 
         public void ClearSwitchHistory() => SwitchHistory.Clear();
 

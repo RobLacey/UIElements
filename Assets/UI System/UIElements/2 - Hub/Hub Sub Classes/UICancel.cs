@@ -1,28 +1,19 @@
-﻿using System;
-using EZ.Events;
+﻿using EZ.Events;
 using EZ.Service;
 using UIElements;
-using UnityEngine;
 
-interface ICancel
-{
-    void OnEnable();
-}
+interface ICancel: IMonoEnable, IMonoDisable { }
 
 /// <summary>
 /// Class handles all UI cancel behaviour from cancel type to context sensitive cases
 /// </summary>
-public class UICancel : ICancel, IServiceUser, IEZEventUser, IMonoEnable
+public class UICancel : ICancel, IServiceUser, IEZEventUser
 {
     //Variables
     private IHistoryTrack _uiHistoryTrack;
-    //private InputScheme _inputScheme;
     private IDataHub _myDataHub;
 
-
     //Properties 7 Getters / Setters
-   // private bool GameIsPaused => _myDataHub.GamePaused;
-    private bool ActiveResolvePopUps => !_myDataHub.NoResolvePopUp;
     private EscapeKey GlobalEscapeSetting => _myDataHub.GlobalEscapeSetting;
 
     public void OnEnable()
@@ -36,30 +27,27 @@ public class UICancel : ICancel, IServiceUser, IEZEventUser, IMonoEnable
         InputEvents.Do.Subscribe<ICancelPressed>(CancelPressed);
         CancelEvents.Do.Subscribe<ICancelActivated>(CancelOrBackButtonPressed);
     }
+    
+    public void OnDisable() => UnObserveEvents();
 
-    public void UnObserveEvents() { }
+    public void UnObserveEvents()
+    {
+        InputEvents.Do.Unsubscribe<ICancelPressed>(CancelPressed);
+        CancelEvents.Do.Unsubscribe<ICancelActivated>(CancelOrBackButtonPressed);
+    }
 
     public void UseEZServiceLocator()
     {
-       // _inputScheme = EZService.Locator.Get<InputScheme>(this);
         _uiHistoryTrack = EZService.Locator.Get<IHistoryTrack>(this);
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
     }
 
-    private void CancelPressed(ICancelPressed args)
-    {
-        if(ActiveResolvePopUps & !_myDataHub.GamePaused) return;
-        
-        _uiHistoryTrack.CancelHasBeenPressed(ProcessCancelType(args.EscapeKeySettings), null);
-    }
+    private void CancelPressed(ICancelPressed args) 
+        => _uiHistoryTrack.CancelHasBeenPressed(ProcessCancelType(args.EscapeKeySettings), null);
 
-    private void CancelOrBackButtonPressed(ICancelActivated args)
-    {
-        _uiHistoryTrack.CancelHasBeenPressed(ProcessCancelType(args.EscapeKeyType), args.BranchToCancel);
-    }
+    private void CancelOrBackButtonPressed(ICancelActivated args) 
+        => _uiHistoryTrack.CancelHasBeenPressed(ProcessCancelType(args.EscapeKeyType), args.BranchToCancel);
 
-    private EscapeKey ProcessCancelType(EscapeKey escapeKey)
-    {
-        return escapeKey == EscapeKey.GlobalSetting ? GlobalEscapeSetting : escapeKey;
-    }
+    private EscapeKey ProcessCancelType(EscapeKey escapeKey) 
+        => escapeKey == EscapeKey.GlobalSetting ? GlobalEscapeSetting : escapeKey;
 }

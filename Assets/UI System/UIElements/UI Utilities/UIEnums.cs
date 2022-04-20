@@ -129,7 +129,9 @@ public enum Override
 
 public enum Disabled { Yes, No }
 
-public enum ClearAction { All, StopAt, SkipOne}
+public enum ClearAction { All, StopAt, SkipOne }
+
+public enum WhenActiveDo { Nothing, BlockAllOtherRaycasts, TurnOffAllActiveBranches }
 
 
 

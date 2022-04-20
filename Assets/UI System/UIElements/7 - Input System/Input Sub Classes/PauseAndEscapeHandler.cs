@@ -8,46 +8,41 @@ using UnityEngine.Events;
 namespace UIElements
 {
     [Serializable]
-    public class PauseAndEscapeHandler : IMonoEnable, IMonoStart, IServiceUser, IEZEventDispatcher, IPausePressed
+    public class PauseAndEscapeHandler : IMonoEnable, IMonoStart, IMonoDisable, IServiceUser, IEZEventDispatcher, IPausePressed, IEZEventUser
     {
         [SerializeField] private Trunk _pauseMenu;
         [SerializeField] private Trunk _escapeMenu;
-        [SerializeField] [AllowNesting]
-        [Label("Nothing to Cancel Action")] 
-        private PauseOptionsOnEscape _pauseOptionsOnEscape = PauseOptionsOnEscape.DoNothing;
-        [SerializeField]
-        private PauseFunction _globalEscapeFunction;
-        [SerializeField] [Space(10f)] [HorizontalLine(1f, EColor.Blue)] [Header("User Events")]
+        [SerializeField] private PauseFunction _globalEscapeFunction;
+        [SerializeField] 
+        [Space(10f)] [HorizontalLine(1f, EColor.Blue)] [Header("User Events")]
         private GameIsPaused _gameIsPaused;
 
-        //Events
-        [Serializable] public class GameIsPaused : UnityEvent<bool> { }
-        private enum PauseOptionsOnEscape { DoNothing, EnterPauseMenu, EnterEscapeMenu }
-        private enum PauseFunction { DoNothing, BackOneLevel, BackToHome }
-
+        //Variables
         private IDataHub _myDataHub;
         private IHistoryTrack _historyTracker;
+        private PauseOrEscape _pauseOrEscape = PauseOrEscape.NotSet;
+
+        //Events
         private Action<IPausePressed> OnPausedPressed { get; set; }
-        public bool ClearScreen => _pauseMenu.ScreenType == ScreenType.FullScreen;
+        [Serializable] public class GameIsPaused : UnityEvent<bool> { }
+        
+        //Enums
+        private enum PauseFunction { DoNothing, BackOneLevel, BackToHome }
+        private enum PauseOrEscape { Pause, Escape, NotSet }
 
-        public bool CanPause() => _pauseMenu;
-        // private bool CanEnterPauseWithNothingSelected() =>
-        //     (NoActivePopUps && !GameIsPaused && _myDataHub.NoHistory)
-        //     && NothingSelectedAction;
+        //Properties
+        public bool ClearScreen { get; private set; }
 
 
-
+        //Main
         public void OnEnable()
         {
+            ObserveEvents();
             FetchEvents();
             UseEZServiceLocator();
-            Debug.Log("Add Escape menu & Add block pressed paused when in escape menu");
         }
 
-        public void FetchEvents()
-        {
-            OnPausedPressed = InputEvents.Do.Fetch<IPausePressed>();
-        }
+        public void FetchEvents() => OnPausedPressed = InputEvents.Do.Fetch<IPausePressed>();
 
         public void UseEZServiceLocator()
         {
@@ -55,43 +50,88 @@ namespace UIElements
             _historyTracker = EZService.Locator.Get<IHistoryTrack>(this);
         }
         
+        public void ObserveEvents() => InputEvents.Do.Subscribe<ICancelPause>(DoPauseOrEscapeProcess);
+
+        public void OnDisable() => UnObserveEvents();
+
+        public void UnObserveEvents() => InputEvents.Do.Unsubscribe<ICancelPause>(DoPauseOrEscapeProcess);
+
+
         public void OnStart()
         {
             _myDataHub.SetGlobalEscapeSetting(SetGlobalEscapeFunction());
             _myDataHub.SetPausedTrunk(_pauseMenu);
+            _myDataHub.SetEscapeTrunk(_escapeMenu);
         }
-        
-        public void PausePressed()
+
+        private void SetCanvasOrder()
         {
+            
+        }
+
+        public bool CanPause()
+        {
+            if (!_pauseMenu || _pauseOrEscape == PauseOrEscape.Escape) return false;
+            
+            _pauseOrEscape = PauseOrEscape.Pause;
+            return true;
+        }
+        public bool CanEscape()
+        {
+            var atRootWithNoHistory = _myDataHub.IsAtRoot && _myDataHub.NoHistory && _myDataHub.NoPopUps;
+            
+            if (!_escapeMenu || _myDataHub.MultiSelectActive || _pauseOrEscape == PauseOrEscape.Pause) return false;
+            
+            if (_pauseOrEscape == PauseOrEscape.NotSet)
+            {
+                if (!atRootWithNoHistory) return false;
+                _pauseOrEscape = PauseOrEscape.Escape;
+                return true;
+            }
+            return false;
+        }
+
+        
+        public void DoPauseOrEscapeProcess(ICancelPause args = null)
+        {
+            var pauseOrEscape = _pauseOrEscape == PauseOrEscape.Pause ? _pauseMenu : _escapeMenu;
+            ClearScreen = pauseOrEscape.ScreenType == ScreenType.FullScreen;
+            
             if (_myDataHub.GamePaused)
             {
-                _historyTracker.ExitPause();
-                _myDataHub.SetIfGamePaused(false);
-                OnPausedPressed?.Invoke(this);
-                _pauseMenu.OnExitTrunk(End);
-
-                void End()
-                {
-                    _myDataHub.RestoreState();
-                    _historyTracker.MoveToLastBranchInHistory();
-                }
+                ExitPause(pauseOrEscape);
+                _pauseOrEscape = PauseOrEscape.NotSet;
             }
             else
             {
-                _myDataHub.SaveState();
-                _myDataHub.SetIfGamePaused(true);
-                OnPausedPressed?.Invoke(this);
-                _pauseMenu.OnStartTrunk();
+                EnterPause(pauseOrEscape);
             }
             
             _gameIsPaused?.Invoke(_myDataHub.GamePaused);
         }
 
-        public bool HandlePauseOrEscapeMenu()
+        private void ExitPause(Trunk pauseType)
         {
-            return false;
+            _historyTracker.ExitPause();
+            _myDataHub.SetIfGamePaused(false);
+            OnPausedPressed?.Invoke(this);
+            pauseType.OnExitTrunk(End);
+
+            void End()
+            {
+                _myDataHub.RestoreState();
+                _historyTracker.MoveToLastBranchInHistory();
+            }
         }
-        
+
+        private void EnterPause(Trunk pauseType)
+        {
+            _myDataHub.SaveState();
+            _myDataHub.SetIfGamePaused(true);
+            OnPausedPressed?.Invoke(this);
+            pauseType.OnStartTrunk();
+        }
+
         private EscapeKey SetGlobalEscapeFunction()
         {
             switch (_globalEscapeFunction)
@@ -106,7 +146,5 @@ namespace UIElements
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-
     }
 }
