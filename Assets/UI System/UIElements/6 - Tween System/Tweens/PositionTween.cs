@@ -34,7 +34,7 @@ public class PositionTween : TweenBase, IPositionTween
     protected override Tween DoTweenProcess(BuildTweenData item, TweenCallback callback)
     {
         var id = $"{_tweenName}{item.Element.GetInstanceID()}";
-        Debug.Log(_tweenTime * _elipsedTime);
+        //Debug.Log(_tweenTime * _elipsedTime);
         return item.Element.DOAnchorPos3D(item._moveTo, _tweenTime, _pixelSnapping)
                    .SetId(id)
                    .SetEase(_tweenEase)

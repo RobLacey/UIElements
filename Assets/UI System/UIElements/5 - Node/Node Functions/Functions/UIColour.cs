@@ -28,10 +28,10 @@ public class UIColour : NodeFunctionBase
     protected override bool CanBePressed() => (_scheme.ColourSettings & EventType.Pressed) != 0;
     protected override bool CanBeHighlighted() => (_scheme.ColourSettings & EventType.Highlighted) !=0;
     private bool CanBeSelected() => (_scheme.ColourSettings & EventType.Selected) != 0;
-    protected override bool FunctionNotActive()
-    {
-        return _isDisabled && _passOver;
-    }
+    // protected override bool FunctionNotActive()
+    // {
+    //     return _isDisabled && _passOver;
+    // }
 
     public override void OnAwake()
     {

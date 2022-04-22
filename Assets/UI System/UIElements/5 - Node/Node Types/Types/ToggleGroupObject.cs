@@ -8,26 +8,28 @@ using UnityEngine.Serialization;
     {
         [SerializeField] private IsActive _overrideTrunkSwitcher = IsActive.No;
         [SerializeField] private IsActive _activeToggleOnSwitch = IsActive.No;
-
+        [SerializeField] private IsActive _loopAroundSwitcher = IsActive.Yes;
+        
         //Variables
-         private ISwitchTrunkGroup _parentTrunkSwitcher;
+        // private ISwitchTrunkGroup _parentTrunkSwitcher;
         private bool _started;
         private IDataHub _myDataHub;
-        private List<Toggle> toggleGroup = new List<Toggle>();
+        private List<Toggle> _toggleGroup = new List<Toggle>();
 
         //Properties
         private ToggleSwitcher ToggleSwitcher { get; set; }
         private bool CanUseToggleSwitcher => _overrideTrunkSwitcher == IsActive.Yes;
         public INode StartingNode { get; private set; }
         public bool ActivateToggleOnSwitch => _activeToggleOnSwitch == IsActive.Yes;
-        
+        public bool DontLoopSwitcher => _loopAroundSwitcher         == IsActive.No;
+
         //Main
         public void OnAwake()
         {
             if(_started) return;
 
             _started = true;
-            toggleGroup = new List<Toggle>();
+            _toggleGroup = new List<Toggle>();
             StartingNode = null;
             
             if (CanUseToggleSwitcher)
@@ -39,7 +41,7 @@ using UnityEngine.Serialization;
 
         public void AddToGroupAndIsStartingPoint(Toggle toggle)
         {
-            toggleGroup.Add(toggle);
+            _toggleGroup.Add(toggle);
             CheckForStartPosition(toggle);
         }
         
@@ -49,7 +51,7 @@ using UnityEngine.Serialization;
         {
             if (!CanUseToggleSwitcher) return;
             
-            ToggleSwitcher.SetSwitchGroup(toggleGroup);
+            ToggleSwitcher.SetSwitchGroup(_toggleGroup);
        }
 
         private void OnDisable() => _started = false;
@@ -82,7 +84,7 @@ using UnityEngine.Serialization;
         
         public void TurnOffOtherTogglesInGroup(Toggle activeToggle)
         {
-            foreach (var toggleGroupMember in toggleGroup)
+            foreach (var toggleGroupMember in _toggleGroup)
             {
                 if(toggleGroupMember == activeToggle) continue;
                 toggleGroupMember.SetNodeAsNotSelected_NoEffects();

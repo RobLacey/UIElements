@@ -22,7 +22,7 @@ public abstract class NodeFunctionBase : IEZEventUser, IMono, IServiceUser
     public virtual void AxisMoveDirection(MoveDirection moveDirection) { }
     protected abstract bool CanBeHighlighted();
     protected abstract bool CanBePressed();
-    protected virtual bool FunctionNotActive() => _isDisabled;
+    protected virtual bool FunctionNotActive() => _isDisabled && _passOver;
     protected bool MyHubDataIsNull => _myDataHub.IsNull();
     
     //Main

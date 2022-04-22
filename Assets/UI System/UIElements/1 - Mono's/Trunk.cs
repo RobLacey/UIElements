@@ -22,6 +22,7 @@ namespace UIElements
         [SerializeField] [Space(10f)] private WhenToMove _moveToNextTrunk = WhenToMove.Immediately;
         [SerializeField] private WhenToMove _moveBackFromTrunk = WhenToMove.Immediately;
         [SerializeField] private OnGoingToFullScreen _goingToFullscreen = OnGoingToFullScreen.UseBranchDefaults;
+        [SerializeField] private IsActive _loopAroundSwitcher = IsActive.Yes;
         
         [Space(10f, order = 1)]
         [ValidateInput(HasBranches, "Must have at least one branch assigned")]
@@ -45,17 +46,18 @@ namespace UIElements
         private Action<IClearScreen> DoClearScreen { get; set; }
         
         //Enums
-        private enum OnGoingToFullScreen { ForceClearAll, UseBranchDefaults }
+        private enum OnGoingToFullScreen { TweenAllOpenBranches, UseBranchDefaults }
         
         //Properties & Getters/ Setters
         public List<IBranch> GroupsBranches => _branches.ToList<IBranch>();
         public ScreenType ScreenType => _screenType;
         private bool TweenToNextImmediately => _currentMoveType == WhenToMove.Immediately;
-        private bool HasNoValidTweener => _myTweener.Scheme.IsNull() || !_myTweener.HasBuildList;
+        private bool HasValidTweener => _myTweener.Scheme && _myTweener.HasBuildList;
         public bool CanvasIsActive => _myCanvas.enabled == true;
         public IBranch ActiveBranch => _switcher.CurrentBranch;
         public List<Node> SwitcherHistory => _switcher.SwitchHistory;
-        public bool ForceClear => _goingToFullscreen == OnGoingToFullScreen.ForceClearAll;
+        public bool DontLoopSwitcher => _loopAroundSwitcher == IsActive.No;
+        public bool ForceClear => _goingToFullscreen == OnGoingToFullScreen.TweenAllOpenBranches;
         public void SetCurrentMoveTypeToMoveToNext() => _currentMoveType = _moveToNextTrunk;
         public void SetCurrentMoveTypeToMoveToBack() => _currentMoveType = _moveBackFromTrunk;
         public void SetNewSwitcherIndex(INode newNode) => _switcher.SetNewIndex(newNode);
@@ -67,6 +69,11 @@ namespace UIElements
         //Main
         private void Awake()
         { 
+            Debug.Log("Upto : Rework Canvas Order Calculator to reset on Trunk exit as if it has no tween it doesnt tween Branches ");
+            Debug.Log("Upto : Double check how closing trunks works as force close may not right. May need another out type to override tweenwhen settings" +
+                      " and also may want to do a counter in Trunk Tracker like in switcher close (could move to static class) ");
+            Debug.Log("Upto : Maybe add wait for Open Branches or Use/ Wait for all branches as option. Make more intuituve. AfterTween should wait for Open branches too??");
+            
             _switcher = EZInject.Class.NoParams<ISwitchTrunkGroup>();
             _switcher.ThisTrunk = this;
             _myCanvas = GetComponent<Canvas>();
@@ -145,7 +152,7 @@ namespace UIElements
             if (!_myCanvas.enabled)
             {
                 _myCanvas.enabled = true;
-                _switcher.OpenAllBranches(newParent, HasNoValidTweener);
+                _switcher.OpenAllBranches(newParent, HasValidTweener);
                 _myTweener.StartInTweens(ActivateCurrentBranch);
             }
             else
@@ -174,7 +181,7 @@ namespace UIElements
         
             void CloseBranches()
             {
-                _switcher.CloseAllBranches(EndAction, HasNoValidTweener);
+                _switcher.CloseAllBranches(EndAction, HasValidTweener);
             }  
             
              void EndAction()

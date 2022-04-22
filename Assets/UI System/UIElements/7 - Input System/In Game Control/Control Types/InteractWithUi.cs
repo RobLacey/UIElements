@@ -87,7 +87,7 @@ public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
     {
          if (nodeCursorIsOver.Key.MyBranch.MyCanvas.sortingOrder < branchCursorIsOver.MyCanvas.sortingOrder)
          {
-             nodeCursorIsOver.Key.OnPointerExit(null);
+             //nodeCursorIsOver.Key.OnPointerExit(null);
              CloseLastHitAsNotOver(); 
              return true;
          }
@@ -97,7 +97,7 @@ public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
     private void StartNewNode(IVirtualCursor virtualCursor, KeyValuePair<Node, RectTransform> node)
     {
         CloseLastHitNodeAsDifferent();
-        node.Key.OnPointerEnter(null);
+        //node.Key.OnPointerEnter(null);
         CloseLastBranchIfNotRelated(virtualCursor, node.Key.MyBranch);
         _lastHit = (node.Key, node.Value);
         // virtualCursor.OverAnyObject = _lastHit.node.MyBranch;
@@ -107,7 +107,7 @@ public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
     private void CloseLastHitNodeAsDifferent()
     {
         if (!_lastHit.node) return;
-        _lastHit.node.OnPointerExit(null);
+        //_lastHit.node.OnPointerExit(null);
     }
     
     private static void CloseLastBranchIfDifferent(IVirtualCursor virtualCursor, IBranch currentBranch)
@@ -148,7 +148,7 @@ public class InteractWithUi : /*IInteractWithUi,*/ IEZEventUser, IServiceUser
     private void CloseLastHitAsNotOver()
     {
         if (!_lastHit.node) return;
-        _lastHit.node.OnPointerExit(null);
+        //_lastHit.node.OnPointerExit(null);
         _lastHit = (null, null);
     }
     

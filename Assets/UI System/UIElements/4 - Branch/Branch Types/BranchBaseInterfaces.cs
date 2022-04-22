@@ -1,7 +1,7 @@
 ﻿using EZ.Inject;
 using UIElements;
 
-public interface IBranchBase : IParameters, IMono
+public interface IBranchBase : IParameters, IMono, ISetFocus
 {
     void SetUpGOUIBranch(IGOUIModule module);
     IGOUIModule ReturnGOUIModule();
@@ -29,5 +29,11 @@ public interface ICanvasCalcParms : IParameters
 public interface ISetPositionParms : IParameters
 {
     IBranch ThisBranch { get; }
+}
+
+public interface ISetFocus
+{
+    void SetFocus();
+    void ResetFocus();
 }
 

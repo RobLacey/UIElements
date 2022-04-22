@@ -98,7 +98,7 @@ public partial class Branch
     public IBranch TargetBranch => this;
     public GOUIModule ReturnGOUIModule => _branchTypeBaseClass.ReturnGOUIModule() as GOUIModule;
 
-    public bool ApplyFocus => _applyFocus == IsActive.Yes;
+  //  public bool DontApplyFocus => _applyFocus == ApplyFocus.No;
     public int FocusSortingOrder => _whenFocusedSortingOrder;
 
 

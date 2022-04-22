@@ -5,7 +5,7 @@ using EZ.Events;
 using UnityEngine;
 
 
-public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICancelActivated
+public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICancelButtonPressed
 {
     public AutoOpenCloseController(IAutoOpenCloseData data)
     {
@@ -23,7 +23,7 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
     public IBranch ChildNodeHasOpenChild { private get; set; }
 
     //Events
-    private  Action<ICancelActivated> CancelHooverOver { get; set; }
+    private  Action<ICancelButtonPressed> CancelHooverOver { get; set; }
 
     //Main
     public void OnEnable()
@@ -43,7 +43,7 @@ public class AutoOpenCloseController: IAutoOpenClose, IEZEventDispatcher, ICance
         StaticCoroutine.StopCoroutines(runningCoroutine);
     }
     
-    public void FetchEvents() => CancelHooverOver = CancelEvents.Do.Fetch<ICancelActivated>();
+    public void FetchEvents() => CancelHooverOver = CancelEvents.Do.Fetch<ICancelButtonPressed>();
 
     private void OnPointerEnter()
     {

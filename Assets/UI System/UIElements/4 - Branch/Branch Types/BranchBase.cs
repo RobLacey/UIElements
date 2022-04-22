@@ -34,8 +34,8 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
     protected bool CanStart => _myDataHub.SceneStarted;
     protected bool GameIsPaused => _myDataHub.GamePaused;
     protected bool NoResolvePopUps => _myDataHub.NoResolvePopUp;
-    private void SetFocus() => _canvasOrderCalculator.SetFocusCanvasOrder(ThisBranch.FocusSortingOrder);
-    private void ResetFocus() => _canvasOrderCalculator.ResetFocus();
+    public void SetFocus() => _canvasOrderCalculator.SetFocusCanvasOrder(ThisBranch.FocusSortingOrder);
+    public void ResetFocus() => _canvasOrderCalculator.ResetFocus();
     protected bool IsAtRoot => _myDataHub.IsAtRoot;
     public IBranch ThisBranch { get; }
     protected bool CanAllowKeys => _myDataHub.AllowKeys;
@@ -106,9 +106,9 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
         ThisBranch.ExitBranchStartEvent += StartBranchExit;
         ThisBranch.ExitBranchEndEvent += EndOfBranchExit;
         
-        if(!ThisBranch.ApplyFocus) return;
-        ThisBranch.OnMouseEnterEvent += SetFocus;
-        ThisBranch.OnMouseExitEvent += ResetFocus;
+        // if(ThisBranch.DontApplyFocus) return;
+        // ThisBranch.OnMouseEnterEvent += SetFocus;
+        // ThisBranch.OnMouseExitEvent += ResetFocus;
     }
 
     public virtual void UnObserveEvents()
@@ -120,8 +120,8 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
         ThisBranch.OpenBranchEndEvent -= EndOfBranchStart;
         ThisBranch.ExitBranchStartEvent -= StartBranchExit;
         ThisBranch.ExitBranchEndEvent -= EndOfBranchExit;
-        ThisBranch.OnMouseEnterEvent -= SetFocus;
-        ThisBranch.OnMouseExitEvent -= ResetFocus;
+        // ThisBranch.OnMouseEnterEvent -= SetFocus;
+        // ThisBranch.OnMouseExitEvent -= ResetFocus;
     }
 
     public virtual void OnDisable()
@@ -180,11 +180,11 @@ public class BranchBase : IEZEventUser, IServiceUser, IBranchBase, IBranchParams
     {
         _ignoreThis = true;
         
-        if (ThisBranch.WhenActiveDoThis != WhenActiveDo.Nothing)
-            BlockRaycasts?.Invoke(blockRaycast);
-
         if (ThisBranch.WhenActiveDoThis == WhenActiveDo.TurnOffAllActiveBranches)
             ClearCanvas?.Invoke(activeCanvas);
+        
+        if (ThisBranch.WhenActiveDoThis != WhenActiveDo.Nothing)
+            BlockRaycasts?.Invoke(blockRaycast);
         
         _ignoreThis = false;
     }

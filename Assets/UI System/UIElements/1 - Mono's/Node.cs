@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(RunTimeSetter))]
 
 public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointerDownHandler,
-                              IPointerUpHandler, ISubmitHandler, IPointerExitHandler, 
+                              IPointerUpHandler,/* ISubmitHandler,*/ IPointerExitHandler, 
                               IServiceUser, IEZEventUser
 {
     [Header("Main Settings")]
@@ -253,7 +253,7 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
 
     public void ExitNodeByType()
     {
-        Debug.Log(this);
+//        Debug.Log(this);
         _nodeBase.ExitNodeByType();
     }
 
@@ -311,11 +311,13 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
         _nodeBase.NodeSelected();
     }
 
-    public void OnSubmit(BaseEventData eventData)
-    {
-        if(_myDataHub.PlayingTweens > 0 || !AllowKeys || IsNodeDisabled()) return;
-        _nodeBase.NodeSelected();
-    }
+    public void NodeSelected() => OnPointerDown(null);
+
+    // public void OnSubmit(BaseEventData eventData)
+    // {
+    //     if(_myDataHub.PlayingTweens > 0 || !AllowKeys || IsNodeDisabled()) return;
+    //     _nodeBase.NodeSelected();
+    // }
 
     public void OnPointerUp(PointerEventData eventData)
     {

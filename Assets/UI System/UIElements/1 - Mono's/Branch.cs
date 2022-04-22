@@ -16,7 +16,7 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(UITweener))]
 
 
-public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ IBranch, IEZEventDispatcher, ICloseBranch, IServiceUser
+public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDispatcher, ICloseBranch, IServiceUser
 {
     [Header("Branch Main Settings")] [HorizontalLine(2f, EColor.Blue, order = 1)]
     [SerializeField]
@@ -50,7 +50,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     private OrderInCanvas _canvasOrderSetting = OrderInCanvas.Default;
     
     [SerializeField]
-    private IsActive _applyFocus = IsActive.No;
+    private ApplyFocus _applyFocus = ApplyFocus.No;
     
     [SerializeField] 
     [Range(1,40)] private int _whenFocusedSortingOrder = 2;
@@ -117,8 +117,9 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     private UITweener _uiTweener;
     private bool _tweenOnChange = true, _canActivateBranch = true;
     private bool _sceneIsChanging;
-    private bool _tweening = true;
-    private bool _overThisBranch;
+
+    private bool _tweening;
+    //private bool _overThisBranch;
 
     private IBranchBase _branchTypeBaseClass;
     private IDataHub _myDataHub;
@@ -134,6 +135,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     public event Action ExitBranchEndEvent;
     public event Action OnMouseEnterEvent;
     public event Action OnMouseExitEvent;
+    private static event Action<IBranch> OnFocusClick;
 
     //Getters & Setters
     private void SceneIsChanging(ISceneIsChanging args) => _sceneIsChanging = true;
@@ -182,6 +184,9 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
         _branchTypeBaseClass.OnEnable();
         AutoOpenCloseClass.OnEnable();
         _whenAllowed.OnEnable();
+        
+        if(_applyFocus == ApplyFocus.OnClick)
+            OnFocusClick += SetFocus;
     }
 
     public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
@@ -210,6 +215,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
 
     public void OnDisable()
     {
+        OnFocusClick -= SetFocus;
         CloseAndResetBranch?.Invoke(this);
         UnObserveEvents();
         AutoOpenCloseClass.OnDisable();
@@ -246,12 +252,14 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
 
         if (_tweenOnChange)
         {
+            if(_tweening) return;
             _tweening = true;
             _myDataHub.AddPlayingTween();
             _uiTweener.StartInTweens(callBack: InTweenCallback);
         }
         else
         {
+            _myDataHub.AddPlayingTween();
             InTweenCallback();
         }
         
@@ -263,6 +271,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
         SetParentBranch(newParentBranch);
         OpenBranchStartEvent?.Invoke();
         if (!_canActivateBranch) return;
+        SetClickFocus();
         _myDataHub.SetActiveBranch(this);
     }
 
@@ -297,7 +306,8 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
 
     public void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null)
     {
-        //Debug.Log(this);
+        // Debug.Log("Fuck");
+
         bool DontExitBranch() => _branchTypeBaseClass.DontExitBranch(outTweenType);
         var moveType = outTweenType == OutTweenType.MoveToChild ? _moveToChild : _moveBackWhen;
         
@@ -322,9 +332,9 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     private void StartOutTween(Action endOfTweenCallback = null)
     {
         _tweening = true;
+        _myDataHub.AddPlayingTween();
         TweenFinishedCallBack = endOfTweenCallback;
         ExitBranchStartEvent?.Invoke();
-        _myDataHub.AddPlayingTween();
         _uiTweener.StartOutTweens(OutTweenCallback);
     }
 
@@ -345,16 +355,20 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_overThisBranch) return;
         OnMouseEnterEvent?.Invoke();
-        _overThisBranch = true;
+        if(_applyFocus != ApplyFocus.OnOver) return;
+        _branchTypeBaseClass.SetFocus();
+        //_overThisBranch = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(!_overThisBranch || eventData.IsNull() && ThisBranchesNodes.Contains(_myDataHub.Highlighted)) return;
+        //if(!_overThisBranch || eventData.IsNull() && ThisBranchesNodes.Contains(_myDataHub.Highlighted)) return;
         OnMouseExitEvent?.Invoke();
-        _overThisBranch = false;
+        if(_applyFocus != ApplyFocus.OnOver) return;
+        _branchTypeBaseClass.ResetFocus();
+
+        //_overThisBranch = false;
     }
 
     /// <summary>
@@ -368,4 +382,23 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     public void InTest() => Debug.Log($"Mouse over {this}");
     public void OutTest() => Debug.Log($"Mouse not over {this}");
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(_applyFocus != ApplyFocus.OnClick || _myDataHub.PlayingTweens > 0) return;
+        _branchTypeBaseClass.SetFocus();
+        OnFocusClick?.Invoke(ThisBranch);
+    }
+
+    private void SetClickFocus()
+    {
+        if(_applyFocus != ApplyFocus.OnClick) return;
+        _branchTypeBaseClass.SetFocus();
+        OnFocusClick?.Invoke(ThisBranch);
+    }
+
+    private void SetFocus(IBranch focusedBranch)
+    {
+        if(focusedBranch == ThisBranch) return;
+        _branchTypeBaseClass.ResetFocus();
+    }
 }

@@ -1,12 +1,11 @@
 ﻿using System;
-using UnityEngine;
+using EZ.Service;
 using UnityEngine.EventSystems;
 
 public class UINavigation : NodeFunctionBase
 {
     public UINavigation(INavigationSettings settings, IUiEvents uiEvents): base(uiEvents)
     {
-        _mySettings = settings;
         _up = settings.Up;
         _down = settings.Down;
         _left = settings.Left;
@@ -14,20 +13,17 @@ public class UINavigation : NodeFunctionBase
     }
 
     //Variables
-    private readonly Node _up, _down, _left, _right;
+    private readonly NavigateKeyPress _up, _down, _left, _right;
     private IBranch _myBranch;
     private INode _myNode;
-    private readonly INavigationSettings _mySettings;
+    private IHistoryTrack _historyTrack;
 
     //Properties
-    private int Index => Array.IndexOf(_myBranch.ThisBranchesNodes, _myBranch.LastHighlighted);
-    private NavigationType SetNavigation => _mySettings.NavType;
+    private int Index => Array.IndexOf(_myBranch.ThisBranchesNodes, _myNode);
     private int NodeGroupSize => _myBranch.ThisBranchesNodes.Length;
     protected override bool CanBeHighlighted() => false;
-
     protected override bool CanBePressed() => false;
     protected override void SavePointerStatus(bool pointerOver) { }
-    protected override bool FunctionNotActive() => SetNavigation == NavigationType.None;
 
     //Main
     public override void OnAwake()
@@ -36,7 +32,13 @@ public class UINavigation : NodeFunctionBase
         _myNode = _uiEvents.ReturnMasterNode;
         _myBranch = _myNode.MyBranch;
     }
-    
+
+    public override void UseEZServiceLocator()
+    {
+        base.UseEZServiceLocator();
+        _historyTrack = EZService.Locator.Get<IHistoryTrack>(this);
+    }
+
     public override void AxisMoveDirection(MoveDirection moveDirection)
     {
         base.AxisMoveDirection(moveDirection);
@@ -47,8 +49,6 @@ public class UINavigation : NodeFunctionBase
     {
         if (FunctionNotActive()) return;
 
-        if (DoAutoMove(moveDirection)) return;
-
         DoPresetMove(moveDirection);
     }
 
@@ -56,51 +56,68 @@ public class UINavigation : NodeFunctionBase
     {
         switch (moveDirection)
         {
-            case MoveDirection.Down when _down:
+            case MoveDirection.Down:
             {
-                _down.MenuNavigateToThisNode(moveDirection);
+                ProcessMove(_down, MoveDirection.Down);
                 break;
             }
-            case MoveDirection.Up when _up:
+            case MoveDirection.Up:
             {
-                _up.MenuNavigateToThisNode(moveDirection);
+                ProcessMove(_up, MoveDirection.Up);
                 break;
             }
-            case MoveDirection.Left when _left:
+            case MoveDirection.Left:
             {
-                _left.MenuNavigateToThisNode(moveDirection);
+                ProcessMove(_left, MoveDirection.Left);
                 break;
             }
-            case MoveDirection.Right when _right:
+            case MoveDirection.Right:
             {
-                _right.MenuNavigateToThisNode(moveDirection);
+                ProcessMove(_right, MoveDirection.Right);
                 break;
             }
         }
     }
 
-    private bool DoAutoMove(MoveDirection moveDirection)
+    private void ProcessMove(NavigateKeyPress keyPressed, MoveDirection direction)
     {
-        if (NodeGroupSize <= 1) return false;
+        switch (keyPressed.MoveType)
+        {
+            case NavPressMoveType.Navigate:
+                if(keyPressed.Navigate)
+                    keyPressed.Navigate.MenuNavigateToThisNode(direction);
+                break;
+            case NavPressMoveType.ToChildBranch:
+                if (_myNode.HasChildBranch.IsNull()) break;
+                _myNode.NodeSelected();
+                break;
+            case NavPressMoveType.Back:
+                _historyTrack.CancelHasBeenPressed(EscapeKey.BackOneLevel, _myBranch);
+                break;
+            case NavPressMoveType.AutoNavigate:
+                DoAutoMove(direction);
+                break;
+        }
+    }
+
+    private void DoAutoMove(MoveDirection moveDirection)
+    {
+        if (NodeGroupSize <= 1) return;
 
         switch (moveDirection)
         {
-            case MoveDirection.Down when SetNavigation == NavigationType.AutoUpDown:
+            case MoveDirection.Down:
                 CheckMoveDirection(PositiveInteract, moveDirection, Index);
-                return true;
-            case MoveDirection.Up when SetNavigation == NavigationType.AutoUpDown:
+                break;
+            case MoveDirection.Up:
                 CheckMoveDirection(NegativeIterate, moveDirection, Index);
-                return true;
-            case MoveDirection.Left when SetNavigation == NavigationType.AutoRightLeft:
+                break;
+            case MoveDirection.Left:
                 CheckMoveDirection(NegativeIterate, moveDirection, Index);
-                return true;
-            case MoveDirection.Right when SetNavigation == NavigationType.AutoRightLeft:
+                break;
+            case MoveDirection.Right:
                 CheckMoveDirection(PositiveInteract, moveDirection, Index);
-                return true;
-            case MoveDirection.None:
-                return false;
-            default:
-                return false;
+                break;
         } 
     }
 
@@ -113,5 +130,7 @@ public class UINavigation : NodeFunctionBase
         _myBranch.ThisBranchesNodes[iterateMethod.Invoke(index)].MenuNavigateToThisNode(moveDirection);
     }
 
-    private protected override void ProcessPress() { }
+    private protected override void ProcessPress()
+    { 
+    }
 }

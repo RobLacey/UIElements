@@ -6,6 +6,7 @@ using EZ.Service;
 using UIElements;
 using UnityEngine;
 
+
 public interface ISwitchTrunkGroup : IMonoEnable, IMonoDisable, ISwitch
 {
     Trunk ThisTrunk { set; }
@@ -13,8 +14,8 @@ public interface ISwitchTrunkGroup : IMonoEnable, IMonoDisable, ISwitch
     IBranch CurrentBranch { get; }
     void SetNewIndex(INode newNode);
     void ActivateCurrentBranch();
-    void OpenAllBranches(IBranch newParent, bool canTween);
-    void CloseAllBranches(Action endOfClose, bool canTween);
+    void OpenAllBranches(IBranch newParent, bool trunkCanTween);
+    void CloseAllBranches(Action endOfClose, bool trunkCanTween);
 }
 
 public interface ISwitch
@@ -44,6 +45,8 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
     public List<Node> SwitchHistory { get; } = new List<Node>();
 
     public void ClearSwitchHistory() => SwitchHistory.Clear();
+    private bool DontPositiveLoop => ThisTrunk.DontLoopSwitcher & _index == ThisGroup.Count - 1;
+    private bool DontNegativeLoop => ThisTrunk.DontLoopSwitcher & _index == 0;
 
     //Main
     public void OnEnable()
@@ -103,9 +106,11 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
         switch (switchInputType)
         {
             case SwitchInputType.Positive:
+                if(DontPositiveLoop) return;
                 _index = _index.PositiveIterate(ThisGroup.Count);
                 break;
             case SwitchInputType.Negative:
+                if(DontNegativeLoop) return;
                 _index = _index.NegativeIterate(ThisGroup.Count);
                 break;
         }
@@ -113,11 +118,11 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
         ThisGroup[_index].OpenThisBranch();
     }
 
-    public void OpenAllBranches(IBranch newParent, bool canTween)
+    public void OpenAllBranches(IBranch newParent, bool trunkCanTween)
     {
         foreach (var branch in ThisGroup)
         {
-            if(!canTween)
+            if(trunkCanTween)
                 branch.DoNotTween();
             branch.DontSetAsActiveBranch();
             branch.OpenThisBranch(newParent);
@@ -125,14 +130,16 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
         //CurrentBranch.OpenThisBranch(newParent);
     }
     
-    public void CloseAllBranches(Action endOfClose, bool canTween)
+    public void CloseAllBranches(Action endOfClose, bool trunkCanTween)
     {
         var counter = ThisGroup.Count;
 
         foreach (var branch in ThisGroup)
         {
-            if(!canTween)
+            if(trunkCanTween)
+            {
                 branch.DoNotTween();
+            }            
             branch.ExitThisBranch(OutTweenType.Cancel, Complete);
         }
 
@@ -140,7 +147,9 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
         {
             counter--;
             if(counter == 0)
+            {
                 endOfClose?.Invoke();
+            }        
         }
     }
     

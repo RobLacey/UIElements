@@ -9,7 +9,7 @@ public class InputBindings : EZEventBindingsBase
         AutoRemove().CreateEvent<IPausePressed>();
         AutoRemove().CreateEvent<ICancelPause>();
         AutoRemove().CreateEvent<IMenuGameSwitchingPressed>();
-        AutoRemove().CreateEvent<ICancelPressed>();
+        AutoRemove().CreateEvent<IStandardCancel>();
 
         //ChangeControl
         AutoRemove().CreateEvent<IAllowKeys>();
@@ -33,7 +33,7 @@ public interface IAllowKeys // This one is test
 
 public interface IChangeControlsPressed { }
 
-public interface ICancelPressed // This one is test
+public interface IStandardCancel // This one is test
 {
     EscapeKey EscapeKeySettings { get; }
 }

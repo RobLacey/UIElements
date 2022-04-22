@@ -21,7 +21,7 @@ public class UIEvents : NodeFunctionBase
     //Properties
     protected override bool CanBeHighlighted() => true;
     protected override bool CanBePressed() => true;
-    protected override bool FunctionNotActive() => _isDisabled && _passOver;
+    //protected override bool FunctionNotActive() => _isDisabled && _passOver;
 
     //Main
     protected override void SavePointerStatus(bool pointerOver)

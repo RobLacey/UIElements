@@ -38,10 +38,10 @@ public class HistoryData : IServiceUser
 
     public Action EndOfTrunkCloseAction { get; set; }
     public List<INode> History => MyDataHub.History;
+    public bool NoHistory => MyDataHub.NoHistory;
     public bool GameIsPaused => MyDataHub.GamePaused;
     public bool CanStart => MyDataHub.SceneStarted;
     public bool NoPopUps => MyDataHub.NoPopUps;
-    public bool NoHistory => MyDataHub.NoHistory;
     public List<IBranch> ActiveResolvePopUps => MyDataHub.ActiveResolvePopUps;
     public List<IBranch> ActiveOptionalPopUps => MyDataHub.ActiveOptionalPopUps;
     public bool HasActiveResolvePopUps => MyDataHub.ActiveResolvePopUps.IsNotEmpty();

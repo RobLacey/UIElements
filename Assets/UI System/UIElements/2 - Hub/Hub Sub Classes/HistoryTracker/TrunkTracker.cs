@@ -148,7 +148,7 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
         {
             void EndOfBack()
             {
-                Debug.Log(currentNode.MyBranch.ParentTrunk);
+                currentNode.ExitNodeByType();
                 currentNode.MyBranch.ParentTrunk.OnStartTrunk();
             }
             data.CurrentTrunk.SetCurrentMoveTypeToMoveToBack();

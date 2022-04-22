@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _overrideTrunkSwitcher: 1
   _activeToggleOnSwitch: 1
+  _loopAroundSwitcher: 0

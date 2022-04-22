@@ -37,8 +37,8 @@ MonoBehaviour:
     _easeIn: 5
     _easeOut: 6
   _fadeData:
-    _inTime: 0.452
-    _outTime: 0.457
+    _inTime: 1
+    _outTime: 1
     _easeIn: 1
     _easeOut: 1
   _shakeData:

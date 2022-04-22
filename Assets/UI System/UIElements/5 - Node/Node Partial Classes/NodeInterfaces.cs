@@ -25,6 +25,7 @@ public interface INode : IToggleData, IParameters, IDisableData
     void NavigateToNextMenuItem(AxisEventData eventData);
     void MenuNavigateToThisNode(MoveDirection moveDirection);
     void SetGOUIModule(IGOUIModule module);
+    void NodeSelected();
 }
 
 public interface IToggleData

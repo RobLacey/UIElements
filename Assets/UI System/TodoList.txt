@@ -32,7 +32,6 @@
    
 //Switcher
 - Checks for disables branch and skip
-- Add loop around or not option
 
 // Auto Open Close
 - Doesn't work properly with Multi- Select
@@ -43,6 +42,7 @@
 - Turn into a Scriptable object like with toggle group.
  
 //HistoryManagement
+- Rewrite History to just use branches rather than nodes. History tracks branches, branches track it's own nodes
 - Cancel has no sound
 - When Escape pressed doesn't go back to parent node in branch but last highlighted. Must be parent node
 - Have clear current Trunk cancel option (maybe on the back of currentSwitcher list)

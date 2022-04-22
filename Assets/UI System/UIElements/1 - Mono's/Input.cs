@@ -7,7 +7,7 @@ using NaughtyAttributes;
 using UIElements;
 using UnityEngine;
 
-public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICancelPressed, IChangeControlsPressed, 
+public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ IStandardCancel, IChangeControlsPressed, 
                              IMenuGameSwitchingPressed, IServiceUser, IEZEventDispatcher, IVirtualCursorSettings,
                              IIsAService
 {
@@ -35,7 +35,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
 
     //Events
     private Action<IMenuGameSwitchingPressed> OnMenuAndGameSwitch { get; set; }
-    private Action<ICancelPressed> OnCancelPressed { get; set; }
+    private Action<IStandardCancel> OnCancelPressed { get; set; }
     private Action<IChangeControlsPressed> OnChangeControlPressed { get; set; }
     
     //Properties and Getters / Setters
@@ -129,7 +129,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
     public void FetchEvents()
     {
         OnMenuAndGameSwitch = InputEvents.Do.Fetch<IMenuGameSwitchingPressed>();
-        OnCancelPressed = InputEvents.Do.Fetch<ICancelPressed>();
+        OnCancelPressed = InputEvents.Do.Fetch<IStandardCancel>();
         OnChangeControlPressed = InputEvents.Do.Fetch<IChangeControlsPressed>();
     }
 
@@ -189,8 +189,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
             
             if (_inputScheme.PressSelect())
             {
-                var temp = (Node)_myDataHub.Highlighted;
-                temp.OnPointerDown(null);
+                _myDataHub.Highlighted.NodeSelected();
                 return;
             }
         }
@@ -212,9 +211,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ICa
         {
             if (_inputScheme.PressSelect())
             {
-                //Todo make a class in Inode
-                var temp = (Node)_myDataHub.Highlighted;
-                temp.OnPointerDown(null);
+                _myDataHub.Highlighted.NodeSelected();
                 return;
             }
             if(AllowKeys)

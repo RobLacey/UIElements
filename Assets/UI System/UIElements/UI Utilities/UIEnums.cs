@@ -133,6 +133,16 @@ public enum ClearAction { All, StopAt, SkipOne }
 
 public enum WhenActiveDo { Nothing, BlockAllOtherRaycasts, TurnOffAllActiveBranches }
 
+public enum NavPressMoveType
+{
+    None, Navigate, AutoNavigate, ToChildBranch, Back
+}
+
+public enum ApplyFocus
+{
+    No, OnOver, OnClick
+}
+
 
 
 

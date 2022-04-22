@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Tab Branch
   m_EditorClassIdentifier: 
   _overrideTrunkSwitcher: 0
-  _activeToggleOneSwitch: 1
+  _activeToggleOnSwitch: 0
+  _loopAroundSwitcher: 1

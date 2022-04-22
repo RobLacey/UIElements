@@ -15,6 +15,9 @@ public class ToggleSwitcher: ISwitch
     public bool HasOnlyOneMember => ThisToggleGroup.Count == 1;
     public List<Node> SwitchHistory { get; } = new List<Node>();
     public void ClearSwitchHistory() => SwitchHistory.Clear();
+    private bool DontPositiveLoop => _myToggleGroupObject.DontLoopSwitcher & _index == ThisToggleGroup.Count - 1;
+    private bool DontNegativeLoop => _myToggleGroupObject.DontLoopSwitcher & _index == 0;
+
 
     //Main
     public void SetSwitchGroup(List<Toggle> nodes)
@@ -38,9 +41,11 @@ public class ToggleSwitcher: ISwitch
         switch (switchInputType)
         {
             case SwitchInputType.Positive:
+                if(DontPositiveLoop) return;
                 _index = _index.PositiveIterate(ThisToggleGroup.Count);
                 break;
             case SwitchInputType.Negative:
+                if(DontNegativeLoop) return;
                 _index = _index.NegativeIterate(ThisToggleGroup.Count);
                 break;
         }

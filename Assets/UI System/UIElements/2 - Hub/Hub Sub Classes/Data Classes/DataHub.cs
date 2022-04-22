@@ -140,7 +140,7 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
     }
 
     public INode SelectedNode => _lastSelected;
-    
+
     public void SetSelected(INode newNode)
     {
         _lastSelected = (Node)newNode;

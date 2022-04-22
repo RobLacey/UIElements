@@ -4,7 +4,7 @@ using UnityEngine;
 public interface ICancelOrBack : INodeBase { }
 
 
-public class CancelOrBackButton : NodeBase, ICancelActivated, ICancelOrBack
+public class CancelOrBackButton : NodeBase, ICancelButtonPressed, ICancelOrBack
 {
     public CancelOrBackButton(INode node) : base(node)
     {
@@ -16,14 +16,14 @@ public class CancelOrBackButton : NodeBase, ICancelActivated, ICancelOrBack
     public EscapeKey EscapeKeyType { get; }
 
     //Events
-    private Action<ICancelActivated> CancelButtonActive { get; set; }
+    private Action<ICancelButtonPressed> CancelButtonActive { get; set; }
     public IBranch BranchToCancel => MyBranch;
 
     //Main
     public override void FetchEvents()
     {
         base.FetchEvents();
-        CancelButtonActive = CancelEvents.Do.Fetch<ICancelActivated>();
+        CancelButtonActive = CancelEvents.Do.Fetch<ICancelButtonPressed>();
     }
 
     public override void NodeSelected()

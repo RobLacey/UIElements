@@ -71,6 +71,7 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
         if (GetOrderInCanvas != OrderInCanvas.Default) return false;
 
         _myCanvas.enabled = true;
+        _myCanvas.sortingOrder = 0;
         _startingOrder = _myCanvas.sortingOrder;
         _activeOrder = _startingOrder;
         _myCanvas.overrideSorting = false;
@@ -117,22 +118,23 @@ public class CanvasOrderCalculator: IServiceUser, ICanvasOrderCalculator
     public void SetFocusCanvasOrder(int canvasOrder)
     {
         if(_focusActive) return;
-        
         _focusActive = true;
         _myCanvas.overrideSorting = true;
-        _myCanvas.sortingOrder += canvasOrder;
+       // Debug.Log($"Start : {_myBranch}: {_startingOrder}");
+        _myCanvas.sortingOrder += _startingOrder + canvasOrder;
     }
 
     public void ResetFocus()
     {
         if(!_focusActive) return;
-        
-        _myCanvas.sortingOrder = _activeOrder;
+       // Debug.Log($"End : {_myBranch}: {_startingOrder}");
+        _myCanvas.sortingOrder = _startingOrder;
         _focusActive = false;
     }
 
     public void ResetCanvasOrder()
     {
+       // Debug.Log($"Exit : {_myBranch} : {_startingOrder}");
         _myCanvas.sortingOrder = _startingOrder;
         _activeOrder = _startingOrder;
         _focusActive = false;

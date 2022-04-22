@@ -1497,6 +1497,7 @@ MonoBehaviour:
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
   _goingToFullscreen: 1
+  _loopAroundSwitcher: 0
   _branches:
   - {fileID: 993261710}
 --- !u!223 &43557149
@@ -2565,22 +2566,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 375905088}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -4314,22 +4310,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -4865,22 +4856,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1712214354}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
-      _navigate: {fileID: 0}
+      _moveType: 1
+      _navigate: {fileID: 255762090}
     _rightPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 3
       _navigate: {fileID: 0}
     _leftPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 4
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -5607,22 +5593,17 @@ MonoBehaviour:
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 2
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -6038,22 +6019,17 @@ MonoBehaviour:
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 2
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -7680,22 +7656,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1588996935}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
-      _navigate: {fileID: 0}
+      _moveType: 1
+      _navigate: {fileID: 1740294014}
     _rightPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 3
       _navigate: {fileID: 0}
     _leftPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 4
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -8073,6 +8044,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00f12c3acdfb4140bd7b437f898978ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &255762090 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+  m_PrefabInstance: {fileID: 1671354849}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255762086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &266097027
@@ -8933,11 +8915,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4726497964099142034, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: m_SortingOrder
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4726497964099142034, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: m_OverrideSorting
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _stayOn
@@ -8953,7 +8935,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _applyFocus
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _branchType
@@ -8981,6 +8963,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _isFullScreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
+      propertyPath: _moveBackWhen
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
@@ -9158,7 +9144,7 @@ PrefabInstance:
     - target: {fileID: 6032785956394875965, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _scheme
       value: 
-      objectReference: {fileID: 11400000, guid: 1e2b2a9489317a641b9c65bd515169c0, type: 2}
+      objectReference: {fileID: 11400000, guid: 288aa10055ca42443a0371953c985365, type: 2}
     - target: {fileID: 6032785956394875965, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _globalInTime
       value: 1
@@ -9698,22 +9684,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -10817,22 +10798,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -11507,6 +11483,7 @@ MonoBehaviour:
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
   _goingToFullscreen: 1
+  _loopAroundSwitcher: 0
   _branches:
   - {fileID: 506362737}
 --- !u!114 &406618516
@@ -12536,6 +12513,7 @@ MonoBehaviour:
   _moveToNextTrunk: 1
   _moveBackFromTrunk: 1
   _goingToFullscreen: 1
+  _loopAroundSwitcher: 0
   _branches:
   - {fileID: 790558014}
   - {fileID: 1588996935}
@@ -21298,8 +21276,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2030534706}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._upPress._moveType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._upPress._navigate
+      value: 
+      objectReference: {fileID: 2128693704}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _coloursTest._images.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._leftPress._moveType
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _colours._imageElements.Array.size
@@ -22370,22 +22360,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1154447021}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -25480,8 +25465,32 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2135764439}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._upPress._moveType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._upPress._navigate
+      value: 
+      objectReference: {fileID: 1866266119}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._selectedHighlightPerc
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._downPress._moveType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._downPress._navigate
+      value: 
+      objectReference: {fileID: 316116780}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._leftPress._moveType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._rightPress._moveType
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._imageElements.Array.size
@@ -26635,22 +26644,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1154447021}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -26782,22 +26786,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 477428662}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -27459,6 +27458,14 @@ PrefabInstance:
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _screenType
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
+      propertyPath: _moveToChild
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
+      propertyPath: _moveBackWhen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _closeIfClickedOff
@@ -28506,6 +28513,7 @@ MonoBehaviour:
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
   _goingToFullscreen: 1
+  _loopAroundSwitcher: 0
   _branches:
   - {fileID: 1743252783}
 --- !u!114 &1024836157
@@ -31623,22 +31631,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1712214354}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -31770,22 +31773,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -31973,22 +31971,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -33187,22 +33180,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -38720,6 +38708,22 @@ PrefabInstance:
       value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._downPress._moveType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._downPress._navigate
+      value: 
+      objectReference: {fileID: 2128693704}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._leftPress._moveType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._rightPress._moveType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._imageElements.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -39077,22 +39081,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 504002778}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -41967,8 +41966,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 674028815}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._upPress._moveType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._upPress._navigate
+      value: 
+      objectReference: {fileID: 161197621}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _coloursTest._images.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._leftPress._moveType
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _colours._imageElements.Array.size
@@ -42414,22 +42425,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1712214354}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -42817,22 +42823,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -43087,12 +43088,32 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._setKeyNavigation
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _colours._images.Array.data[0]
       value: 
       objectReference: {fileID: 1718557793}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._upPress._moveType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._upPress._navigate
+      value: 
+      objectReference: {fileID: 244123861}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _coloursTest._images.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._downPress._moveType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+      propertyPath: _navigation._leftPress._moveType
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
       propertyPath: _colours._imageElements.Array.size
@@ -43805,6 +43826,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00f12c3acdfb4140bd7b437f898978ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1740294014 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
+  m_PrefabInstance: {fileID: 1718557792}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740294010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1743252781
 GameObject:
   m_ObjectHideFlags: 0
@@ -44018,22 +44050,17 @@ MonoBehaviour:
   _enabledFunctions: 3
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 2
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -46378,22 +46405,17 @@ MonoBehaviour:
   _enabledFunctions: 323
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -46510,6 +46532,10 @@ PrefabInstance:
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _stayVisible
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
+      propertyPath: _moveBackWhen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _closeIfClickedOff
@@ -47469,6 +47495,7 @@ MonoBehaviour:
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
   _goingToFullscreen: 1
+  _loopAroundSwitcher: 0
   _branches:
   - {fileID: 399604471}
 --- !u!223 &1954348581
@@ -48450,6 +48477,10 @@ PrefabInstance:
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _presetParent
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
+      propertyPath: _whenActiveDo
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _alwaysHighlighted
@@ -49719,22 +49750,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -49887,22 +49913,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -50332,22 +50353,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 790558014}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -52838,22 +52854,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 1096179286}
-    _setKeyNavigation: 1
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -52949,7 +52960,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _applyFocus
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _screenType
@@ -54403,22 +54414,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -55145,7 +55151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _canvasOrderSetting
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _neverTweenOnReturn
@@ -55646,7 +55652,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421614741107817081, guid: d4d4ae77ac7463a40afa29655e938f81, type: 3}
       propertyPath: _goingToFullscreen
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4421614741107817081, guid: d4d4ae77ac7463a40afa29655e938f81, type: 3}
       propertyPath: _pauseOptionButton
@@ -56408,22 +56414,17 @@ MonoBehaviour:
   _enabledFunctions: 67
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 3
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -56794,22 +56795,17 @@ MonoBehaviour:
   _enabledFunctions: 239
   _navigation:
     _childBranch: {fileID: 616071579}
-    _setKeyNavigation: 3
     _upPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
-      _navigate: {fileID: 0}
+      _moveType: 2
+      _navigate: {fileID: 6790820044446171236}
     _downPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
-      _navigate: {fileID: 0}
+      _moveType: 2
+      _navigate: {fileID: 6790820044164496566}
     _rightPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 3
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -57074,22 +57070,17 @@ MonoBehaviour:
   _enabledFunctions: 231
   _navigation:
     _childBranch: {fileID: 1096179286}
-    _setKeyNavigation: 3
     _upPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
-      _navigate: {fileID: 0}
+      _moveType: 2
+      _navigate: {fileID: 6790820043816564219}
     _downPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 2
       _navigate: {fileID: 0}
     _rightPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 3
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -57219,25 +57210,20 @@ MonoBehaviour:
     _multiSelectGroup: 0
   _disableSettings:
     _passOverIfDisabled: 0
-  _enabledFunctions: 231
+  _enabledFunctions: 487
   _navigation:
     _childBranch: {fileID: 1450462822}
-    _setKeyNavigation: 3
     _upPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 2
       _navigate: {fileID: 0}
     _downPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
-      _navigate: {fileID: 0}
+      _moveType: 2
+      _navigate: {fileID: 6790820043816564219}
     _rightPress:
-      _moveType: 0
-      _moveTo: {fileID: 0}
+      _moveType: 3
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
@@ -57492,22 +57478,17 @@ MonoBehaviour:
   _enabledFunctions: 327
   _navigation:
     _childBranch: {fileID: 1029651617}
-    _setKeyNavigation: 2
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 1109364856}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 2f508ea07536e3843b9b21691700c5cd, type: 2}
@@ -57786,22 +57767,17 @@ MonoBehaviour:
   _enabledFunctions: 327
   _navigation:
     _childBranch: {fileID: 399604471}
-    _setKeyNavigation: 2
     _upPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 1332049459}
     _downPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _rightPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
     _leftPress:
       _moveType: 0
-      _moveTo: {fileID: 0}
       _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 2f508ea07536e3843b9b21691700c5cd, type: 2}

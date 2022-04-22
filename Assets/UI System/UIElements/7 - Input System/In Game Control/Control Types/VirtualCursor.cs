@@ -69,7 +69,7 @@ public class VirtualCursor : IEZEventUser, IVirtualCursor, ICursorSettings, ISer
         ShowVC_Cursor();
         _interactWithUi.ClearLastHit();
     }
-    private void CancelPressed(ICancelPressed args) => _interactWithUi.ClearLastHit();
+    private void CancelPressed(IStandardCancel args) => _interactWithUi.ClearLastHit();
 
     //Main
     public void OnAwake()
@@ -96,7 +96,7 @@ public class VirtualCursor : IEZEventUser, IVirtualCursor, ICursorSettings, ISer
     public void ObserveEvents()
     {
         InputEvents.Do.Subscribe<IAllowKeys>(SaveAllowKeys);
-        InputEvents.Do.Subscribe<ICancelPressed>(CancelPressed);
+        InputEvents.Do.Subscribe<IStandardCancel>(CancelPressed);
     }
 
     public void UnObserveEvents() { }

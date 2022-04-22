@@ -24,16 +24,16 @@ public class UICancel : ICancel, IServiceUser, IEZEventUser
 
     public void ObserveEvents()
     {
-        InputEvents.Do.Subscribe<ICancelPressed>(CancelPressed);
-        CancelEvents.Do.Subscribe<ICancelActivated>(CancelOrBackButtonPressed);
+        InputEvents.Do.Subscribe<IStandardCancel>(CancelPressed);
+        CancelEvents.Do.Subscribe<ICancelButtonPressed>(CancelOrBackButtonPressed);
     }
     
     public void OnDisable() => UnObserveEvents();
 
     public void UnObserveEvents()
     {
-        InputEvents.Do.Unsubscribe<ICancelPressed>(CancelPressed);
-        CancelEvents.Do.Unsubscribe<ICancelActivated>(CancelOrBackButtonPressed);
+        InputEvents.Do.Unsubscribe<IStandardCancel>(CancelPressed);
+        CancelEvents.Do.Unsubscribe<ICancelButtonPressed>(CancelOrBackButtonPressed);
     }
 
     public void UseEZServiceLocator()
@@ -42,10 +42,10 @@ public class UICancel : ICancel, IServiceUser, IEZEventUser
         _myDataHub = EZService.Locator.Get<IDataHub>(this);
     }
 
-    private void CancelPressed(ICancelPressed args) 
+    private void CancelPressed(IStandardCancel args) 
         => _uiHistoryTrack.CancelHasBeenPressed(ProcessCancelType(args.EscapeKeySettings), null);
 
-    private void CancelOrBackButtonPressed(ICancelActivated args) 
+    private void CancelOrBackButtonPressed(ICancelButtonPressed args) 
         => _uiHistoryTrack.CancelHasBeenPressed(ProcessCancelType(args.EscapeKeyType), args.BranchToCancel);
 
     private EscapeKey ProcessCancelType(EscapeKey escapeKey) 

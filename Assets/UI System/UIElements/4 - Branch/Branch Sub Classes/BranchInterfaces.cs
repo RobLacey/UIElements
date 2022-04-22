@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 
 public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoDisable, IMonoEnable, IMonoOnDestroy,
-                           IDynamicBranch, IBranchStateEvents, IPointerEnterHandler, IPointerExitHandler, IApplyFocus
+                           IDynamicBranch, IBranchStateEvents, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IApplyFocus
 {
     bool IsControlBar();
     bool IsPauseMenuBranch();
@@ -110,7 +110,7 @@ public interface IBranchStateEvents
 
 public interface IApplyFocus
 {
-    bool ApplyFocus { get; }
+   // bool DontApplyFocus { get; }
     int FocusSortingOrder { get; }
 }
 

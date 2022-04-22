@@ -1,66 +1,45 @@
 ﻿using System;
 using NaughtyAttributes;
-using UIElements;
 using UnityEngine;
 
 public interface INavigationSettings : IComponentSettings
 {
-    IBranch ChildBranch { get; set; }
-    NavigationType NavType { get; }
-    Node Up { get; }
-    Node Down { get; }
-    Node Left { get; }
-    Node Right { get; }
+    NavigateKeyPress Up { get; }
+    NavigateKeyPress Down { get; }
+    NavigateKeyPress Left { get; }
+    NavigateKeyPress Right { get; }
 }
 
 [Serializable]
 public class NavigationSettings :INavigationSettings
 {
+    [Space(10f, order = 1)] [Header("Linked Branch - Always When Selected and Key Press If Set", order = 2)] 
+    [HorizontalLine(1f, EColor.Blue, order = 3)]
+
     [SerializeField] 
-    [ValidateInput(ValidBranch, ErrorMessage)]
-    [AllowNesting] [Label("Child Branch")] [HideIf(CannotNav)] 
+    [ValidateInput(ValidBranch, ErrorMessage)] [AllowNesting] [Label("Child Branch")] [HideIf(CannotNav)] 
     private Branch _childBranch = default;
-    
-    [SerializeField] 
-    private NavigationType _setKeyNavigation = NavigationType.None;
 
-    [SerializeField] 
-    //[ValidateInput(ValidBranch, ErrorMessage)]
-    //[AllowNesting] [EnableIf("UpDownNav")]
-    private NavigateKeyPress _upPress = default;
-    [SerializeField] 
-    //[ValidateInput(ValidBranch, ErrorMessage)]
-    // [AllowNesting] [ShowIf("UpDownNav")]
-    private NavigateKeyPress _downPress = default;
-    [SerializeField] 
-    //[ValidateInput(ValidBranch, ErrorMessage)]
-    // [AllowNesting] [ShowIf("RightLeftNav")]
-    private NavigateKeyPress _rightPress = default;
-    [SerializeField] 
-    //[ValidateInput(ValidBranch, ErrorMessage)]
-    // [AllowNesting] [ShowIf("RightLeftNav")]
-    private NavigateKeyPress _leftPress = default;
+    [Space(10f, order = 1)] [Header("Navigation Key Presses", order = 2)] [HorizontalLine(1f, EColor.Blue, order = 3)]
     
-    // [SerializeField] 
-    // [AllowNesting] [ShowIf("UpDownNav")] private Node _up = default;
-    // [SerializeField] 
-    // [AllowNesting] [ShowIf("UpDownNav")] private Node _down = default;
-    // [SerializeField] 
-    // [AllowNesting] [ShowIf("RightLeftNav")] private Node _left = default;
-    // [SerializeField] 
-    // [AllowNesting] [ShowIf("RightLeftNav")] private Node _right = default;
-
+    [SerializeField]  private NavigateKeyPress _upPress = default;
+    [SerializeField]  private NavigateKeyPress _downPress = default;
+    [SerializeField] private NavigateKeyPress _rightPress = default;
+    [SerializeField] private NavigateKeyPress _leftPress = default;
+    
     //Editor Scripts
     private const string ValidBranch = nameof(CheckValidBranch);
-    private const string CannotNav = nameof(CantNavigate);
+    private const string CannotNav = nameof(SetNavigate);
     private const string ErrorMessage = "Must NOT use a Pop Up here. Do this via the Event Functions Or HotKeys instead.";
+
+    private bool SetNavigate()
+    {
+        if (CantNavigate)
+            _childBranch = null;
+
+        return CantNavigate;
+    }
     public bool CantNavigate { get; set; }
-
-    public bool UpDownNav()
-        => _setKeyNavigation == NavigationType.UpAndDown || _setKeyNavigation == NavigationType.AllDirections;
-
-    public bool RightLeftNav()
-        => _setKeyNavigation == NavigationType.RightAndLeft || _setKeyNavigation == NavigationType.AllDirections;
     
     private bool CheckValidBranch(Branch branch)
     {
@@ -76,11 +55,10 @@ public class NavigationSettings :INavigationSettings
     }
     
     private void SetNewChild(IBranch newChild) => ChildBranch = newChild;
-    public NavigationType NavType => _setKeyNavigation;
-    public Node Up => _upPress.Navigate;
-    public Node Down => _downPress.Navigate;
-    public Node Left => _leftPress.Navigate;
-    public Node Right => _rightPress.Navigate;
+    public NavigateKeyPress Up => _upPress;
+    public NavigateKeyPress Down => _downPress;
+    public NavigateKeyPress Left => _leftPress;
+    public NavigateKeyPress Right => _rightPress;
     public UINavigation Instance { get; set; }
 
     public NodeFunctionBase SetUp(IUiEvents uiNodeEvents, Setting functions)
@@ -95,18 +73,4 @@ public class NavigationSettings :INavigationSettings
     }
 
     private bool CanCreate(Setting functions) => (functions & Setting.NavigationAndOnClick) != 0;
-}
-
-[Serializable]
-public class NavigateKeyPress
-{
-    [SerializeField] private NavPressMoveType _moveType = NavPressMoveType.None;
-    [SerializeField] private Node _navigate = default;
-
-    private enum NavPressMoveType
-    {
-        None, Navigate, ToBranch, Back
-    }
-
-    public Node Navigate => _navigate;
 }

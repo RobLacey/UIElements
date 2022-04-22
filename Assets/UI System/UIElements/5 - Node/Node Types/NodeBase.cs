@@ -147,7 +147,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         //SelectedNode = _uiNode;
         if(_dontAddToHistoryTracking || !_myDataHub.SceneStarted) return;
        // DoSelected?.Invoke(this);
-       _myDataHub.SetSelected(_uiNode);
+        _myDataHub.SetSelected(_uiNode);
     }
 
     protected void SetNodeAsSelected_NoEffects()
@@ -178,14 +178,16 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         PointerOverNode = true;
         _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
         MyBranch.SetNewHighlighted(_uiNode);
-        MyBranch.OnPointerEnter(null);
+        if (_myDataHub.AllowKeys)
+            MyBranch.OnPointerEnter(null);
     }
    
     public virtual void OnExitingNode()
     {
         PointerOverNode = false;
         _uiFunctionEvents.DoWhenPointerOver(PointerOverNode);
-        MyBranch.OnPointerExit(null);
+        if (_myDataHub.AllowKeys)
+            MyBranch.OnPointerExit(null);
     }
 
     public void DoMoveToNextNode(MoveDirection moveDirection) => Navigation.AxisMoveDirection(moveDirection);
@@ -214,6 +216,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         if(ActivatePopUpChildNode()) return;
         SetSelectedStatus(true, DoPressOnNode);
         ThisNodeIsSelected();
+        MyBranch.OnPointerExit(null);
     }
 
     private void Deactivate()
@@ -221,6 +224,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         if (!_historyTracker.NodeNeededForMultiSelect(_uiNode))
             SetSelectedStatus(false, DoPressOnNode);
         ThisNodeIsSelected();
+        MyBranch.OnPointerEnter(null);
     }
 
     private void SetSelectedStatus(bool isSelected, Action endAction)
