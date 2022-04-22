@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _positionTween: 0
   _rotationTween: 0
-  _fadeTween: 3
+  _fadeTween: 1
   _scaleTween: 0
   _punchTween: 0
   _shakeTween: 0

@@ -55,7 +55,13 @@ public class UITooltip : NodeFunctionBase, IToolTipData
     //Set / Getters
     protected override bool CanBeHighlighted() => false;
     protected override bool CanBePressed() => false;
-    private protected override void ProcessPress() { }
+
+    private protected override void ProcessPress()
+    {
+        if(_isSelected & _myDataHub.AllowKeys)
+            ImmediateClose();
+    }
+    
     protected override bool FunctionNotActive() => _isDisabled && _passOver || ListOfTooltips.Length == 0;
     private protected override void ProcessDisabled()
     {
@@ -131,17 +137,17 @@ public class UITooltip : NodeFunctionBase, IToolTipData
         _canvasOrderData = EZService.Locator.Get<ICanvasOrderData>(this);
     }
 
-    public override void ObserveEvents()
-    {
-        base.ObserveEvents();
-        BranchEvent.Do.Subscribe<IClearScreen>(CloseTooltipImmediately);
-    }
-
-    public override void UnObserveEvents()
-    {
-        base.UnObserveEvents();
-        BranchEvent.Do.Unsubscribe<IClearScreen>(CloseTooltipImmediately);
-    }
+    // public override void ObserveEvents()
+    // {
+    //     base.ObserveEvents();
+    //     BranchEvent.Do.Subscribe<IClearScreen>(CloseTooltipImmediately);
+    // }
+    //
+    // public override void UnObserveEvents()
+    // {
+    //     base.UnObserveEvents();
+    //     BranchEvent.Do.Unsubscribe<IClearScreen>(CloseTooltipImmediately);
+    // }
 
     public override void OnDisable()
     {
@@ -192,7 +198,7 @@ public class UITooltip : NodeFunctionBase, IToolTipData
         _pointerOver = pointerOver;
     }
 
-    private void CloseTooltipImmediately(IClearScreen args) => ImmediateClose();
+    //private void CloseTooltipImmediately(IClearScreen args) => ImmediateClose();
 
     private void ImmediateClose()
     {

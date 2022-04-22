@@ -6,7 +6,7 @@ using EZ.Events;
 using EZ.Service;
 using NaughtyAttributes;
 
-public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher, IServiceUser
+public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher/*, IServiceUser*/
 {
     [SerializeField] 
     [BoxGroup("Tween Settings")] [HorizontalLine(1, EColor.Blue , order = 1)]
@@ -24,7 +24,7 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher, IServiceU
     private int _counter, _effectCounter;
     private List<ITweenBase> _activeTweens;
     private readonly ITweenInspector _tweenInspector = EZInject.Class.NoParams<ITweenInspector>();
-    private IDataHub _myDataHub;
+    //private IDataHub _myDataHub;
 
     //Properties
     public RectTransform EndTweenRect { get; private set; }
@@ -58,7 +58,7 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher, IServiceU
 
     private void OnEnable()
     {
-        UseEZServiceLocator();
+       // UseEZServiceLocator();
         if (_activeTweens is null) return;
         foreach (var activeTween in _activeTweens)
         {
@@ -66,7 +66,7 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher, IServiceU
         }
     }
     
-    public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
+    //public void UseEZServiceLocator() => _myDataHub = EZService.Locator.Get<IDataHub>(this);
 
     private void OnDisable()
     {
@@ -83,13 +83,13 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher, IServiceU
 
     public void StartInTweens(Action callBack)
     {
-        _myDataHub.AddPlayingTween();
+       // _myDataHub.AddPlayingTween();
         _tweenEvents.InTweenEventStart?.Invoke();
         StartProcessingTweens(TweenType.In, callBack, _tweenEvents.InTweenEventEnd);
     }
     public void StartOutTweens(Action callBack)
     {
-        _myDataHub.AddPlayingTween();
+       // _myDataHub.AddPlayingTween();
         _tweenEvents.OutTweenEventStart?.Invoke();
         StartProcessingTweens(TweenType.Out, callBack, _tweenEvents.OutTweenEventEnd);
     }
@@ -121,7 +121,7 @@ public class UITweener : MonoBehaviour, IEndTween, IEZEventDispatcher, IServiceU
     
     private void EndOfTween()
     {
-        _myDataHub.RemovePlayingTween();
+       // _myDataHub.RemovePlayingTween();
         _effectCounter--;
         if (_effectCounter > 0) return;
         TweenTypeEndEvent?.Invoke();

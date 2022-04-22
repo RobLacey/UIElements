@@ -199,4 +199,14 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, I
         branchToClose.LastSelected.ExitNodeByType();
     }
 
+    public void OpenCurrentSwitchHistory()
+    {
+        
+    }
+
+    public void CloseCurrentSwitchHistory()
+    {
+        
+    }
+
 }

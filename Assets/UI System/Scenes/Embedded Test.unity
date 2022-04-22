@@ -1496,6 +1496,7 @@ MonoBehaviour:
   _screenType: 0
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
+  _goingToFullscreen: 1
   _branches:
   - {fileID: 993261710}
 --- !u!223 &43557149
@@ -2565,10 +2566,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 375905088}
     _setKeyNavigation: 3
-    _up: {fileID: 1694247286}
-    _down: {fileID: 948469796}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -4302,10 +4315,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 1173239053}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -4841,10 +4866,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1712214354}
     _setKeyNavigation: 3
-    _up: {fileID: 0}
-    _down: {fileID: 659218751}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -5571,10 +5608,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 2
-    _up: {fileID: 0}
-    _down: {fileID: 1332049459}
-    _left: {fileID: 0}
-    _right: {fileID: 183270146}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -5990,10 +6039,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 2
-    _up: {fileID: 0}
-    _down: {fileID: 1332049459}
-    _left: {fileID: 176592437}
-    _right: {fileID: 1746369515}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -7620,10 +7681,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1588996935}
     _setKeyNavigation: 3
-    _up: {fileID: 0}
-    _down: {fileID: 1718557794}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -8114,7 +8187,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -8126,7 +8198,7 @@ MonoBehaviour:
   _orderInCanvas: 0
   _moveToChild: 0
   _moveBackWhen: 0
-  _stayVisible: 1
+  _stayVisible: 0
   _whenActiveDo: 0
   _escapeKeyFunction: 0
   _saveExitSelection: 1
@@ -9627,10 +9699,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 1483168074}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -10734,10 +10818,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 823973491}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -11231,7 +11327,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -11411,6 +11506,7 @@ MonoBehaviour:
   _screenType: 0
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
+  _goingToFullscreen: 1
   _branches:
   - {fileID: 506362737}
 --- !u!114 &406618516
@@ -12050,7 +12146,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 1579058406}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -12438,8 +12533,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _screenType: 1
-  _moveToNextTrunk: 0
-  _moveBackFromTrunk: 0
+  _moveToNextTrunk: 1
+  _moveBackFromTrunk: 1
+  _goingToFullscreen: 1
   _branches:
   - {fileID: 790558014}
   - {fileID: 1588996935}
@@ -12744,6 +12840,10 @@ PrefabInstance:
       propertyPath: _colours._images.Array.data[0]
       value: 
       objectReference: {fileID: 1683589942}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._upPress._navigate
+      value: 
+      objectReference: {fileID: 1746369515}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._selectedHighlightPerc
       value: 0.8
@@ -14324,7 +14424,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -14523,7 +14622,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -15922,17 +16020,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &531416950 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
-  m_PrefabInstance: {fileID: 1586830572}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &538311073
@@ -18167,17 +18254,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4907883a84abe54e902c13951db25b4, type: 3}
---- !u!114 &659218751 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
-  m_PrefabInstance: {fileID: 1671354849}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 255762086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &660028738
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22295,10 +22371,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1154447021}
     _setKeyNavigation: 1
-    _up: {fileID: 194668750}
-    _down: {fileID: 134818550}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -23585,7 +23673,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -24558,7 +24645,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -25646,7 +25732,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 5
   _whenAllowed:
     _notOnRootScreen: 0
@@ -25926,6 +26011,10 @@ PrefabInstance:
       propertyPath: _colours._images.Array.data[0]
       value: 
       objectReference: {fileID: 242404366}
+    - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
+      propertyPath: _navigation._upPress._navigate
+      value: 
+      objectReference: {fileID: 176592437}
     - target: {fileID: 7713156616522297100, guid: 883e6b769f6167a4794fc142b77d057b, type: 3}
       propertyPath: _colours._selectedHighlightPerc
       value: 0.8
@@ -26547,10 +26636,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1154447021}
     _setKeyNavigation: 1
-    _up: {fileID: 528461478}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -26682,10 +26783,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 477428662}
     _setKeyNavigation: 3
-    _up: {fileID: 75400626}
-    _down: {fileID: 1879167844}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -28392,6 +28505,7 @@ MonoBehaviour:
   _screenType: 0
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
+  _goingToFullscreen: 1
   _branches:
   - {fileID: 1743252783}
 --- !u!114 &1024836157
@@ -28501,7 +28615,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -30171,7 +30284,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -31085,7 +31197,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -31513,10 +31624,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1712214354}
     _setKeyNavigation: 1
-    _up: {fileID: 2088685279}
-    _down: {fileID: 0}
-    _left: {fileID: 2088685279}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -31648,10 +31771,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 135199491}
-    _right: {fileID: 2010628281}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -31839,10 +31974,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 232275039}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -33041,10 +33188,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 2052579379}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -34726,7 +34885,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 0
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -37710,7 +37868,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 5
   _whenAllowed:
     _notOnRootScreen: 0
@@ -38921,10 +39078,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 504002778}
     _setKeyNavigation: 3
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -39270,7 +39439,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 5
   _whenAllowed:
     _notOnRootScreen: 0
@@ -42247,10 +42415,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1712214354}
     _setKeyNavigation: 3
-    _up: {fileID: 0}
-    _down: {fileID: 75400626}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -42418,7 +42598,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -42639,10 +42818,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 370211954}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -42939,17 +43130,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1718557794 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3688934388505339739, guid: 86ed9c2d3160af54887a9f55908252df, type: 3}
-  m_PrefabInstance: {fileID: 1718557792}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1740294010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f5dfd11c59dde44c933280df0ae6aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1719071081
@@ -43685,7 +43865,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -43840,10 +44019,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 2
-    _up: {fileID: 0}
-    _down: {fileID: 1109364856}
-    _left: {fileID: 183270146}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -46188,10 +46379,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 3
-    _up: {fileID: 948469796}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -46303,6 +46506,10 @@ PrefabInstance:
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _moveToChild
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
+      propertyPath: _stayVisible
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _closeIfClickedOff
@@ -47261,6 +47468,7 @@ MonoBehaviour:
   _screenType: 0
   _moveToNextTrunk: 0
   _moveBackFromTrunk: 0
+  _goingToFullscreen: 1
   _branches:
   - {fileID: 399604471}
 --- !u!223 &1954348581
@@ -48233,6 +48441,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
       propertyPath: _stayVisible
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
+      propertyPath: _moveBackWhen
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5905019687427038913, guid: d4907883a84abe54e902c13951db25b4, type: 3}
@@ -49508,10 +49720,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 794549783}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -49664,10 +49888,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 1173239053}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -50097,10 +50333,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 790558014}
     _setKeyNavigation: 3
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -50329,7 +50577,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -52362,7 +52609,6 @@ MonoBehaviour:
   _branchType: 1
   _controlBar: 1
   _startOnThisNode: {fileID: 0}
-  _presetParent: {fileID: 0}
   _timer: 1
   _whenAllowed:
     _notOnRootScreen: 0
@@ -52593,10 +52839,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1096179286}
     _setKeyNavigation: 1
-    _up: {fileID: 0}
-    _down: {fileID: 1172980946}
-    _left: {fileID: 0}
-    _right: {fileID: 1172980946}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 0}
@@ -54146,10 +54404,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 3
-    _up: {fileID: 6446246268481184040}
-    _down: {fileID: 531416950}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 1675654969143493557}
@@ -55169,7 +55439,7 @@ PrefabInstance:
     - target: {fileID: 3142652020214348524, guid: d4d4ae77ac7463a40afa29655e938f81, type: 3}
       propertyPath: _scheme
       value: 
-      objectReference: {fileID: 11400000, guid: 288aa10055ca42443a0371953c985365, type: 2}
+      objectReference: {fileID: 11400000, guid: 1e2b2a9489317a641b9c65bd515169c0, type: 2}
     - target: {fileID: 3142652020214348524, guid: d4d4ae77ac7463a40afa29655e938f81, type: 3}
       propertyPath: _buildObjectsList.Array.size
       value: 1
@@ -55372,6 +55642,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421614741107817081, guid: d4d4ae77ac7463a40afa29655e938f81, type: 3}
       propertyPath: _escapeKeyFunction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421614741107817081, guid: d4d4ae77ac7463a40afa29655e938f81, type: 3}
+      propertyPath: _goingToFullscreen
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4421614741107817081, guid: d4d4ae77ac7463a40afa29655e938f81, type: 3}
@@ -56135,10 +56409,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 0}
     _setKeyNavigation: 3
-    _up: {fileID: 531416950}
-    _down: {fileID: 1675654969295092519}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 6446246268114113608}
@@ -56509,10 +56795,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 616071579}
     _setKeyNavigation: 3
-    _up: {fileID: 6790820044446171236}
-    _down: {fileID: 6790820044164496566}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 6790820043331441443}
@@ -56777,10 +57075,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1096179286}
     _setKeyNavigation: 3
-    _up: {fileID: 6790820043816564219}
-    _down: {fileID: 6790820044446171236}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 6790820044114795118}
@@ -56913,10 +57223,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1450462822}
     _setKeyNavigation: 3
-    _up: {fileID: 6790820044164496566}
-    _down: {fileID: 6790820043816564219}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 547a8a0ebb4e7b542af91cd3d2c07f2f, type: 2}
     _text: {fileID: 6790820044932081340}
@@ -57171,10 +57493,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 1029651617}
     _setKeyNavigation: 2
-    _up: {fileID: 1109364856}
-    _down: {fileID: 0}
-    _left: {fileID: 7713156618011646807}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 1109364856}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 2f508ea07536e3843b9b21691700c5cd, type: 2}
     _text: {fileID: 0}
@@ -57453,10 +57787,22 @@ MonoBehaviour:
   _navigation:
     _childBranch: {fileID: 399604471}
     _setKeyNavigation: 2
-    _up: {fileID: 1332049459}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 7713156617632872757}
+    _upPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 1332049459}
+    _downPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _moveTo: {fileID: 0}
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 11400000, guid: 2f508ea07536e3843b9b21691700c5cd, type: 2}
     _text: {fileID: 0}

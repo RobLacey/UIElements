@@ -45,7 +45,7 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
     [Label("UI Functions To Use")]
     private Setting _enabledFunctions;
     [SerializeField] 
-    [Space(15f)] [Label("Navigation And On Click Calls")] [ShowIf(HasNavigation)]  
+    [Space(15f)] [Label("Menu Navigation Settings")] [ShowIf(HasNavigation)]  
     private NavigationSettings _navigation;
     [SerializeField] 
     [Space(15f)] [Label("Colour Settings")] [ShowIf(HasColour)]  
@@ -251,7 +251,11 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
 
     public void SetAsHotKeyParent(bool setAsActive) => _nodeBase.HotKeyPressed(setAsActive);
 
-    public void ExitNodeByType() => _nodeBase.ExitNodeByType();
+    public void ExitNodeByType()
+    {
+        Debug.Log(this);
+        _nodeBase.ExitNodeByType();
+    }
 
 
     // Use To Disable Node from external scripts

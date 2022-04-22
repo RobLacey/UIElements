@@ -163,6 +163,7 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
     }
     public void RemovePlayingTween()
     {
+        if(PlayingTweens == 0) return;
         PlayingTweens--;
     }
 

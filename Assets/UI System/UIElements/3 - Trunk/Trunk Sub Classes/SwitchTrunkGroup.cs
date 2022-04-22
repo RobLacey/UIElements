@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using EZ.Events;
 using EZ.Service;
 using UIElements;
@@ -10,6 +11,8 @@ public interface ISwitchTrunkGroup : IMonoEnable, IMonoDisable, ISwitch
     Trunk ThisTrunk { set; }
     List<IBranch> ThisGroup { set; }
     IBranch CurrentBranch { get; }
+    void SetNewIndex(INode newNode);
+    void ActivateCurrentBranch();
     void OpenAllBranches(IBranch newParent, bool canTween);
     void CloseAllBranches(Action endOfClose, bool canTween);
 }
@@ -87,7 +90,7 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
     private bool NotValidBranchType(INode nodeToCheck) =>
         nodeToCheck.MyBranch.IsInGameBranch() || nodeToCheck.MyBranch.IsAPopUpBranch();
 
-    private void SetNewIndex(INode newNode)
+    public void SetNewIndex(INode newNode)
     {
         if(ThisGroup.Contains(newNode.MyBranch))
             _index = ThisGroup.IndexOf(newNode.MyBranch);
@@ -140,5 +143,32 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
                 endOfClose?.Invoke();
         }
     }
+    
+    public void ActivateCurrentBranch()
+    {
+        if(SwitchHistory.IsEmpty())
+        {
+            CurrentBranch.OpenThisBranch();
+        }
+        else
+        {
+            var last = SwitchHistory.Last();
+            foreach (var node in SwitchHistory)
+            {
+                ProcessBranchOpen(node, last);
+            }
 
+            SwitchHistory.Remove(last);
+        }
+    }
+
+    private static void ProcessBranchOpen(Node node, Node last)
+    {
+        if (!node.MyBranch.StayVisibleMovingToChild() && node != last) return;
+        
+        if (node != last)
+            node.MyBranch.DontSetAsActiveBranch();
+        
+        node.MyBranch.OpenThisBranch();
+    }
 }

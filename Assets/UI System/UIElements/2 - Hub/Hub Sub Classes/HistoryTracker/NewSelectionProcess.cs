@@ -35,7 +35,7 @@ public static class NewSelectionProcess
 
     private static void NavigateToChildBranch(HistoryData data)
     {
-        if(data.NewNode.HasChildBranch.IsNull()) return;
+        //if(data.NewNode.HasChildBranch.IsNull()) return;
         
         if(TrunkTracker.MovingToNewTrunk(data)) return;
         

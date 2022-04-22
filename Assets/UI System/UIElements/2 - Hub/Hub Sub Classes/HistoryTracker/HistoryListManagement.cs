@@ -70,8 +70,6 @@ public static class HistoryListManagement
 
     private static void ExitNode(HistoryData data,INode currentNode)
     {
-        currentNode.ExitNodeByType();
-        data.RemoveFromHistory(currentNode);
         if(currentNode.HasChildBranch.IsNull())return;
         if(TrunkTracker.MoveBackATrunk(data, currentNode)) return;
 
@@ -79,6 +77,8 @@ public static class HistoryListManagement
 
         void EndAction()
         {
+            currentNode.ExitNodeByType();
+            data.RemoveFromHistory(currentNode);
             if(currentNode != data.StopPoint) return;
             currentNode.MyBranch.OpenThisBranch();
         }

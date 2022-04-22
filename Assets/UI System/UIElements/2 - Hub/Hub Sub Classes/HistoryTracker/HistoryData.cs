@@ -50,6 +50,7 @@ public class HistoryData : IServiceUser
     public IBranch NewNodesBranch => NewNode.MyBranch;
     public IBranch ActiveBranch => MyDataHub.ActiveBranch;
     public Trunk CurrentTrunk => MyDataHub.CurrentTrunk;
+    //public List<Node> CurrentSwitchHistory => MyDataHub.CurrentSwitchHistory;
     public bool MultiSelectIsActive => MyDataHub.MultiSelectActive;
     private IDataHub MyDataHub { get; set; }
     public Trunk RootTrunk => MyDataHub.RootTrunk;

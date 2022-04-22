@@ -30,9 +30,9 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     [Label("Start On (Optional)")] 
     private Node _startOnThisNode;
     
-    [SerializeField]
-    [Label("Preset Parent (Optional)")] 
-    private Node _presetParent;
+    // [SerializeField]
+    // [Label("Preset Parent (Optional)")] 
+    // private Branch _presetParent;
 
     [SerializeField] 
     [ShowIf(EConditionOperator.Or, TimedBranch, OptionalBranch)] [Range(0f,20f)] 
@@ -239,6 +239,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
 
     public void OpenThisBranch(IBranch newParentBranch = null)
     {
+        //Debug.Log(this);
         if(!_branchTypeBaseClass.CanStartBranch()) return;
 
         SetBranchAsActive(newParentBranch);
@@ -246,6 +247,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
         if (_tweenOnChange)
         {
             _tweening = true;
+            _myDataHub.AddPlayingTween();
             _uiTweener.StartInTweens(callBack: InTweenCallback);
         }
         else
@@ -272,6 +274,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
     
     private void InTweenCallback()
     {
+        _myDataHub.RemovePlayingTween();
         _tweening = false;
         OpenBranchEndEvent?.Invoke();
         SetHighlightedNode();
@@ -294,6 +297,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
 
     public void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null)
     {
+        //Debug.Log(this);
         bool DontExitBranch() => _branchTypeBaseClass.DontExitBranch(outTweenType);
         var moveType = outTweenType == OutTweenType.MoveToChild ? _moveToChild : _moveBackWhen;
         
@@ -320,11 +324,13 @@ public partial class Branch : MonoBehaviour, IEZEventUser,/*, IActiveBranch,*/ I
         _tweening = true;
         TweenFinishedCallBack = endOfTweenCallback;
         ExitBranchStartEvent?.Invoke();
+        _myDataHub.AddPlayingTween();
         _uiTweener.StartOutTweens(OutTweenCallback);
     }
 
     private void OutTweenCallback()
     {
+        _myDataHub.RemovePlayingTween();
         _tweening = false;
         ExitBranchEndEvent?.Invoke();
         TweenFinishedCallBack?.Invoke();

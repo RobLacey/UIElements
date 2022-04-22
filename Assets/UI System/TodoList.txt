@@ -10,13 +10,22 @@
 - Stop Parent Branch re-opening child when it is already open/tweening from a different parent.
 - Runtime Pool setting which disables everything i.e RestoreBranch and also check that it can be activated as it's pooled
 
+//Navigate
+- Push direction to move to child (add Event and/or use new class)
+- Add Loop around to node navigation and to switcher
+
 //Control Bar
-- Doesn't work properly, sometimes disappears on going to full screen (to with Trunk). Need to add itself to each trunks switcher and be independant
+- Need to add itself to each trunks switcher and be independant. Access whether needs to be one per project or could have multiples. 
+- Option to override on certain screens
+- Doesn't work properly, sometimes disappears on going to full screen (to with Trunk). 
 
 //Trunk
 - Add option to not tween branches when opening or closing a trunk
 - Trunk needs to have Immediate or AfterExit option to tween
 - Update Make New tree Button
+
+//HotKeys
+- Second press closes option
 
 //Runtime Setter
 - Rework to have all functionality needed

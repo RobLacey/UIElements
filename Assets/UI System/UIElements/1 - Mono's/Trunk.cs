@@ -21,6 +21,7 @@ namespace UIElements
         
         [SerializeField] [Space(10f)] private WhenToMove _moveToNextTrunk = WhenToMove.Immediately;
         [SerializeField] private WhenToMove _moveBackFromTrunk = WhenToMove.Immediately;
+        [SerializeField] private OnGoingToFullScreen _goingToFullscreen = OnGoingToFullScreen.UseBranchDefaults;
         
         [Space(10f, order = 1)]
         [ValidateInput(HasBranches, "Must have at least one branch assigned")]
@@ -43,6 +44,9 @@ namespace UIElements
         //Events
         private Action<IClearScreen> DoClearScreen { get; set; }
         
+        //Enums
+        private enum OnGoingToFullScreen { ForceClearAll, UseBranchDefaults }
+        
         //Properties & Getters/ Setters
         public List<IBranch> GroupsBranches => _branches.ToList<IBranch>();
         public ScreenType ScreenType => _screenType;
@@ -50,6 +54,11 @@ namespace UIElements
         private bool HasNoValidTweener => _myTweener.Scheme.IsNull() || !_myTweener.HasBuildList;
         public bool CanvasIsActive => _myCanvas.enabled == true;
         public IBranch ActiveBranch => _switcher.CurrentBranch;
+        public List<Node> SwitcherHistory => _switcher.SwitchHistory;
+        public bool ForceClear => _goingToFullscreen == OnGoingToFullScreen.ForceClearAll;
+        public void SetCurrentMoveTypeToMoveToNext() => _currentMoveType = _moveToNextTrunk;
+        public void SetCurrentMoveTypeToMoveToBack() => _currentMoveType = _moveBackFromTrunk;
+        public void SetNewSwitcherIndex(INode newNode) => _switcher.SetNewIndex(newNode);
         
         /// <summary>
         /// Method can be used to reactive the default trunk switcher if tab groups are present
@@ -58,11 +67,6 @@ namespace UIElements
         //Main
         private void Awake()
         { 
-            Debug.Log("Upto : Moving closing history to HistoryManagment from here. Make sure when moving to new switch it searches for  target from last Trunk correctly");
-            Debug.Log("Upto : Make sure when moving to new switch it searches for  target from last Trunk correctly");
-            Debug.Log("Upto : On move back after tween check why nodes are all cleared first");
-            Debug.Log("Upto : On move to child after tween check why tooltips are still active until new node set");
-            
             _switcher = EZInject.Class.NoParams<ISwitchTrunkGroup>();
             _switcher.ThisTrunk = this;
             _myCanvas = GetComponent<Canvas>();
@@ -126,9 +130,11 @@ namespace UIElements
 
         public void OnStartTrunk(IBranch newParent = null)
         {
-            //Debug.Log($"Start This : {this}");
+           // Debug.Log($"Start This : {this}");
+            void ActivateCurrentBranch() => _switcher.ActivateCurrentBranch();
+            
             if(_myDataHub.CurrentTrunk == this) return;
-
+            
             if(ScreenType == ScreenType.FullScreen)
                  DoClearScreen?.Invoke(this);
             
@@ -148,75 +154,9 @@ namespace UIElements
             }
         }
 
-        private void ActivateCurrentBranch()
-            {
-                if(_switcher.SwitchHistory.IsEmpty())
-                {
-                    ActiveBranch.OpenThisBranch();
-                }
-                else
-                {
-                    var last = _switcher.SwitchHistory.Last();
-                    foreach (var node in _myDataHub.CurrentSwitchHistory)
-                    {
-                        if(_branches.Contains(node.MyBranch)) continue;
-                        if(!node.MyBranch.StayVisibleMovingToChild() && node != last)
-                            continue;
-                        if(node != last)
-                            node.MyBranch.DontSetAsActiveBranch();
-                        node.MyBranch.OpenThisBranch();
-                    }
-
-                    _switcher.SwitchHistory.Remove(last);
-                }
-            }
-
-        public void OnMoveToNewTrunk(Action endOfMoveAction, ScreenType newTrunksScreenType)
-        {
-            bool toFullScreenTrunk = newTrunksScreenType == ScreenType.FullScreen || _screenType == ScreenType.FullScreen;
-            _currentMoveType = _moveToNextTrunk;
-
-            if(toFullScreenTrunk)
-            {
-                CloseTrunkForFullScreen(endOfMoveAction);
-            }
-            else
-            {
-                endOfMoveAction?.Invoke();
-            }
-        }
-
-        private void CloseTrunkForFullScreen(Action endOfMoveAction)
-        {
-            void CloseTrunk() => OnExitTrunk(endOfMoveAction, false);
-
-            if (_myDataHub.CurrentSwitchHistory.IsNotEmpty())
-            {
-                CloseOpenBranchesInSwitchHistory(CloseTrunk);
-            }
-            else
-            {
-                CloseTrunk();
-            }
-        }
-
-        private void CloseOpenBranchesInSwitchHistory(Action closeTrunk)
-        {
-            var last = _myDataHub.CurrentSwitchHistory.Last();
-            foreach (var node in _myDataHub.CurrentSwitchHistory)
-            {
-                if (node == last) continue;
-                if (_branches.Contains(node.MyBranch)) continue;
-
-                node.MyBranch.ExitThisBranch(OutTweenType.MoveToChild);
-            }
-
-            last.MyBranch.ExitThisBranch(OutTweenType.MoveToChild, closeTrunk);
-        }
-
         public void OnExitTrunk(Action endOfMoveAction, bool removeFromHistory = true)
         {
-            Debug.Log($"Exit : {this}");
+            //Debug.Log($"Exit : {this}");
 
             if(removeFromHistory)
                 _myDataHub.RemoveTrunk(this);
@@ -243,7 +183,7 @@ namespace UIElements
                  endOfMoveAction?.Invoke();
              }
 
-             _currentMoveType = _moveBackFromTrunk;
+             //_currentMoveType = _moveBackFromTrunk;
         }
 
         
