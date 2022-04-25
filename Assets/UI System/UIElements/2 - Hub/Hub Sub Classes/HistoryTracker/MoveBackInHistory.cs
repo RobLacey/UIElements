@@ -17,6 +17,7 @@ public static class MoveBackInHistory
         //TODO Fix this process so it's the dame as Back One level. Doesn't need return
         data.TweenType = OutTweenType.Cancel;
         data.SetToThisTrunkWhenFinished(data.RootTrunk);
+        data.RootTrunk.SwitcherHistory.Clear();
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.All);
         return data.RootTrunk.ActiveBranch;
     }

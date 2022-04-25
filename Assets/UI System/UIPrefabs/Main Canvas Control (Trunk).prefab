@@ -9,7 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4421614741107817062}
+  - component: {fileID: 8939412310332589940}
   - component: {fileID: 4421614741107817081}
+  - component: {fileID: 3142652020214348524}
   m_Layer: 5
   m_Name: Main Canvas Control (Trunk)
   m_TagString: Untagged
@@ -36,6 +38,27 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!223 &8939412310332589940
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4421614741107817058}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!114 &4421614741107817081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48,5 +71,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 031b6fb864dbb044d8e3a145109c2c68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _branches: []
   _screenType: 0
+  _moveToNextTrunk: 0
+  _moveBackFromTrunk: 0
+  _goingToFullscreen: 1
+  _loopAroundSwitcher: 0
+  _branches: []
+--- !u!114 &3142652020214348524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4421614741107817058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a427e419e3a5c458bd440912184959, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scheme: {fileID: 0}
+  _buildObjectsList: []
+  _tweenEvents:
+    _inTweenEventStart:
+      m_PersistentCalls:
+        m_Calls: []
+    _inTweenEventEnd:
+      m_PersistentCalls:
+        m_Calls: []
+    _outTweenEventStart:
+      m_PersistentCalls:
+        m_Calls: []
+    _outTweenEventEnd:
+      m_PersistentCalls:
+        m_Calls: []

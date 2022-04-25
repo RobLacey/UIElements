@@ -159,8 +159,10 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, I
             case EscapeKey.BackOneLevel:
                 MoveBackInHistory.BackOneLevelProcess(HistoryData);
                 break;
-            case EscapeKey.BackToHome:
+            case EscapeKey.BackToRootTrunk:
                 MoveBackInHistory.BackToHomeProcess(HistoryData).OpenThisBranch();
+                break;
+            case EscapeKey.BackToCurrentTrunk:
                 break;
         }
     }

@@ -69,11 +69,6 @@ namespace UIElements
         //Main
         private void Awake()
         { 
-            Debug.Log("Upto : Rework Canvas Order Calculator to reset on Trunk exit as if it has no tween it doesnt tween Branches ");
-            Debug.Log("Upto : Double check how closing trunks works as force close may not right. May need another out type to override tweenwhen settings" +
-                      " and also may want to do a counter in Trunk Tracker like in switcher close (could move to static class) ");
-            Debug.Log("Upto : Maybe add wait for Open Branches or Use/ Wait for all branches as option. Make more intuituve. AfterTween should wait for Open branches too??");
-            
             _switcher = EZInject.Class.NoParams<ISwitchTrunkGroup>();
             _switcher.ThisTrunk = this;
             _myCanvas = GetComponent<Canvas>();
@@ -137,7 +132,7 @@ namespace UIElements
 
         public void OnStartTrunk(IBranch newParent = null)
         {
-           // Debug.Log($"Start This : {this}");
+            Debug.Log($"Start This : {this}");
             void ActivateCurrentBranch() => _switcher.ActivateCurrentBranch();
             
             if(_myDataHub.CurrentTrunk == this) return;
@@ -163,34 +158,39 @@ namespace UIElements
 
         public void OnExitTrunk(Action endOfMoveAction, bool removeFromHistory = true)
         {
-            //Debug.Log($"Exit : {this}");
+            Debug.Log($"Exit : {this}");
+            var forTrunk = HasValidTweener ? 1 : 0;
+            
+            var counter = GroupsBranches.Count + SwitcherHistory.Count + forTrunk;
 
             if(removeFromHistory)
                 _myDataHub.RemoveTrunk(this);
             
             if (TweenToNextImmediately)
             {
-                _myTweener.StartOutTweens(CloseBranches);
+                CloseBranches();
                 endOfMoveAction?.Invoke();
                 endOfMoveAction = null;
             }
             else
             {
-                _myTweener.StartOutTweens(CloseBranches);
+                CloseBranches();
             }
         
             void CloseBranches()
             {
+                _myTweener.StartOutTweens(EndAction);
                 _switcher.CloseAllBranches(EndAction, HasValidTweener);
             }  
             
              void EndAction()
              {
+                 counter--;
+                 if (counter != 0) return;
+                 
                  _myCanvas.enabled = false;
                  endOfMoveAction?.Invoke();
              }
-
-             //_currentMoveType = _moveBackFromTrunk;
         }
 
         

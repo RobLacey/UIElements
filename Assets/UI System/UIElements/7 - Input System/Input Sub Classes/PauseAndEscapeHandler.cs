@@ -12,7 +12,6 @@ namespace UIElements
     {
         [SerializeField] private Trunk _pauseMenu;
         [SerializeField] private Trunk _escapeMenu;
-        [SerializeField] private PauseFunction _globalEscapeFunction;
         [SerializeField] 
         [Space(10f)] [HorizontalLine(1f, EColor.Blue)] [Header("User Events")]
         private GameIsPaused _gameIsPaused;
@@ -27,7 +26,6 @@ namespace UIElements
         [Serializable] public class GameIsPaused : UnityEvent<bool> { }
         
         //Enums
-        private enum PauseFunction { DoNothing, BackOneLevel, BackToHome }
         private enum PauseOrEscape { Pause, Escape, NotSet }
 
         //Properties
@@ -59,14 +57,8 @@ namespace UIElements
 
         public void OnStart()
         {
-            _myDataHub.SetGlobalEscapeSetting(SetGlobalEscapeFunction());
             _myDataHub.SetPausedTrunk(_pauseMenu);
             _myDataHub.SetEscapeTrunk(_escapeMenu);
-        }
-
-        private void SetCanvasOrder()
-        {
-            
         }
 
         public bool CanPause()
@@ -132,19 +124,5 @@ namespace UIElements
             pauseType.OnStartTrunk();
         }
 
-        private EscapeKey SetGlobalEscapeFunction()
-        {
-            switch (_globalEscapeFunction)
-            {
-                case PauseFunction.DoNothing:
-                    return EscapeKey.None;
-                case PauseFunction.BackOneLevel:
-                    return EscapeKey.BackOneLevel;
-                case PauseFunction.BackToHome:
-                    return EscapeKey.BackToHome;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
     }
 }

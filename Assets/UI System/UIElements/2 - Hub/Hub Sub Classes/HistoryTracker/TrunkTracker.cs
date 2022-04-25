@@ -1,8 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 namespace UIElements.Hub_Sub_Classes.HistoryTracker
 {
@@ -72,7 +70,7 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
 
             if(toFullScreenTrunk)
             {
-                CloseTrunkForFullScreen(trunk, moveToNextTrunk);
+                trunk.OnExitTrunk(moveToNextTrunk, false);
             }
             else
             {
@@ -80,50 +78,11 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
             }
         }
         
-        private static void CloseTrunkForFullScreen(Trunk trunk, Action endOfMoveAction)
-        {
-            void CloseTrunk() => trunk.OnExitTrunk(endOfMoveAction, false);
-
-            if (trunk.SwitcherHistory.IsNotEmpty())
-            {
-                CloseOpenBranchesInSwitchHistory(trunk, CloseTrunk);
-            }
-            else
-            {
-                CloseTrunk();
-            }
-        }
-
-        private static void CloseOpenBranchesInSwitchHistory(Trunk trunk, Action closeTrunk)
-        {
-            OutTweenType outTweenType = OutTweenType.MoveToChild;
-            var lastNodeInHistory = trunk.SwitcherHistory.Last();
-            
-            if (trunk.ForceClear)
-                outTweenType = OutTweenType.Cancel;
-            
-            foreach (var node in trunk.SwitcherHistory)
-            {
-                if (node == lastNodeInHistory) continue;
-                if (trunk.GroupsBranches.Contains(node.MyBranch)) continue;
-
-                node.MyBranch.ExitThisBranch(outTweenType);
-            }
-
-            if (trunk.GroupsBranches.Contains(lastNodeInHistory.MyBranch))
-            {
-                closeTrunk?.Invoke();
-                return;
-            }
-            lastNodeInHistory.MyBranch.ExitThisBranch(outTweenType, closeTrunk);
-        }
-
 
         public static bool MoveBackATrunk(HistoryData data, INode currentNode)
         {
-            //Debug.Log($"{currentNode} : {currentNode.MyBranch.ParentTrunk} : {data.CurrentTrunk}");
+            //TODO Fixes Here
             if (NoTrunkToGoBackTo(data, currentNode)) return false;
-           // if (CheckIfGoingBackAnThenOnToANewTrunk(data)) return true;
             
             BackCloseProcess(data, currentNode);
             return true;
@@ -131,21 +90,16 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
 
         private static bool NoTrunkToGoBackTo(HistoryData data, INode currentNode)
         {
+            //TODO Fixes Here
+
             return currentNode.MyBranch.ParentTrunk == data.CurrentTrunk
                    || data.CurrentTrunk             == data.RootTrunk; /*currentNode.MyBranch.ParentTrunk.IsNull();*/
         }
 
-        //Lets MoveToNewTrunkManage the exit of the trunks as it was getting double called
-        // private static bool CheckIfGoingBackAnThenOnToANewTrunk(HistoryData data)
-        // {
-        //     var hasFullscreenDestination = data.DestinationTrunk.IsNotNull() &&
-        //                                   data.ScreenTypeOfDestinationTrunk == ScreenType.FullScreen;
-        //     
-        //     return data.TweenType == OutTweenType.MoveToChild & hasFullscreenDestination;
-        // }
-
         private static void BackCloseProcess(HistoryData data, INode currentNode)
         {
+            //TODO Fixes Here
+
             void EndOfBack()
             {
                 currentNode.ExitNodeByType();

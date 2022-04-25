@@ -4,15 +4,11 @@
 - add Disable Branch functionality (disables all). It just disables all Nodes. Link to switcher (move or not option and check when switching)
     Check when all nodes are disabled in branch that it will switch to next branch and / or pass over it when switching when set to
 - Make MoveToBranch Call OnEnable, StartBranchExit to call OnDisable.
-   Only active branches and nodes are assigned to Events etc (Potentially quick big!!)
+   Only active branches and nodes are assigned to Events etc (Potentially quite big!!)
 - Disable /  enable Branches working still (removes from groups and can a add to group). Need to fix Dynamic Branches so functionality works
 - Turn off Canvas then disable for Dynamic branches / Nodes. Needed for pooling
 - Stop Parent Branch re-opening child when it is already open/tweening from a different parent.
 - Runtime Pool setting which disables everything i.e RestoreBranch and also check that it can be activated as it's pooled
-
-//Navigate
-- Push direction to move to child (add Event and/or use new class)
-- Add Loop around to node navigation and to switcher
 
 //Control Bar
 - Need to add itself to each trunks switcher and be independant. Access whether needs to be one per project or could have multiples. 
@@ -44,8 +40,6 @@
 //HistoryManagement
 - Rewrite History to just use branches rather than nodes. History tracks branches, branches track it's own nodes
 - Cancel has no sound
-- When Escape pressed doesn't go back to parent node in branch but last highlighted. Must be parent node
-- Have clear current Trunk cancel option (maybe on the back of currentSwitcher list)
 
 
 //Hub
@@ -57,6 +51,7 @@
 - Move Where to start into approaprite class. At the moment it is in various places. Moving Input may help this as settings move to Hub
 
 //UiInput
+- Add GameOver Trunk To Pause And Escape Handler (Do exactly the same as pause and Escape and stop everything being pressed except itself)
 - Start with Keys doesn't work
 - Make UI Input a normal c# class and have settings in Hub
 - Make Hotspot class for VC
@@ -73,6 +68,9 @@
  - Sliders, do they work
  - Check functionality with other UI types (scroll bars etc etc). Maybe need tween for scroll bar value?
  - Add loop around or not to auto navigation
+ 
+ //ToggleGroup
+ - Add an option to highlight Toggle or the Toggle Branch when switcher or Toggle is pressed (Keys only
  
  //Drag Bar
  - Add drag bar functionality. Will work on Branch or node. Seperate Class. Have save new setting or reset position on close (See Tweener for other settings needed)

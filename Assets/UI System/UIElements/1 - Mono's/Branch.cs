@@ -245,9 +245,8 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
 
     public void OpenThisBranch(IBranch newParentBranch = null)
     {
-        //Debug.Log(this);
         if(!_branchTypeBaseClass.CanStartBranch()) return;
-
+        
         SetBranchAsActive(newParentBranch);
 
         if (_tweenOnChange)
@@ -259,11 +258,11 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
         }
         else
         {
+            _tweenOnChange = true;
             _myDataHub.AddPlayingTween();
             InTweenCallback();
         }
         
-        _tweenOnChange = true;
     }
     
     private void SetBranchAsActive(IBranch newParentBranch)

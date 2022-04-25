@@ -128,11 +128,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _buttonFunction: 2
   _autoOpen: 1
-  _isDynamic: 1
   _autoOpenDelay: 0
-  _escapeKeyFunction: 3
+  _isDynamic: 1
+  _escapeKeyFunction: 1
   _toggleData:
-    _toggleGroupId: 0
+    _toggleGroup: {fileID: 0}
     _startAsSelected: 1
     _linkBranch: {fileID: 0}
   _multiSelectSettings:
@@ -144,11 +144,18 @@ MonoBehaviour:
   _enabledFunctions: 0
   _navigation:
     _childBranch: {fileID: 0}
-    _setKeyNavigation: 5
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+    _upPress:
+      _moveType: 0
+      _navigate: {fileID: 0}
+    _downPress:
+      _moveType: 0
+      _navigate: {fileID: 0}
+    _rightPress:
+      _moveType: 0
+      _navigate: {fileID: 0}
+    _leftPress:
+      _moveType: 0
+      _navigate: {fileID: 0}
   _colours:
     _scheme: {fileID: 0}
     _text: {fileID: 0}

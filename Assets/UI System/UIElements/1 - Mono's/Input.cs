@@ -16,6 +16,8 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
     private InputScheme _inputScheme  = default;
 
     [SerializeField] private Transform _virtualCursorParent;
+    [SerializeField] private GlobalEscape _globalEscapeAction = GlobalEscape.BackOneLevel;
+
     [SerializeField]
     [Space(10f)]
     private PauseAndEscapeHandler _pauseAndEscapeSettings;
@@ -32,6 +34,9 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
     //Variables
     private bool _inMenu;
     private IDataHub _myDataHub;
+    
+    //Enums
+    private enum GlobalEscape { DoNothing, BackOneLevel, BackToCurrentTrunk, BackToRootTrunk }
 
     //Events
     private Action<IMenuGameSwitchingPressed> OnMenuAndGameSwitch { get; set; }
@@ -151,6 +156,19 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
             VirtualCursor.OnStart();
         MenuToGameSwitching.OnStart();
         _pauseAndEscapeSettings.OnStart();
+        _myDataHub.SetGlobalEscapeSetting(SetGlobalEscapeFunction());
+    }
+    
+    private EscapeKey SetGlobalEscapeFunction()
+    {
+        return _globalEscapeAction switch
+               {
+                   GlobalEscape.DoNothing          => EscapeKey.None,
+                   GlobalEscape.BackOneLevel       => EscapeKey.BackOneLevel,
+                   GlobalEscape.BackToRootTrunk    => EscapeKey.BackToRootTrunk,
+                   GlobalEscape.BackToCurrentTrunk => EscapeKey.BackToCurrentTrunk,
+                   _                               => throw new ArgumentOutOfRangeException()
+               };
     }
 
     private void Update()
