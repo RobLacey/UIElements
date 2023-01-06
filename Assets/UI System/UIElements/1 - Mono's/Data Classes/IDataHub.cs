@@ -3,7 +3,7 @@ using UIElements;
 using UnityEngine;
 
 public interface IDataHub : ISwitchData, IPopUpManage, ITrunkManagement,  ITrackNodesAndBranches, 
-                            IPausedAndEscapeTracker, ISaveState, TweenControl
+                            IPausedAndEscapeTracker, ISaveState, TweenControl, IHotKeyTracker
 {
     RectTransform MainCanvasRect { get; }
     void SetMasterRectTransform(RectTransform mainRect);
@@ -29,7 +29,7 @@ public interface ISwitchData
     public Trunk CurrentTrunk { get; }
 }
 
-public interface IPopUpManage: IRemoveOptionalPopUp, IRemoveResolvePopUp, IAddOptionalPopUp, IAddResolvePopUp
+public interface IPopUpManage /*IRemoveOptionalPopUp, IRemoveResolvePopUp, IAddOptionalPopUp, IAddResolvePopUp*/
 {
     bool NoResolvePopUp { get; }
     bool HasResolvePopUp { get; }
@@ -92,4 +92,10 @@ public interface TweenControl
     void AddPlayingTween();
     void RemovePlayingTween();
 
+}
+
+public interface IHotKeyTracker
+{
+    bool WasLastHotKeyPressed(Branch thisHotKey);
+    void SetLastHotKeyPressed(Branch thisHotKey);
 }

@@ -77,7 +77,7 @@ public class ToggleAsTab : IServiceUser, IMonoEnable, IMonoDisable, IMonoStart, 
     public void NavigateToChildBranch()
     {
         if (!HasLink || MultiSelectAllowed) return;
-        LinkBranch.OpenThisBranch(MyBranch.MyParentBranch);
+        LinkBranch.OpenThisBranch(newParentBranch: MyBranch.MyParentBranch);
     }
 
     private void OnBranchExit()

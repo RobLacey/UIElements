@@ -50,7 +50,8 @@ public interface IBranch : IParameters, IAutoOpenCloseData, ICanvasOrder, IMonoD
     bool StayVisibleMovingToChild();
     void SetNotAControlBar();
     void StartPopUp_RunTimeCall(bool fromPool);
-    void OpenThisBranch(IBranch newParentBranch = null);
+    void OpenThisBranch(Action endAction = null, IBranch newParentBranch = null);
+    //void OpenThisBranch(IBranch newParentBranch = null);
     void DontSetAsActiveBranch();
     void DoNotTween();
     void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null);

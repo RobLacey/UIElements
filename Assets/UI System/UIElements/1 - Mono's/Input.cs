@@ -7,7 +7,7 @@ using NaughtyAttributes;
 using UIElements;
 using UnityEngine;
 
-public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ IStandardCancel, IChangeControlsPressed, 
+public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ IStandardCancel, /*IChangeControlsPressed,*/ 
                              IMenuGameSwitchingPressed, IServiceUser, IEZEventDispatcher, IVirtualCursorSettings,
                              IIsAService
 {
@@ -23,7 +23,9 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
     private PauseAndEscapeHandler _pauseAndEscapeSettings;
     
     [SerializeField] 
-    [OnValueChanged(CheckForNewHotKey)] [Space(10f)]
+    [InfoBox(HotKeyText)]
+    [OnValueChanged(CheckForNewHotKey)] 
+    [Space(10f)]
     private List<HotKeys> _hotKeySettings = new List<HotKeys>();
     
     [Header(Settings, order = 2)][HorizontalLine(1f, EColor.Blue, order = 3)] 
@@ -41,7 +43,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
     //Events
     private Action<IMenuGameSwitchingPressed> OnMenuAndGameSwitch { get; set; }
     private Action<IStandardCancel> OnCancelPressed { get; set; }
-    private Action<IChangeControlsPressed> OnChangeControlPressed { get; set; }
+   // private Action<IChangeControlsPressed> OnChangeControlPressed { get; set; }
     
     //Properties and Getters / Setters
     private bool GameIsPaused => _myDataHub.GamePaused;
@@ -135,7 +137,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
     {
         OnMenuAndGameSwitch = InputEvents.Do.Fetch<IMenuGameSwitchingPressed>();
         OnCancelPressed = InputEvents.Do.Fetch<IStandardCancel>();
-        OnChangeControlPressed = InputEvents.Do.Fetch<IChangeControlsPressed>();
+        //OnChangeControlPressed = InputEvents.Do.Fetch<IChangeControlsPressed>();
     }
 
     public void ObserveEvents()
@@ -157,6 +159,11 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
         MenuToGameSwitching.OnStart();
         _pauseAndEscapeSettings.OnStart();
         _myDataHub.SetGlobalEscapeSetting(SetGlobalEscapeFunction());
+        
+        foreach (var hotKeySetting in _hotKeySettings)
+        {
+            hotKeySetting.OnStart();
+        }
     }
     
     private EscapeKey SetGlobalEscapeFunction()
@@ -240,7 +247,7 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
         }
 
         if(MultiSelectPressed) return;
-        DoChangeControlPressed();
+        ChangeControl.ChangeControlType();
     }
 
     private void DoMenuNavigation()
@@ -256,8 +263,6 @@ public partial class Input : MonoBehaviour, IEZEventUser, /*IPausePressed,*/ ISt
         VirtualCursor.Update();
         return true;
     }
-
-    private void DoChangeControlPressed() => OnChangeControlPressed?.Invoke(this);
 
     private bool MultiSelectPressed => _inputScheme.MultiSelectPressed() && !AllowKeys;
 

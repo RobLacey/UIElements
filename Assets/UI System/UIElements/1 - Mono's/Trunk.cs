@@ -5,6 +5,7 @@ using EZ.Events;
 using EZ.Service;
 using UnityEngine;
 using NaughtyAttributes;
+using UnityEditor.Experimental;
 
 namespace UIElements
 {
@@ -35,7 +36,6 @@ namespace UIElements
         private const string BranchListTitle = "Set Main Branch/es For This Trunk. Multiple Branches Activate Switcher";
         private Canvas _myCanvas;
         private UITweener _myTweener;
-        private bool _firstTimeStart = true;
         private WhenToMove _currentMoveType;
 
         //Editor
@@ -132,36 +132,55 @@ namespace UIElements
 
         public void OnStartTrunk(IBranch newParent = null)
         {
-            Debug.Log($"Start This : {this}");
+           // Debug.Log($"Start Trunk : {this}");
+
             void ActivateCurrentBranch() => _switcher.ActivateCurrentBranch();
+            
+            _switcher.UpdateSwitchHistory();
+            
+             var counter = GroupsBranches.Count + SwitcherHistory.Count + 1;
+
             
             if(_myDataHub.CurrentTrunk == this) return;
             
             if(ScreenType == ScreenType.FullScreen)
                  DoClearScreen?.Invoke(this);
             
-            OnEnable();
             _myDataHub.AddTrunk(this);
             _myDataHub.SetSwitcher(_switcher);
+            OnEnable();
 
             if (!_myCanvas.enabled)
             {
                 _myCanvas.enabled = true;
-                _switcher.OpenAllBranches(newParent, HasValidTweener);
-                _myTweener.StartInTweens(ActivateCurrentBranch);
+                _myTweener.StartInTweens(EndAction);
+                _switcher.OpenAllBranches(newParent, HasValidTweener, EndAction);
             }
             else
             {
                 ActivateCurrentBranch();
             }
+
+            void EndAction()
+            {
+                counter--;
+                if (counter > 0) return;
+                 
+                ActivateCurrentBranch();
+            }
         }
+
 
         public void OnExitTrunk(Action endOfMoveAction, bool removeFromHistory = true)
         {
-            Debug.Log($"Exit : {this}");
-            var forTrunk = HasValidTweener ? 1 : 0;
+            Debug.Log($"Exit Trunk : {this}");
+            if (!_myCanvas.enabled)
+            {
+                endOfMoveAction?.Invoke();
+                return;
+            }
             
-            var counter = GroupsBranches.Count + SwitcherHistory.Count + forTrunk;
+            var counter = GroupsBranches.Count + SwitcherHistory.Count + 1;
 
             if(removeFromHistory)
                 _myDataHub.RemoveTrunk(this);
@@ -170,7 +189,6 @@ namespace UIElements
             {
                 CloseBranches();
                 endOfMoveAction?.Invoke();
-                endOfMoveAction = null;
             }
             else
             {
@@ -186,13 +204,12 @@ namespace UIElements
              void EndAction()
              {
                  counter--;
-                 if (counter != 0) return;
+                 if (counter > 0) return;
                  
                  _myCanvas.enabled = false;
                  endOfMoveAction?.Invoke();
              }
         }
-
         
         [Button("Add a New Tree Structure")]
         private void MakeTreeFolders()

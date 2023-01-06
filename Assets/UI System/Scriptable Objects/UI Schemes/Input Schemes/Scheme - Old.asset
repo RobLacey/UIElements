@@ -30,8 +30,6 @@ MonoBehaviour:
       m_Bits: 1
     _raycastLength: 1000
   _startGameWhere: 0
-  _pauseOptionsOnEscape: 1
-  _globalEscapeFunction: 1
   _pauseOptionButton: Pause
   _cancelButton: Cancel
   _selectButton: Submit
@@ -51,7 +49,7 @@ MonoBehaviour:
   _hotKey3: HotKey 3
   _hotKey4: HotKey 4
   _hotKey5: HotKey 5
-  _hotKey6: 
+  _hotKey6: Hot Key 6
   _hotKey7: 
   _hotKey8: 
   _hotKey9: 

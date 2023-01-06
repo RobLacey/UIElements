@@ -7,26 +7,6 @@ using UIElements;
 using UnityEngine;
 
 
-public interface ISwitchTrunkGroup : IMonoEnable, IMonoDisable, ISwitch
-{
-    Trunk ThisTrunk { set; }
-    List<IBranch> ThisGroup { set; }
-    IBranch CurrentBranch { get; }
-    void SetNewIndex(INode newNode);
-    void ActivateCurrentBranch();
-    void OpenAllBranches(IBranch newParent, bool trunkCanTween);
-    void CloseAllBranches(Action endOfClose, bool trunkCanTween);
-}
-
-public interface ISwitch
-{
-    List<Node> SwitchHistory { get; }
-    void ClearSwitchHistory();
-    void DoSwitch(SwitchInputType switchInputType);
-    bool HasOnlyOneMember { get; }
-
-}
-
 /// <summary>
 /// This class Looks after switching between, clearing and correctly restoring the home screen branches. Main functionality
 /// is for keyboard or controller. Differ from internal branch groups as involve Branches not Nodes
@@ -36,7 +16,7 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
     //Variables
     private int _index = 0;
     private IDataHub _myDataHub;
-    private readonly List<Canvas> _canvasToNotTween = new List<Canvas>();
+  //  private List<Node> _historyErrorStore = new List<Node>();
 
     //Properties and Getters / Setters
     public Trunk ThisTrunk { private get; set; }
@@ -83,7 +63,6 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
 
     private void NewSelected(ISelectedNode args)
     {
-        if(!ThisTrunk.CanvasIsActive) return;
         if(SameAsLastActive(args.SelectedNode) || NotValidBranchType(args.SelectedNode)) return;
         
         SetNewIndex(args.SelectedNode);
@@ -115,78 +94,34 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
                 _index = _index.NegativeIterate(ThisGroup.Count);
                 break;
         }
-        //_lastActiveHomeBranch = ThisGroup[_index];
         ThisGroup[_index].OpenThisBranch();
     }
 
-    public void OpenAllBranches(IBranch newParent, bool trunkCanTween)
+    public void OpenAllBranches(IBranch newParent, bool trunkCanTween, Action endAction)
     {
         foreach (var branch in ThisGroup)
         {
             if(trunkCanTween)
                 branch.DoNotTween();
             branch.DontSetAsActiveBranch();
-            branch.OpenThisBranch(newParent);
-            RestoreCanvasOfPreviouslyTweenedBranch(branch);        
-        }
-    }
-
-    private void RestoreCanvasOfPreviouslyTweenedBranch(IBranch branch)
-    {
-        if (_canvasToNotTween.Contains(branch.MyCanvas))
-        {
-            branch.MyCanvas.enabled = false;
-            _canvasToNotTween.Remove(branch.MyCanvas);
-        }
-    }
-
-    public void CloseAllBranches(Action endOfClose, bool trunkCanTween)
-    {
-        foreach (var branch in ThisGroup)
-        {
-            if(trunkCanTween)
-            {
-                branch.DoNotTween();
-                StorePreviouslyTweenedBranch(branch);
-            }            
-            branch.ExitThisBranch(OutTweenType.Cancel, endOfClose);
+            branch.OpenThisBranch(endAction, newParent);
         }
         
-        CloseOpenBranchesInSwitchHistory(endOfClose);
-    }
-
-    private void StorePreviouslyTweenedBranch(IBranch branch)
-    {
-        if (!branch.CanvasIsEnabled)
-            _canvasToNotTween.Add(branch.MyCanvas);
-    }
-
-    private void CloseOpenBranchesInSwitchHistory(Action finished)
-    {
-        OutTweenType outTweenType = OutTweenType.MoveToChild;
-       // var lastNodeInHistory = SwitchHistory.Last();
-            
-        if (ThisTrunk.ForceClear)
-            outTweenType = OutTweenType.Cancel;
-
         foreach (var node in SwitchHistory)
         {
-            if (/*node == lastNodeInHistory ||*/ ThisGroup.Contains(node.MyBranch))
-            {
-                finished?.Invoke();
-                continue;
-            }
-           // if (ThisGroup.Contains(node.MyBranch)) continue;
-
-            node.MyBranch.ExitThisBranch(outTweenType, finished);
+            node.HasChildBranch.DontSetAsActiveBranch();
+            node.HasChildBranch.OpenThisBranch(endAction);
         }
-
-        // if (ThisGroup.Contains(lastNodeInHistory.MyBranch))
-        // {
-        //     //finished?.Invoke();
-        //     return;
-        // }
-        // lastNodeInHistory.MyBranch.ExitThisBranch(outTweenType, finished);
+    }
+    
+    public void UpdateSwitchHistory()
+    {
+        for (var index = SwitchHistory.Count - 1; index >= 0; index--)
+        {
+            var node = SwitchHistory[index];
+            if (_myDataHub.History.Contains(node)) continue;
+            SwitchHistory.Remove(node);
+        }
     }
 
     
@@ -198,24 +133,42 @@ public class SwitchTrunkGroup : IEZEventUser, ISwitchTrunkGroup, IServiceUser
         }
         else
         {
-            var last = SwitchHistory.Last();
-            foreach (var node in SwitchHistory)
-            {
-                ProcessBranchOpen(node, last);
-            }
-
-            SwitchHistory.Remove(last);
+            SwitchHistory.Last().HasChildBranch.OpenThisBranch();
         }
     }
 
-    private static void ProcessBranchOpen(Node node, Node last)
+    public void CloseAllBranches(Action endOfClose, bool trunkCanTween)
     {
-        if (!node.MyBranch.StayVisibleMovingToChild() && node != last) return;
+        foreach (var branch in ThisGroup)
+        {
+            if(trunkCanTween)
+            {
+                branch.DoNotTween();
+            }            
+            branch.ExitThisBranch(OutTweenType.Cancel, endOfClose);
+        }
         
-        if (node != last)
-            node.MyBranch.DontSetAsActiveBranch();
-        
-        node.MyBranch.OpenThisBranch();
+        CloseOpenBranchesInSwitchHistory(endOfClose);
+    }
+
+    private void CloseOpenBranchesInSwitchHistory(Action finished)
+    {
+        OutTweenType outTweenType = OutTweenType.MoveToChild;
+            
+        if (ThisTrunk.ForceClear)
+            outTweenType = OutTweenType.Cancel;
+
+        for (int i = SwitchHistory.Count - 1; i >= 0; i--)
+        {
+            var currentNode = SwitchHistory[i];
+            
+            if (ThisGroup.Contains(currentNode.MyBranch))
+            {
+                finished?.Invoke();
+                continue;
+            }
+            currentNode.MyBranch.ExitThisBranch(outTweenType, finished);
+        }
     }
     
 

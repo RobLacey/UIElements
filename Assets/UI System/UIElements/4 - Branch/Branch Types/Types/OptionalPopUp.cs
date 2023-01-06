@@ -106,12 +106,10 @@ public class OptionalPopUpPopUp : BranchBase, IOptionalPopUpBranch
 
     public override void StartBranchExit()
     {
+        _myDataHub.RemoveOptionalPopUp(ThisBranch);
         base.StartBranchExit();
-        
         StaticCoroutine.StopCoroutines(_coroutine);
         _running = false;
-        
-        _myDataHub.RemoveOptionalPopUp(ThisBranch);
     }
 
     public override void EndOfBranchExit()

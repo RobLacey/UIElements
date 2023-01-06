@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UIElements.Hub_Sub_Classes.HistoryTracker;
 using UnityEngine;
 
@@ -12,22 +13,57 @@ public static class HistoryListManagement
                 ClearHistory(data);
                 break;
             case ClearAction.StopAt:
-                ClearHistoryWithStopPoint(data);
+                ClearStopAtHistory(data);
                 break;
             case ClearAction.SkipOne:
                 ClearHistoryWithSkippedNode(data);
                 break;
         }
     }
-    
+
     private static void ClearHistory(HistoryData data)
     {
-        for (int i = data.History.Count -1; i >= 0; i--)
+        if(data.CurrentTrunk != data.RootTrunk && data.CurrentTrunk.ScreenType == ScreenType.FullScreen)
+        {
+            data.CurrentTrunk.SetCurrentMoveTypeToMoveToBack();
+            data.CurrentTrunk.OnExitTrunk(ClearTheRest);
+        }
+        else
+        {
+            ClearTheRest();
+        }
+        
+        void ClearTheRest() => ClearRestOfHistory(data);
+    }
+
+
+    private static void ClearRestOfHistory(HistoryData data)
+    {
+        for (int i = data.History.Count - 1; i >= 0; i--)
         {
             var currentNode = data.History[i];
             ExitNode(data, currentNode);
         }
-        data.SetToThisTrunk.OnStartTrunk();
+    
+        //data.SetToThisTrunk.OnStartTrunk();
+    }
+
+    private static void ClearStopAtHistory(HistoryData data)
+    {
+        if(data.StopPoint.MyBranch.ParentTrunk != data.CurrentTrunk && data.CurrentTrunk.ScreenType == ScreenType.FullScreen)
+        {
+            data.CurrentTrunk.SetCurrentMoveTypeToMoveToBack();
+            data.CurrentTrunk.OnExitTrunk(ClearTheRest);
+        }
+        else
+        {
+            ClearTheRest();
+        }
+        
+        void ClearTheRest()
+        {
+            ClearHistoryWithStopPoint(data);
+        }
     }
 
     private static void ClearHistoryWithStopPoint(HistoryData data)
@@ -38,19 +74,14 @@ public static class HistoryListManagement
         {
             currentNode = data.History[i];
             ExitNode(data, currentNode);
-
+            
             if (CheckIfAtStopPoint(data.StopPoint, currentNode)) break;
-
-           // if (CheckIfStillInSameTrunk(data.NewNodesBranch, currentNode.MyBranch)) break;
         }
         data.EndOfTrunkCloseAction?.Invoke();
-        //currentNode.MyBranch.ParentTrunk.OnStartTrunk();
     }
     private static bool CheckIfAtStopPoint(INode stopAtThisNode, INode currentNode) 
         => currentNode.MyBranch == stopAtThisNode.MyBranch;
 
-    // private static bool CheckIfStillInSameTrunk(IBranch newNodeTrunk, IBranch currentTrunk) 
-    //     => newNodeTrunk.ParentTrunk == currentTrunk.ParentTrunk;
 
     private static void ClearHistoryWithSkippedNode(HistoryData data)
     {
@@ -73,9 +104,7 @@ public static class HistoryListManagement
         data.RemoveFromHistory(currentNode);
         currentNode.ExitNodeByType();
         if(currentNode.HasChildBranch.IsNull())return;
-        Debug.Log(currentNode);
         if(TrunkTracker.MoveBackATrunk(data, currentNode)) return;
-
         CloseCurrentPosition(data, currentNode);
     }
 

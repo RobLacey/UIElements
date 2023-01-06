@@ -26,7 +26,7 @@ namespace UIElements
         
         public Hub()
         {
-            PopUpEvents.Do.Initialise(new PopUpBindings());
+            //PopUpEvents.Do.Initialise(new PopUpBindings());
             HistoryEvents.Do.Initialise(new HistoryBindings());
             InputEvents.Do.Initialise(new InputBindings());
             GOUIEvents.Do.Initialise(new GOUIEventsBindings());
@@ -80,12 +80,14 @@ namespace UIElements
 
         private void Awake()
         {
-            Debug.Log("Upto : Back To home Doesn't clear switch history's. Check how this process clears history ");
-            Debug.Log( "To Fix : Add a target trunk option for going back (Already in use I think in HistoryData. Allow current trunk to close first." +
-                       " Stop trunks being close multiple times (use _tweening same as Branch). Use same process as moving to new Trunk!!");
-            Debug.Log("Have clear current Trunk cancel option (uses currentSwitcher list) ");
+            Debug.Log("Fix : Finish hot keys : see options in class ");
+            Debug.Log ("Focus doesn't work with tab branches");
+            Debug.Log("To Fix : Add a target trunk option for going back (Already in use I think in HistoryData. Allow current trunk to close first.");
+            
             Debug.Log("Upto : Rework Canvas Order Calculator to reset on Trunk exit as if it has no tween it doesnt tween Branches ");
+                   Debug.Log("Hot Key activation as child??? Check this out");
 
+            
             var uIInput = GetComponent<IInput>();
             AddService();
             _startingInGame = uIInput.StartInGame();

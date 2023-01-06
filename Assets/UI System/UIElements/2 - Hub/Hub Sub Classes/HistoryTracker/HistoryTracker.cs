@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using EZ.Events;
 using EZ.Service;
 using UIElements.Input_System;
@@ -110,7 +111,7 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, I
     {
         HistoryData.SwitchPressed(true);
         HistoryData.SetToThisTrunkWhenFinished(HistoryData.CurrentTrunk);
-        ClearAllHistory();
+        ClearTrunk();
         HistoryData.SwitchPressed(false);
     }
 
@@ -118,6 +119,12 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, I
     {
         HistoryData.SetToThisTrunkWhenFinished(HistoryData.CurrentTrunk);
         ClearAllHistory();
+    }
+
+    private void ClearTrunk()
+    {
+        MultiSelectSystem.ClearMultiSelect(HistoryData);
+        MoveBackInHistory.BackToThisTrunkProcess(HistoryData);
     }
 
     private void ClearAllHistory()
@@ -133,7 +140,7 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, I
         
         if (HistoryData.GameIsPaused || HistoryData.NoPopUps)
         {
-            if(ClearMultiSelect()) return;
+            if(ClearMultiSelect() || HistoryData.NoHistory) return;
             BackInHistory(cancelType);
         }
         else
@@ -160,9 +167,10 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, I
                 MoveBackInHistory.BackOneLevelProcess(HistoryData);
                 break;
             case EscapeKey.BackToRootTrunk:
-                MoveBackInHistory.BackToHomeProcess(HistoryData).OpenThisBranch();
+                MoveBackInHistory.BackToRootProcess(HistoryData);
                 break;
             case EscapeKey.BackToCurrentTrunk:
+                MoveBackInHistory.BackToThisTrunkProcess(HistoryData);
                 break;
         }
     }
@@ -184,10 +192,11 @@ public class HistoryTracker : IHistoryTrack, IEZEventUser, IEZEventDispatcher, I
             return HistoryData.ActiveBranch;
         
         if (!HistoryData.NoPopUps)
+        {
             return PopUpController.NextPopUp(HistoryData);
+        }
         
         return HistoryData.NoHistory ? HistoryData.RootTrunk.ActiveBranch : HistoryData.ActiveBranch;
-        // return HistoryData.NoHistory ? MoveBackInHistory.BackToHomeProcess(HistoryData) : HistoryData.ActiveBranch;
     }
     
     public void CheckListsAndRemove(IBranch branchToClose)

@@ -105,14 +105,14 @@ public class UIData : MonoBehaviour, IMonoEnable, IEZEventUser, IServiceUser
     }
 
     //private void SaveActiveBranch(IActiveBranch args) => _activeBranch = (Branch)_myDataHub.ActiveBranch;
-    private void SaveOnHomeScreen(IIsAtRootTrunk args) => _onHomeScreen = _myDataHub.IsAtRoot;
-    private void SaveAllowKeys(IAllowKeys args) => _controllingWithKeys = args.CanAllowKeys;
-    private void SaveInMenu(IInMenu args) => _inMenu = args.InTheMenu;
-    private void AddResolve(IAddResolvePopUp args) => _activeResolvePopUps.Add((Branch)args.ThisPopUp);
-    private void AddOptional(IAddOptionalPopUp args) => _activeOptionalPopUps.Add((Branch)args.ThisPopUp);
-    private void RemoveResolve(IRemoveResolvePopUp args) => _activeResolvePopUps.Remove((Branch)args.ThisPopUp);
-    private void RemoveOptional(IRemoveOptionalPopUp args) => _activeOptionalPopUps.Remove((Branch)args.ThisPopUp);
-    private void GameIsPaused(IPausePressed args) => _gameIsPaused = _myDataHub.GamePaused;
+    // private void SaveOnHomeScreen(IIsAtRootTrunk args) => _onHomeScreen = _myDataHub.IsAtRoot;
+    // private void SaveAllowKeys(IAllowKeys args) => _controllingWithKeys = args.CanAllowKeys;
+    // private void SaveInMenu(IInMenu args) => _inMenu = args.InTheMenu;
+    // private void AddResolve(IAddResolvePopUp args) => _activeResolvePopUps.Add((Branch)args.ThisPopUp);
+    // private void AddOptional(IAddOptionalPopUp args) => _activeOptionalPopUps.Add((Branch)args.ThisPopUp);
+    // private void RemoveResolve(IRemoveResolvePopUp args) => _activeResolvePopUps.Remove((Branch)args.ThisPopUp);
+    // private void RemoveOptional(IRemoveOptionalPopUp args) => _activeOptionalPopUps.Remove((Branch)args.ThisPopUp);
+    // private void GameIsPaused(IPausePressed args) => _gameIsPaused = _myDataHub.GamePaused;
 
     // private void AddTrunk(IAddTrunk trunkData)
     // {

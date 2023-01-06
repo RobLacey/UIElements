@@ -1,6 +1,8 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace UIElements.Hub_Sub_Classes.HistoryTracker
 {
@@ -8,9 +10,8 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
     {
         public static bool MovingToNewTrunk(HistoryData data)
         {
-            if (data.DestinationTrunk == data.CurrentTrunk) return false;
+            if (data.DestinationTrunk == data.ActiveTrunks.Last()) return false;
             // if (data.DestinationTrunk.IsNull()) return false;
-            
             CloseOtherOpenTrunksAndMoveToNewTrunk(data);
             return true;
         }
@@ -77,29 +78,28 @@ namespace UIElements.Hub_Sub_Classes.HistoryTracker
                 moveToNextTrunk?.Invoke();
             }
         }
-        
 
         public static bool MoveBackATrunk(HistoryData data, INode currentNode)
         {
-            //TODO Fixes Here
             if (NoTrunkToGoBackTo(data, currentNode)) return false;
+            if (currentNode.MyBranch.ParentTrunk.ScreenType == ScreenType.FullScreen)
+            {
+                data.RemoveTrunk(currentNode.MyBranch.ParentTrunk);
+                return false;
+            }
             
             BackCloseProcess(data, currentNode);
             return true;
         }
-
+        
         private static bool NoTrunkToGoBackTo(HistoryData data, INode currentNode)
         {
-            //TODO Fixes Here
-
             return currentNode.MyBranch.ParentTrunk == data.CurrentTrunk
-                   || data.CurrentTrunk             == data.RootTrunk; /*currentNode.MyBranch.ParentTrunk.IsNull();*/
+                    || data.CurrentTrunk     == data.RootTrunk; /*currentNode.MyBranch.ParentTrunk.IsNull();*/
         }
-
+        
         private static void BackCloseProcess(HistoryData data, INode currentNode)
         {
-            //TODO Fixes Here
-
             void EndOfBack()
             {
                 currentNode.ExitNodeByType();

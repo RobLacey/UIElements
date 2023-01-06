@@ -70,7 +70,7 @@ public class TestRunner : MonoBehaviour
         {
             AddANewInGameObject();
         }
-
+        
         if (UnityEngine.Input.GetKeyDown(KeyCode.H))
         {
             RemoveInGameObject();
@@ -80,7 +80,7 @@ public class TestRunner : MonoBehaviour
         {
             AddANewNodeAtRuntime();
         }
-
+        
         if (UnityEngine.Input.GetKeyDown(KeyCode.Y))
         {
             RemoveNodeAtRuntime();

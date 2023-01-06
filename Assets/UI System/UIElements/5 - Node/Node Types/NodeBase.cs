@@ -141,14 +141,6 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         }
     }
 
-    private void ThisNodeIsSelected()
-    {
-        MyBranch.SetNewSelected(IsSelected ? _uiNode : null);
-        //SelectedNode = _uiNode;
-        if(_dontAddToHistoryTracking || !_myDataHub.SceneStarted) return;
-       // DoSelected?.Invoke(this);
-        _myDataHub.SetSelected(_uiNode);
-    }
 
     protected void SetNodeAsSelected_NoEffects()
     {
@@ -226,6 +218,13 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
         ThisNodeIsSelected();
         MyBranch.OnPointerEnter(null);
     }
+    
+    private void ThisNodeIsSelected()
+    {
+        MyBranch.SetNewSelected(IsSelected ? _uiNode : null);
+        if(_dontAddToHistoryTracking || !_myDataHub.SceneStarted) return;
+        _myDataHub.SetSelected(_uiNode);
+    }
 
     private void SetSelectedStatus(bool isSelected, Action endAction)
     {
@@ -238,6 +237,7 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
     {
         if (_popUpBranch.IsNull()) return false;
         
+        Debug.Log("Hot Key activation as child???");
         _historyTracker.CancelHasBeenPressed(EscapeKey.BackOneLevel, MyBranch);
         _popUpBranch.HotKeyActivation();
         return true;
@@ -245,13 +245,15 @@ public abstract class NodeBase : INodeBase, IEZEventDispatcher, /*ISelectedNode,
 
     public void HotKeyPressed(bool setAsActive)
     {
-        _myDataHub.SetAsHighLighted(_uiNode); // Sets the switcher to the correct Branch
+       // if(setAsActive)
+           _myDataHub.SetAsHighLighted(_uiNode); // Sets the switcher to the correct Branch
         MyBranch.SetNewHighlighted(_uiNode);
 
         if (setAsActive)
         {
-            Debug.Log($"Activate : {_uiNode}");
+            //SetNodeAsSelected_NoEffects();
             Activate();
+            //OnExitingNode();
         }
         else
         {

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using UIElements.Hub_Sub_Classes.HistoryTracker;
+using UnityEngine;
 
 public static class NewSelectionProcess 
 {
@@ -17,6 +18,7 @@ public static class NewSelectionProcess
     private static void ContainsNewNode(HistoryData data)
     {
         data.AddStopPoint(data.NewNode);
+        data.EndOfTrunkCloseAction = ()=> data.NewNodesBranch.ParentTrunk.OnStartTrunk();
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.StopAt);
     }
 
@@ -34,13 +36,11 @@ public static class NewSelectionProcess
 
     private static void NavigateToChildBranch(HistoryData data)
     {
-        //if(data.NewNode.HasChildBranch.IsNull()) return;
-        
         if(TrunkTracker.MovingToNewTrunk(data)) return;
         
         data.NewNode.MyBranch.ExitThisBranch(OutTweenType.MoveToChild, StartChild);
         
-        void StartChild() => data.NewNode.HasChildBranch.OpenThisBranch(data.NewNodesBranch);
+        void StartChild() => data.NewNode.HasChildBranch.OpenThisBranch(newParentBranch: data.NewNodesBranch);
     }
 
     private static void NodeInDifferentBranchAndNotAChildObject(HistoryData data, Action endOfTrunkClose)

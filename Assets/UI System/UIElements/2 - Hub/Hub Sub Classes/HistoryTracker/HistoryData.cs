@@ -39,6 +39,7 @@ public class HistoryData : IServiceUser
     public Action EndOfTrunkCloseAction { get; set; }
     public List<INode> History => MyDataHub.History;
     public bool NoHistory => MyDataHub.NoHistory;
+    public bool NoCurrentSwitchHistory => MyDataHub.CurrentSwitchHistory.IsEmpty();
     public bool GameIsPaused => MyDataHub.GamePaused;
     public bool CanStart => MyDataHub.SceneStarted;
     public bool NoPopUps => MyDataHub.NoPopUps;
@@ -50,10 +51,11 @@ public class HistoryData : IServiceUser
     public IBranch NewNodesBranch => NewNode.MyBranch;
     public IBranch ActiveBranch => MyDataHub.ActiveBranch;
     public Trunk CurrentTrunk => MyDataHub.CurrentTrunk;
-    //public List<Node> CurrentSwitchHistory => MyDataHub.CurrentSwitchHistory;
+    public List<Node> CurrentSwitchHistory => MyDataHub.CurrentSwitchHistory;
     public bool MultiSelectIsActive => MyDataHub.MultiSelectActive;
     private IDataHub MyDataHub { get; set; }
     public Trunk RootTrunk => MyDataHub.RootTrunk;
+    public void RemoveTrunk(Trunk toRemove) => MyDataHub.RemoveTrunk(toRemove);
     public Trunk SetToThisTrunk { get; private set; }
     public List<Trunk> ActiveTrunks => MyDataHub.ActiveTrunks;
     public OutTweenType TweenType { get; set; }

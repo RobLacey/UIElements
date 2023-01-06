@@ -13,7 +13,7 @@ public class InputBindings : EZEventBindingsBase
 
         //ChangeControl
         AutoRemove().CreateEvent<IAllowKeys>();
-        AutoRemove().CreateEvent<IChangeControlsPressed>();
+       // AutoRemove().CreateEvent<IChangeControlsPressed>();
    }
 }
 
@@ -31,7 +31,7 @@ public interface IAllowKeys // This one is test
     bool CanAllowKeys { get; }
 }
 
-public interface IChangeControlsPressed { }
+//public interface IChangeControlsPressed { }
 
 public interface IStandardCancel // This one is test
 {

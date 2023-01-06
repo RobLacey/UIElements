@@ -9,6 +9,11 @@ public partial class Input
     private int _lastIndex;
     private const string CheckForNewHotKey = nameof(CheckForNew);
 
+    private const string HotKeyText =
+        "All Hot Keys, except Pop Ups, must have a parent node to return to. " +
+        "This node MUST have the hotkey as a child branch too. "               +
+        "This means when the hot key is activated it will always return to this node";
+
     private void CheckForNew()
     {
         if (_lastIndex < _hotKeySettings.Count)

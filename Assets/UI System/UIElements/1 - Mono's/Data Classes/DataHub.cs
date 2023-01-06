@@ -19,6 +19,7 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
     [SerializeField] private Trunk _currentTrunk = default;
     [SerializeField] private Trunk _pausedTrunk = default;
     [SerializeField] private Trunk _escapeTrunk = default;
+    [SerializeField] private Branch _lastHotKeyPressed = default;
     [SerializeField] [ReadOnly] private Trunk _rootTrunk;
     [SerializeField] [ReadOnly] private bool _sceneStarted;
     [SerializeField] [ReadOnly] private bool _onRootTrunk = true;
@@ -45,10 +46,10 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
     private IHistoryTrack _historyTracker;
 
     //Events
-    private Action<IAddOptionalPopUp> DoAddOptionalPopUp { get; set; }
-    private Action<IRemoveOptionalPopUp> DoRemoveOptionalPopUp { get; set; }
-    private Action<IAddResolvePopUp> DoAddResolvePopUp { get; set; }
-    private Action<IRemoveResolvePopUp> DoRemoveResolvePopUps { get; set; }
+    // private Action<IAddOptionalPopUp> DoAddOptionalPopUp { get; set; }
+    // private Action<IRemoveOptionalPopUp> DoRemoveOptionalPopUp { get; set; }
+    // private Action<IAddResolvePopUp> DoAddResolvePopUp { get; set; }
+    // private Action<IRemoveResolvePopUp> DoRemoveResolvePopUps { get; set; }
     private Action<IHighlightedNode> DoHighlighted { get; set; } 
     private Action<ISelectedNode> DoSelected { get; set; }
     private Action<IIsAtRootTrunk> DoSetIsAtRoot { get; set; }
@@ -77,7 +78,11 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
     public List<IBranch> ActiveOptionalPopUps => _activeOptionalPopUps.ToList<IBranch>();
     public bool NoHistory => History.IsEmpty();
     public IBranch ActiveBranch => _activeBranch;
-    public void SetActiveBranch(Branch activeBranch) => _activeBranch = activeBranch;
+    public void SetActiveBranch(Branch activeBranch)
+    {
+        if(activeBranch.IsAPopUpBranch()) return;
+        _activeBranch = activeBranch;
+    }
 
     public ISwitch CurrentSwitcher { get; private set; }
     public void SetSwitcher(ISwitch newSwitcher)
@@ -179,10 +184,10 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
 
     public void FetchEvents()
     {
-        DoAddOptionalPopUp = PopUpEvents.Do.Fetch<IAddOptionalPopUp>();
-        DoRemoveOptionalPopUp = PopUpEvents.Do.Fetch<IRemoveOptionalPopUp>();
-        DoAddResolvePopUp = PopUpEvents.Do.Fetch<IAddResolvePopUp>();
-        DoRemoveResolvePopUps = PopUpEvents.Do.Fetch<IRemoveResolvePopUp>();
+        // DoAddOptionalPopUp = PopUpEvents.Do.Fetch<IAddOptionalPopUp>();
+        // DoRemoveOptionalPopUp = PopUpEvents.Do.Fetch<IRemoveOptionalPopUp>();
+        // DoAddResolvePopUp = PopUpEvents.Do.Fetch<IAddResolvePopUp>();
+        // DoRemoveResolvePopUps = PopUpEvents.Do.Fetch<IRemoveResolvePopUp>();
         DoHighlighted = HistoryEvents.Do.Fetch<IHighlightedNode>();
         DoSelected = HistoryEvents.Do.Fetch<ISelectedNode>();
         DoSetIsAtRoot = HistoryEvents.Do.Fetch<IIsAtRootTrunk>();
@@ -203,28 +208,29 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
     {
         _activeResolvePopUps.Add((Branch)popUpToAdd);
         ThisPopUp = popUpToAdd;
-        DoAddResolvePopUp?.Invoke(this);
+      //  DoAddResolvePopUp?.Invoke(this);
     }
 
     public void AddOptionalPopUp(IBranch popUpToAdd)
     {
+       if(_activeOptionalPopUps.Contains(popUpToAdd)) return;
         _activeOptionalPopUps.Add((Branch)popUpToAdd);
         ThisPopUp = popUpToAdd;
-        DoAddOptionalPopUp?.Invoke(this);
+      //  DoAddOptionalPopUp?.Invoke(this);
     }
 
     public void RemoveResolvePopUp(IBranch popUpToRemove)
     {
         _activeResolvePopUps.Remove((Branch)popUpToRemove);
         ThisPopUp = popUpToRemove;
-        DoRemoveResolvePopUps?.Invoke(this);
+       // DoRemoveResolvePopUps?.Invoke(this);
     }
 
     public void RemoveOptionalPopUp(IBranch popUpToRemove)
     {
         _activeOptionalPopUps.Remove((Branch)popUpToRemove);
         ThisPopUp = popUpToRemove;
-        DoRemoveOptionalPopUp?.Invoke(this);
+      // DoRemoveOptionalPopUp?.Invoke(this);
     }
     
     public void ManageHistory(INode node)
@@ -283,4 +289,7 @@ public class DataHub:  IIsAService, IDataHub, IEZEventDispatcher, IServiceUser
         _currentSwitchHistory = _lastCurrentSwitchHistory;
     }
 
+    public bool WasLastHotKeyPressed(Branch thisHotKey) => thisHotKey.IsEqualTo(_lastHotKeyPressed);
+
+    public void SetLastHotKeyPressed(Branch thisHotKey) => _lastHotKeyPressed = thisHotKey;
 }

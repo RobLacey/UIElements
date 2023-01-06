@@ -1,24 +1,31 @@
 ﻿
+using System.Linq;
 using UnityEngine;
 
 public static class MoveBackInHistory 
 {
     public static void BackOneLevelProcess(HistoryData data)
     {
-        if(data.NoHistory) return;
         var lastSelected = data.LastSelected();
         data.AddStopPoint(lastSelected);
         data.TweenType = OutTweenType.Cancel;
+        data.EndOfTrunkCloseAction = () => lastSelected.MyBranch.ParentTrunk.OnStartTrunk();
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.StopAt);
     }
 
-    public static IBranch BackToHomeProcess(HistoryData data)
+    public static void BackToRootProcess(HistoryData data)
     {
-        //TODO Fix this process so it's the dame as Back One level. Doesn't need return
         data.TweenType = OutTweenType.Cancel;
         data.SetToThisTrunkWhenFinished(data.RootTrunk);
         data.RootTrunk.SwitcherHistory.Clear();
         HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.All);
-        return data.RootTrunk.ActiveBranch;
+    }
+
+    public static void BackToThisTrunkProcess(HistoryData data)
+    {
+        data.TweenType = OutTweenType.Cancel;
+        if(data.CurrentSwitchHistory.IsEmpty())  return;
+        data.AddStopPoint(data.CurrentSwitchHistory.First());
+        HistoryListManagement.ResetAndClearHistoryList(data, ClearAction.StopAt);
     }
 }

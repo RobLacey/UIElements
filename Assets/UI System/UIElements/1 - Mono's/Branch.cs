@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using EZ.Events;
@@ -128,6 +129,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
 
     //Delegates & Events
     private Action TweenFinishedCallBack { get; set; }
+    //private Action TweenOpenFinishedCallBack { get; set; }
     private Action<ICloseBranch> CloseAndResetBranch { get; set; }
     public event Action OpenBranchStartEvent;
     public event Action OpenBranchEndEvent;
@@ -177,6 +179,10 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
 
     public void OnEnable()
     {
+
+        HotKeys.HotkeyPressed += Hotkey;
+        
+        
         UseEZServiceLocator();
         FetchEvents();
         ObserveEvents();
@@ -215,6 +221,8 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
 
     public void OnDisable()
     {
+        HotKeys.HotkeyPressed -= Hotkey;
+
         OnFocusClick -= SetFocus;
         CloseAndResetBranch?.Invoke(this);
         UnObserveEvents();
@@ -243,11 +251,30 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
         OpenThisBranch();
     }
 
-    public void OpenThisBranch(IBranch newParentBranch = null)
+    private bool _hotkey;
+    
+    private void Hotkey(List<IBranch> hotKeyHierachy)
     {
-        if(!_branchTypeBaseClass.CanStartBranch()) return;
+        if(hotKeyHierachy.Contains(ThisBranch) & !CanvasIsEnabled)
+        {
+            Debug.Log($"Hot key is me : {ThisBranch}");
+            _hotkey = true;
+        }    
+    }
+    
+    private bool HotkeyPressed()
+    {
+        if (!_hotkey) return false;
+        _hotkey = false;
+        return true;
+    }
+
+
+    public void OpenThisBranch(Action endAction = null, IBranch newParentBranch = null)
+    {
+        if(!_branchTypeBaseClass.CanStartBranch() || HotkeyPressed()) return;
         
-        SetBranchAsActive(newParentBranch);
+        SetBranchAsActive(newParentBranch, endAction);
 
         if (_tweenOnChange)
         {
@@ -262,13 +289,14 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
             _myDataHub.AddPlayingTween();
             InTweenCallback();
         }
-        
     }
     
-    private void SetBranchAsActive(IBranch newParentBranch)
+    private void SetBranchAsActive(IBranch newParentBranch, Action endAction)
     {
         SetParentBranch(newParentBranch);
         OpenBranchStartEvent?.Invoke();
+        TweenFinishedCallBack = endAction;
+
         if (!_canActivateBranch) return;
         SetClickFocus();
         _myDataHub.SetActiveBranch(this);
@@ -287,6 +315,7 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
         OpenBranchEndEvent?.Invoke();
         SetHighlightedNode();
         _canActivateBranch = true;
+        TweenFinishedCallBack?.Invoke();
     }
 
     private void SetHighlightedNode()
@@ -305,8 +334,6 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
 
     public void ExitThisBranch(OutTweenType outTweenType, Action endOfTweenCallback = null)
     {
-        // Debug.Log("Fuck");
-
         bool DontExitBranch() => _branchTypeBaseClass.DontExitBranch(outTweenType);
         var moveType = outTweenType == OutTweenType.MoveToChild ? _moveToChild : _moveBackWhen;
         
@@ -316,7 +343,6 @@ public partial class Branch : MonoBehaviour, IEZEventUser, IBranch, IEZEventDisp
             _tweenOnChange = true;
             return;
         }
-
         if (moveType == WhenToMove.AfterEndOfTween)
         {
             StartOutTween(endOfTweenCallback);

@@ -107,6 +107,7 @@ namespace UIElements
             _historyTracker.ExitPause();
             _myDataHub.SetIfGamePaused(false);
             OnPausedPressed?.Invoke(this);
+            pauseType.SetCurrentMoveTypeToMoveToBack();
             pauseType.OnExitTrunk(End);
 
             void End()

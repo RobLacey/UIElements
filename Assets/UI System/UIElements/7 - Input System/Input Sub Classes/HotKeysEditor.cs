@@ -33,6 +33,7 @@ public partial class HotKeys
             _oldBranchType = _myBranch;
             return;
         }
+        
 #if UNITY_EDITOR
         
         UIEditorDialogue.WarningDialogue(Title, message, "OK");
@@ -42,20 +43,22 @@ public partial class HotKeys
 
     private void CheckPreset()
     {
-        var message = String.Empty;
-
-        if (_presetParent.IsNotNull() && _presetParent.HasChildBranch != (IBranch)_myBranch)
-        {
-            message = $"Can't have \"{_presetParent.name}\" as Preset. " +
-                      $"{Environment.NewLine}"                          +
-                      $"{Environment.NewLine}"                          +
-                      "Does not have Child Set to this Branch so isn't a valid Parent";
 #if UNITY_EDITOR
         
-            UIEditorDialogue.WarningDialogue(Title, message, "OK");
-#endif
+        var message = String.Empty;
 
-            _presetParent = null;
+        if (_parentNode.IsNotNull() && _parentNode.HasChildBranch != (IBranch)_myBranch)
+        {
+            message = $"Can't have \"{_parentNode.name}\" as Preset. " +
+                      $"{Environment.NewLine}"                          +
+                      $"{Environment.NewLine}"                          +
+                      $"Does not have \"{_myBranch}\" as a CHILD BRANCH so isn't a valid Parent.";
+        
+            UIEditorDialogue.WarningDialogue(Title, message, "OK");
+
+            _parentNode = null;
+            
+#endif
         }
     }
 }

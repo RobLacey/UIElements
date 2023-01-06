@@ -126,6 +126,16 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
         StartNodeFactory();
         _nodeBase.OnAwake();
         _disableSettings.OnAwake(this);
+        SetChildParentBranch();
+    }
+    
+    private void SetChildParentBranch()
+    {
+        if(_buttonFunction == ButtonFunction.InGameUi) return;
+        if (HasChildBranch.IsNotNull())
+        {
+            HasChildBranch.SetParentBranch(MyBranch);
+        }
     }
 
     private void SetUpUiFunctions()
@@ -223,7 +233,6 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
 
     private void Start()
     {
-        SetChildParentBranch(); 
         _nodeBase.OnStart();
         
         foreach (var nodeFunctionBase in _activeFunctions)
@@ -231,16 +240,7 @@ public partial class Node : MonoBehaviour, INode, IPointerEnterHandler, IPointer
             nodeFunctionBase.OnStart();
         }
     }
-
-    private void SetChildParentBranch()
-    {
-        if(_buttonFunction == ButtonFunction.InGameUi) return;
-        if (HasChildBranch.IsNotNull())
-        {
-            HasChildBranch.SetParentBranch(MyBranch);
-        }
-    }
-
+    
     private void StartNodeFactory()
     {
         _nodeBase = NodeFactory.Factory(_buttonFunction, this);
